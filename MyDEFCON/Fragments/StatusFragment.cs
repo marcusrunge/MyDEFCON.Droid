@@ -230,17 +230,13 @@ namespace MyDEFCON.Fragments
 
         private async Task BroadcastDefconStatus(int defconStatus)
         {
-            for (int i = 0; i < 10; i++)
+            using (var udpClient = new UdpClient())
             {
-                using (var udpClient = new UdpClient())
-                {
-                    udpClient.EnableBroadcast = true;
-                    var ipEndpoint = new IPEndPoint(IPAddress.Broadcast, 4536);
-                    var datagram = Encoding.ASCII.GetBytes(defconStatus.ToString());
-                    await udpClient.SendAsync(datagram, datagram.Length, ipEndpoint);
-                    udpClient.Close();
-                }
-                await Task.Delay(500);
+                udpClient.EnableBroadcast = true;
+                var ipEndpoint = new IPEndPoint(IPAddress.Broadcast, 4536);
+                var datagram = Encoding.ASCII.GetBytes(defconStatus.ToString());
+                await udpClient.SendAsync(datagram, datagram.Length, ipEndpoint);
+                udpClient.Close();
             }
         }
 
