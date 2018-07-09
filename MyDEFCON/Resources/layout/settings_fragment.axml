@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@layout/backrepeat">
+    <ScrollView
+        android:fillViewport="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginLeft="12dp">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#B2000000"
+            android:padding="12dp">
+            <TextView
+                android:textColor="@android:color/white"
+                android:text="DEFCON Broadcast on LAN UDP Port 4536"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
+            <GridLayout
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:columnCount="3"
+                android:rowCount="1"
+                android:orientation="horizontal"
+                android:id="@+id/settingsGridLayout">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:text="OFF"
+                    android:layout_column="0"
+                    android:layout_row="0"
+                    android:layout_columnWeight="1"
+                    android:layout_gravity="right"
+                    android:layout_margin="4px" />
+                <android.support.v7.widget.SwitchCompat
+                    android:theme="@style/RedGreenSwitchTheme"
+                    android:layout_column="1"
+                    android:layout_row="0"
+                    android:id="@+id/isBroadcastEnabledSwitch"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="4px" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:text="ON"
+                    android:layout_column="2"
+                    android:layout_row="0"
+                    android:layout_columnWeight="1"
+                    android:layout_gravity="left"
+                    android:layout_margin="4px"
+                    android:gravity="left" />
+            </GridLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

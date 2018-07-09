@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+  <item
+      android:id="@+id/menu_status"
+      android:icon="@drawable/ic_action_defcon"
+      android:title="@string/title_status" />
+
+  <item
+      android:id="@+id/menu_checklist"
+      android:icon="@drawable/ic_format_list_bulleted"
+      android:title="@string/title_checklist" />
+</menu>

@@ -1,0 +1,195 @@
+using Android.App;
+using Android.Content.PM;
+using Android.OS;
+using Android.Views;
+
+using MyDEFCON.Fragments;
+using Android.Support.V7.App;
+using Android.Support.Design.Widget;
+using MyDEFCON.Services;
+using SQLite;
+using MyDEFCON.Models;
+using static Android.App.ActivityManager;
+using Android.Graphics;
+using Unity;
+using Unity.ServiceLocation;
+using CommonServiceLocator;
+using Android.Support.V7.Widget;
+using Android.Content;
+
+namespace MyDEFCON
+{
+    [Activity(Label = "@string/app_name", MainLauncher = true, Theme = "@style/splashscreen", LaunchMode = LaunchMode.SingleTop, Icon = "@drawable/Icon", RoundIcon = "@mipmap/ic_launcher")]
+    public class MainActivity : AppCompatActivity, BottomNavigationView.IOnNavigationItemSelectedListener
+    {      
+        BottomNavigationView _navigation;
+        int _lastFragmentId;
+        IEventService _eventService;
+        IMenu _menu;
+        IUnityContainer unityContainer;
+        ISettingsService _settingsService;
+
+        protected override void OnCreate(Bundle savedInstanceState)
+        {
+            base.OnCreate(savedInstanceState);            
+            unityContainer = new UnityContainer();
+            unityContainer.RegisterSingleton<IEventService, EventService>();
+            unityContainer.RegisterInstance<ISettingsService>(SettingsService.Instance());
+            _eventService = unityContainer.Resolve<IEventService>();
+            _settingsService = unityContainer.Resolve<ISettingsService>();
+            unityContainer.RegisterInstance<ISQLiteDependencies>(SQLiteDependencies.GetInstance(_settingsService.GetLocalFilePath("checklist.db")));
+            unityContainer.RegisterType<ICounterService, CounterService>();
+            UnityServiceLocator unityServiceLocator = new UnityServiceLocator(unityContainer);
+            ServiceLocator.SetLocatorProvider(() => unityServiceLocator);
+
+            SetContentView(Resource.Layout.activity_main);
+            _navigation = FindViewById<BottomNavigationView>(Resource.Id.bottomNavigationView);
+            _navigation.SetOnNavigationItemSelectedListener(this);
+
+            var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
+            if (toolbar != null)
+            {
+                SetSupportActionBar(toolbar);
+            }
+
+            Bitmap bitmap;
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.NMr1) bitmap = BitmapFactory.DecodeResource(Resources, Resource.Mipmap.ic_launcher);
+            else bitmap = BitmapFactory.DecodeResource(Resources, Resource.Drawable.Icon);
+            TaskDescription taskDescription = new TaskDescription("MyDEFCON", bitmap, Color.ParseColor("#e8ff00"));
+            SetTaskDescription(taskDescription);
+
+            //if first time you will want to go ahead and click first item.
+            if (savedInstanceState == null)
+            {
+                LoadFragment(Resource.Id.menu_status);
+                _navigation.SelectedItemId = Resource.Id.menu_status;
+            }
+
+            try
+            {
+                var connection = new SQLiteAsyncConnection(_settingsService.GetLocalFilePath("checklist.db"));
+                connection.CreateTableAsync<CheckListEntry>();
+            }
+            catch (System.Exception) { }
+
+            if (_settingsService.GetSetting<bool>("IsBroadcastEnabled"))
+            {
+                var udpClientServiceIntent = new Intent(this, typeof(UdpClientService));
+                StopService(udpClientServiceIntent);
+                StartService(udpClientServiceIntent);
+            }
+        }
+
+        void LoadFragment(int id)
+        {
+            Android.Support.V4.App.Fragment existingFragment;
+            existingFragment = SupportFragmentManager.FindFragmentByTag("CHK");
+            if (existingFragment != null) SupportFragmentManager.PopBackStackImmediate(existingFragment.Id, 0);
+            existingFragment = SupportFragmentManager.FindFragmentByTag("STS");
+            if (existingFragment != null) SupportFragmentManager.PopBackStackImmediate(existingFragment.Id, 0);
+            existingFragment = SupportFragmentManager.FindFragmentByTag("ABT");
+            if (existingFragment != null) SupportFragmentManager.PopBackStackImmediate(existingFragment.Id, 0);
+            
+            string fragmentTag;
+            Android.Support.V4.App.Fragment fragment = null;
+            if (id == Resource.Id.menu_status)
+            {
+                fragmentTag = "STS";
+                fragment = StatusFragment.GetInstance(Resources);
+
+                SupportActionBar.SetTitle(Resource.String.statusTitle);
+                _lastFragmentId = id;
+                if (_menu != null)
+                {
+                    _menu.FindItem(Resource.Id.menu_share).SetVisible(true);
+                    _menu.FindItem(Resource.Id.menu_create).SetVisible(false);
+                }
+
+            }
+            else if (id == Resource.Id.menu_checklist)
+            {
+                fragmentTag = "CHK";
+                fragment = ChecklistFragment.GetInstance();
+                SupportActionBar.SetTitle(Resource.String.checklistTitle);
+                _lastFragmentId = id;
+                _menu.FindItem(Resource.Id.menu_share).SetVisible(false);
+                _menu.FindItem(Resource.Id.menu_create).SetVisible(true);
+            }
+            else return;
+
+            SupportFragmentManager.BeginTransaction().Replace(Resource.Id.content_frame, fragment, fragmentTag).Commit();
+        }
+
+        public override bool OnOptionsItemSelected(IMenuItem item)
+        {
+            Android.Support.V4.App.Fragment existingFragment;
+            existingFragment = SupportFragmentManager.FindFragmentByTag("CHK");
+            if (existingFragment != null) SupportFragmentManager.PopBackStackImmediate(existingFragment.Id, 0);
+            existingFragment = SupportFragmentManager.FindFragmentByTag("STS");
+            if (existingFragment != null) SupportFragmentManager.PopBackStackImmediate(existingFragment.Id, 0);
+            existingFragment = SupportFragmentManager.FindFragmentByTag("ABT");
+            if (existingFragment != null) SupportFragmentManager.PopBackStackImmediate(existingFragment.Id, 0);
+
+            Android.Support.V4.App.Fragment fragment = null;
+            if (item.ItemId == Resource.Id.menu_about)
+            {
+                fragment = AboutFragment.NewInstance();
+                SupportActionBar.SetTitle(Resource.String.aboutTitle);
+                _navigation.Visibility = ViewStates.Gone;
+                _menu.FindItem(Resource.Id.menu_share).SetVisible(false);
+                _menu.FindItem(Resource.Id.menu_create).SetVisible(false);
+                SupportFragmentManager.BeginTransaction().Replace(Resource.Id.content_frame, fragment, "ABT").Commit();
+            }
+
+            if (item.ItemId == Resource.Id.menu_settings)
+            {
+                fragment = SettingsFragment.NewInstance();
+                SupportActionBar.SetTitle(Resource.String.settingsTitle);
+                _navigation.Visibility = ViewStates.Gone;
+                _menu.FindItem(Resource.Id.menu_share).SetVisible(false);
+                _menu.FindItem(Resource.Id.menu_create).SetVisible(false);
+                SupportFragmentManager.BeginTransaction().Replace(Resource.Id.content_frame, fragment, "SET").Commit();
+            }
+
+            _eventService.OnMenuItemPressedEvent(new MenuItemPressedEventArgs(item.TitleFormatted.ToString()));
+
+            return base.OnOptionsItemSelected(item);
+        }
+
+        public bool OnNavigationItemSelected(IMenuItem item)
+        {
+            LoadFragment(item.ItemId);
+            return true;
+        }
+
+        public override bool OnCreateOptionsMenu(IMenu menu)
+        {
+            _menu = menu;
+            MenuInflater.Inflate(Resource.Menu.toolbar_menu, _menu);
+            _menu.FindItem(Resource.Id.menu_create).SetVisible(false);
+            return base.OnCreateOptionsMenu(menu);
+        }
+
+        public override void OnBackPressed()
+        {
+            if (_navigation.Visibility == ViewStates.Gone)
+            {
+                LoadFragment(_lastFragmentId);
+                _navigation.Visibility = ViewStates.Visible;
+            }
+            else base.OnBackPressed();
+        }
+
+        protected override void OnResume()
+        {
+            base.OnResume();
+            if (_settingsService.GetSetting<bool>("IsBroadcastEnabled"))
+            {
+                var udpClientServiceIntent = new Intent(this, typeof(UdpClientService));
+                StopService(udpClientServiceIntent);
+                StartService(udpClientServiceIntent);
+            }
+        }
+    }
+}
+

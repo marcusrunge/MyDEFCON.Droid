@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">MyDEFCON</string>
+  <string name="drawer_open">Open</string>
+  <string name="drawer_close">Close</string>
+  <string name="menu_refresh">Refresh</string>
+  <string name="statusTitle">DEFCON Status</string>
+  <string name="checklistTitle">DEFCON Checklist</string>
+  <string name="aboutTitle">About</string>
+  <string name="settingsTitle">Settings</string>
+  <string name="e_mail"><a href="mailto:code_m@outlook.de">technical support/feedback email</a></string>
+  <string name="title_status">Status</string>
+  <string name="title_checklist">Checklist</string>
+</resources>

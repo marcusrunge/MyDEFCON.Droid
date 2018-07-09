@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mydefconFrameLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    android:background="@android:color/white">
+    <LinearLayout
+        android:id="@+id/mydefconWidgetLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/black">
+        <TextView
+            android:text="--"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/mydefconWidgetTextView"
+            android:textSize="60dp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_gravity="center" />
+    </LinearLayout>
+</FrameLayout>
