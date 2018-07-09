@@ -67,7 +67,7 @@ namespace MyDEFCON.Fragments
             defcon2Button = view.FindViewById<Button>(Resource.Id.defcon2Button);
             defcon3Button = view.FindViewById<Button>(Resource.Id.defcon3Button);
             defcon4Button = view.FindViewById<Button>(Resource.Id.defcon4Button);
-            defcon5Button = view.FindViewById<Button>(Resource.Id.defcon5Button);                       
+            defcon5Button = view.FindViewById<Button>(Resource.Id.defcon5Button);
 
             defcon1Button.Click += async (s, e) => { _isButtonPressed = true; view.PerformHapticFeedback(FeedbackConstants.VirtualKey, FeedbackFlags.IgnoreGlobalSetting); await SetButtonColors(1); await BroadcastDefconStatus(1); };
             defcon2Button.Click += async (s, e) => { _isButtonPressed = true; view.PerformHapticFeedback(FeedbackConstants.VirtualKey, FeedbackFlags.IgnoreGlobalSetting); await SetButtonColors(2); await BroadcastDefconStatus(2); };
@@ -214,7 +214,7 @@ namespace MyDEFCON.Fragments
                     break;
             }
             _settingsService.SaveSetting("DefconStatus", defconStatus.ToString());
-            if (!_isReceiving)Context.SendBroadcast(intent);            
+            if (!_isReceiving) Context.SendBroadcast(intent);
             await _counterService.CalculateCounter(defconStatus);
             _isButtonPressed = false;
         }
@@ -222,7 +222,7 @@ namespace MyDEFCON.Fragments
         public async override void OnResume()
         {
             base.OnResume();
-            _applicationDefconStatus = GetApplicationDefconStatus();            
+            _applicationDefconStatus = GetApplicationDefconStatus();
             await InitButtonColors(_applicationDefconStatus);
             _defconStatusReceiver = new DefconStatusReceiver();
             if (_defconStatusReceiver != null && _settingsService.GetSetting<bool>("IsBroadcastEnabled")) LocalBroadcastManager.GetInstance(Context).RegisterReceiver(_defconStatusReceiver, new IntentFilter("com.marcusrunge.MyDEFCON.DEFCON_UPDATE"));
@@ -230,13 +230,17 @@ namespace MyDEFCON.Fragments
 
         private async Task BroadcastDefconStatus(int defconStatus)
         {
-            using (var udpClient = new UdpClient())
+            for (int i = 0; i < 10; i++)
             {
-                udpClient.EnableBroadcast = true;
-                var ipEndpoint = new IPEndPoint(IPAddress.Broadcast, 4536);
-                var datagram = Encoding.ASCII.GetBytes(defconStatus.ToString());
-                await udpClient.SendAsync(datagram, datagram.Length, ipEndpoint);
-                udpClient.Close();
+                using (var udpClient = new UdpClient())
+                {
+                    udpClient.EnableBroadcast = true;
+                    var ipEndpoint = new IPEndPoint(IPAddress.Broadcast, 4536);
+                    var datagram = Encoding.ASCII.GetBytes(defconStatus.ToString());
+                    await udpClient.SendAsync(datagram, datagram.Length, ipEndpoint);
+                    udpClient.Close();
+                }
+                await Task.Delay(500);
             }
         }
 
