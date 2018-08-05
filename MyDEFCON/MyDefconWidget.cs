@@ -84,7 +84,7 @@ namespace MyDEFCON
         {
             base.OnReceive(context, intent);
             var defconStatus = intent.GetStringExtra("DefconStatus");
-            if (defconStatus != null)
+            if (defconStatus != null && !defconStatus.Equals("0"))
             {
                 Intent mainActivityIntent = new Intent(context, typeof(MainActivity));
                 PendingIntent pendingIntent = PendingIntent.GetActivity(context, 0, mainActivityIntent, 0);

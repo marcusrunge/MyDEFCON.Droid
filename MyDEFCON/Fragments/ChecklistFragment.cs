@@ -107,11 +107,13 @@ namespace MyDEFCON.Fragments
                             break;
                         case ActionType.CheckedChange:
                             _checkList[e.Item2].Checked = (e.Item1 as CheckBox).Checked;
+                            _checkList[e.Item2].UnixTimeStampUpdated = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                             await _sqLiteAsyncConnection.UpdateAsync(_checkList[e.Item2]);
                             await SetCounter();
                             break;
                         case ActionType.AfterTextChanged:
-                            _checkList[e.Item2].CheckItem = (e.Item1 as AppCompatEditText).EditableText.ToString();
+                            _checkList[e.Item2].Item = (e.Item1 as AppCompatEditText).EditableText.ToString();
+                            _checkList[e.Item2].UnixTimeStampUpdated = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                             await _sqLiteAsyncConnection.UpdateAsync(_checkList[e.Item2]);
                             break;
                         default:
@@ -130,7 +132,7 @@ namespace MyDEFCON.Fragments
                 _onCreateView.PerformHapticFeedback(FeedbackConstants.VirtualKey, FeedbackFlags.IgnoreGlobalSetting);
                 if ((e as MenuItemPressedEventArgs).MenuItemTitle.Equals("Create"))
                 {
-                    var checkListEntry = new CheckListEntry() { Status = fragmentDefconStatus };
+                    var checkListEntry = new CheckListEntry() { DefconStatus = fragmentDefconStatus, UnixTimeStampCreated = DateTimeOffset.Now.ToUnixTimeMilliseconds() };
                     _checkList.Add(checkListEntry);
                     await _sqLiteAsyncConnection.InsertAsync(checkListEntry);
                     _checklistRecyclerViewAdapter.NotifyDataSetChanged();
@@ -272,7 +274,7 @@ namespace MyDEFCON.Fragments
             if (_sqLiteAsyncConnection == null) return new List<CheckListEntry>();
             var queryList = await Task.Factory.StartNew(async () =>
             {
-                return await _sqLiteAsyncConnection.QueryAsync<CheckListEntry>("SELECT * FROM CheckListEntry WHERE Status = ?", defconStatus);
+                return await _sqLiteAsyncConnection.QueryAsync<CheckListEntry>("SELECT * FROM CheckListEntry WHERE DefconStatus = ? AND Deleted = 0", defconStatus);
             }).Result;
             if (queryList.Count > 0) return queryList;
             else return new List<CheckListEntry>();
@@ -283,13 +285,20 @@ namespace MyDEFCON.Fragments
             _onCreateView.PerformHapticFeedback(FeedbackConstants.VirtualKey, FeedbackFlags.IgnoreGlobalSetting);
             if (item.TitleFormatted.ToString().Equals("Delete"))
             {
-                _sqLiteAsyncConnection.DeleteAsync(_checkList[_actionModeItemId]);
+                var checkListEntry = _checkList[_actionModeItemId];
+                checkListEntry.Checked = true;
+                checkListEntry.Visibility = 1;
+                checkListEntry.Deleted = true;                
+                //_sqLiteAsyncConnection.DeleteAsync(checkListEntry);
                 _checkList.RemoveAt(_actionModeItemId);
                 _checklistRecyclerViewAdapter.NotifyDataSetChanged();
-                Task.Factory.StartNew(async () =>
-                {
-                    await SetCounter();
-                });
+                //Task.Factory.StartNew(async () =>
+                //{
+                //    await _sqLiteAsyncConnection.UpdateAsync(checkListEntry);
+                //    await SetCounter();
+                //});
+                _sqLiteAsyncConnection.UpdateAsync(checkListEntry);
+                SetCounter();
                 _checklistRecyclerViewAdapter.ClickedItem = -1;
                 mode.Finish();
             }

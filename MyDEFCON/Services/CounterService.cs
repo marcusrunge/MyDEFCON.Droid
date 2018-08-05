@@ -69,7 +69,7 @@ namespace MyDEFCON.Services
             if (sqLiteAsyncConnection == null) return;
             var checkList = await Task.Factory.StartNew(async () =>
                             {
-                                return await sqLiteAsyncConnection.Table<CheckListEntry>().ToListAsync();
+                                return await sqLiteAsyncConnection.Table<CheckListEntry>().Where(x => !x.Deleted).ToListAsync();
                             }).Result;
 
 
@@ -78,54 +78,54 @@ namespace MyDEFCON.Services
                 switch (actualDefconStatus)
                 {
                     case 1:
-                        _counter1Value = checkList.Where((x) => x.Status == 1).Where((x) => x.Checked == false).Count();
-                        _counter2Value = checkList.Where((x) => x.Status == 2).Where((x) => x.Checked == false).Count();
-                        _counter3Value = checkList.Where((x) => x.Status == 3).Where((x) => x.Checked == false).Count();
-                        _counter4Value = checkList.Where((x) => x.Status == 4).Where((x) => x.Checked == false).Count();
-                        _counter5Value = checkList.Where((x) => x.Status == 5).Where((x) => x.Checked == false).Count();
+                        _counter1Value = checkList.Where((x) => x.DefconStatus == 1).Where((x) => x.Checked == false).Count();
+                        _counter2Value = checkList.Where((x) => x.DefconStatus == 2).Where((x) => x.Checked == false).Count();
+                        _counter3Value = checkList.Where((x) => x.DefconStatus == 3).Where((x) => x.Checked == false).Count();
+                        _counter4Value = checkList.Where((x) => x.DefconStatus == 4).Where((x) => x.Checked == false).Count();
+                        _counter5Value = checkList.Where((x) => x.DefconStatus == 5).Where((x) => x.Checked == false).Count();
 
-                        if (checkList.Where((x) => x.Status == 1).Where((x) => x.Checked == true).Count() == 0 && checkList.Where((x) => x.Status == 1).Count() > 0) _counter1Color = Color.ParseColor("#FC0800");
-                        else if (checkList.Where((x) => x.Status == 1).Where((x) => x.Checked == true).Count() == checkList.Where((x) => x.Status == 1).Count()) _counter1Color = Color.ParseColor("#00FF00");
+                        if (checkList.Where((x) => x.DefconStatus == 1).Where((x) => x.Checked == true).Count() == 0 && checkList.Where((x) => x.DefconStatus == 1).Count() > 0) _counter1Color = Color.ParseColor("#FC0800");
+                        else if (checkList.Where((x) => x.DefconStatus == 1).Where((x) => x.Checked == true).Count() == checkList.Where((x) => x.DefconStatus == 1).Count()) _counter1Color = Color.ParseColor("#00FF00");
                         else _counter1Color = Color.ParseColor("#FFB300");
 
-                        if (checkList.Where((x) => x.Status == 2).Where((x) => x.Checked == true).Count() == 0 && checkList.Where((x) => x.Status == 2).Count() > 0) _counter2Color = Color.ParseColor("#FC0800");
-                        else if (checkList.Where((x) => x.Status == 2).Where((x) => x.Checked == true).Count() == checkList.Where((x) => x.Status == 2).Count()) _counter2Color = Color.ParseColor("#00FF00");
+                        if (checkList.Where((x) => x.DefconStatus == 2).Where((x) => x.Checked == true).Count() == 0 && checkList.Where((x) => x.DefconStatus == 2).Count() > 0) _counter2Color = Color.ParseColor("#FC0800");
+                        else if (checkList.Where((x) => x.DefconStatus == 2).Where((x) => x.Checked == true).Count() == checkList.Where((x) => x.DefconStatus == 2).Count()) _counter2Color = Color.ParseColor("#00FF00");
                         else _counter2Color = Color.ParseColor("#FFB300");
 
-                        if (checkList.Where((x) => x.Status == 3).Where((x) => x.Checked == true).Count() == 0 && checkList.Where((x) => x.Status == 3).Count() > 0) _counter3Color = Color.ParseColor("#FC0800");
-                        else if (checkList.Where((x) => x.Status == 3).Where((x) => x.Checked == true).Count() == checkList.Where((x) => x.Status == 3).Count()) _counter3Color = Color.ParseColor("#00FF00");
+                        if (checkList.Where((x) => x.DefconStatus == 3).Where((x) => x.Checked == true).Count() == 0 && checkList.Where((x) => x.DefconStatus == 3).Count() > 0) _counter3Color = Color.ParseColor("#FC0800");
+                        else if (checkList.Where((x) => x.DefconStatus == 3).Where((x) => x.Checked == true).Count() == checkList.Where((x) => x.DefconStatus == 3).Count()) _counter3Color = Color.ParseColor("#00FF00");
                         else _counter3Color = Color.ParseColor("#FFB300");
 
-                        if (checkList.Where((x) => x.Status == 4).Where((x) => x.Checked == true).Count() == 0 && checkList.Where((x) => x.Status == 4).Count() > 0) _counter4Color = Color.ParseColor("#FC0800");
-                        else if (checkList.Where((x) => x.Status == 4).Where((x) => x.Checked == true).Count() == checkList.Where((x) => x.Status == 4).Count()) _counter4Color = Color.ParseColor("#00FF00");
+                        if (checkList.Where((x) => x.DefconStatus == 4).Where((x) => x.Checked == true).Count() == 0 && checkList.Where((x) => x.DefconStatus == 4).Count() > 0) _counter4Color = Color.ParseColor("#FC0800");
+                        else if (checkList.Where((x) => x.DefconStatus == 4).Where((x) => x.Checked == true).Count() == checkList.Where((x) => x.DefconStatus == 4).Count()) _counter4Color = Color.ParseColor("#00FF00");
                         else _counter4Color = Color.ParseColor("#FFB300");
 
-                        if (checkList.Where((x) => x.Status == 5).Where((x) => x.Checked == true).Count() == 0 && checkList.Where((x) => x.Status == 5).Count() > 0) _counter5Color = Color.ParseColor("#FC0800");
-                        else if (checkList.Where((x) => x.Status == 5).Where((x) => x.Checked == true).Count() == checkList.Where((x) => x.Status == 5).Count()) _counter5Color = Color.ParseColor("#00FF00");
+                        if (checkList.Where((x) => x.DefconStatus == 5).Where((x) => x.Checked == true).Count() == 0 && checkList.Where((x) => x.DefconStatus == 5).Count() > 0) _counter5Color = Color.ParseColor("#FC0800");
+                        else if (checkList.Where((x) => x.DefconStatus == 5).Where((x) => x.Checked == true).Count() == checkList.Where((x) => x.DefconStatus == 5).Count()) _counter5Color = Color.ParseColor("#00FF00");
                         else _counter5Color = Color.ParseColor("#FFB300");
                         break;
                     case 2:
                         _counter1Value = 0;
                         _counter1Color = Color.ParseColor("#00FF00");
-                        _counter2Value = checkList.Where((x) => x.Status == 2).Where((x) => x.Checked == false).Count();
-                        _counter3Value = checkList.Where((x) => x.Status == 3).Where((x) => x.Checked == false).Count();
-                        _counter4Value = checkList.Where((x) => x.Status == 4).Where((x) => x.Checked == false).Count();
-                        _counter5Value = checkList.Where((x) => x.Status == 5).Where((x) => x.Checked == false).Count();
+                        _counter2Value = checkList.Where((x) => x.DefconStatus == 2).Where((x) => x.Checked == false).Count();
+                        _counter3Value = checkList.Where((x) => x.DefconStatus == 3).Where((x) => x.Checked == false).Count();
+                        _counter4Value = checkList.Where((x) => x.DefconStatus == 4).Where((x) => x.Checked == false).Count();
+                        _counter5Value = checkList.Where((x) => x.DefconStatus == 5).Where((x) => x.Checked == false).Count();
 
-                        if (checkList.Where((x) => x.Status == 2).Where((x) => x.Checked == true).Count() == 0 && checkList.Where((x) => x.Status == 2).Count() > 0) _counter2Color = Color.ParseColor("#FC0800");
-                        else if (checkList.Where((x) => x.Status == 2).Where((x) => x.Checked == true).Count() == checkList.Where((x) => x.Status == 2).Count()) _counter2Color = Color.ParseColor("#00FF00");
+                        if (checkList.Where((x) => x.DefconStatus == 2).Where((x) => x.Checked == true).Count() == 0 && checkList.Where((x) => x.DefconStatus == 2).Count() > 0) _counter2Color = Color.ParseColor("#FC0800");
+                        else if (checkList.Where((x) => x.DefconStatus == 2).Where((x) => x.Checked == true).Count() == checkList.Where((x) => x.DefconStatus == 2).Count()) _counter2Color = Color.ParseColor("#00FF00");
                         else _counter2Color = Color.ParseColor("#FFB300");
 
-                        if (checkList.Where((x) => x.Status == 3).Where((x) => x.Checked == true).Count() == 0 && checkList.Where((x) => x.Status == 3).Count() > 0) _counter3Color = Color.ParseColor("#FC0800");
-                        else if (checkList.Where((x) => x.Status == 3).Where((x) => x.Checked == true).Count() == checkList.Where((x) => x.Status == 3).Count()) _counter3Color = Color.ParseColor("#00FF00");
+                        if (checkList.Where((x) => x.DefconStatus == 3).Where((x) => x.Checked == true).Count() == 0 && checkList.Where((x) => x.DefconStatus == 3).Count() > 0) _counter3Color = Color.ParseColor("#FC0800");
+                        else if (checkList.Where((x) => x.DefconStatus == 3).Where((x) => x.Checked == true).Count() == checkList.Where((x) => x.DefconStatus == 3).Count()) _counter3Color = Color.ParseColor("#00FF00");
                         else _counter3Color = Color.ParseColor("#FFB300");
 
-                        if (checkList.Where((x) => x.Status == 4).Where((x) => x.Checked == true).Count() == 0 && checkList.Where((x) => x.Status == 4).Count() > 0) _counter4Color = Color.ParseColor("#FC0800");
-                        else if (checkList.Where((x) => x.Status == 4).Where((x) => x.Checked == true).Count() == checkList.Where((x) => x.Status == 4).Count()) _counter4Color = Color.ParseColor("#00FF00");
+                        if (checkList.Where((x) => x.DefconStatus == 4).Where((x) => x.Checked == true).Count() == 0 && checkList.Where((x) => x.DefconStatus == 4).Count() > 0) _counter4Color = Color.ParseColor("#FC0800");
+                        else if (checkList.Where((x) => x.DefconStatus == 4).Where((x) => x.Checked == true).Count() == checkList.Where((x) => x.DefconStatus == 4).Count()) _counter4Color = Color.ParseColor("#00FF00");
                         else _counter4Color = Color.ParseColor("#FFB300");
 
-                        if (checkList.Where((x) => x.Status == 5).Where((x) => x.Checked == true).Count() == 0 && checkList.Where((x) => x.Status == 5).Count() > 0) _counter5Color = Color.ParseColor("#FC0800");
-                        else if (checkList.Where((x) => x.Status == 5).Where((x) => x.Checked == true).Count() == checkList.Where((x) => x.Status == 5).Count()) _counter5Color = Color.ParseColor("#00FF00");
+                        if (checkList.Where((x) => x.DefconStatus == 5).Where((x) => x.Checked == true).Count() == 0 && checkList.Where((x) => x.DefconStatus == 5).Count() > 0) _counter5Color = Color.ParseColor("#FC0800");
+                        else if (checkList.Where((x) => x.DefconStatus == 5).Where((x) => x.Checked == true).Count() == checkList.Where((x) => x.DefconStatus == 5).Count()) _counter5Color = Color.ParseColor("#00FF00");
                         else _counter5Color = Color.ParseColor("#FFB300");
                         break;
                     case 3:
@@ -133,20 +133,20 @@ namespace MyDEFCON.Services
                         _counter2Value = 0;
                         _counter1Color = Color.ParseColor("#00FF00");
                         _counter2Color = Color.ParseColor("#00FF00");
-                        _counter3Value = checkList.Where((x) => x.Status == 3).Where((x) => x.Checked == false).Count();
-                        _counter4Value = checkList.Where((x) => x.Status == 4).Where((x) => x.Checked == false).Count();
-                        _counter5Value = checkList.Where((x) => x.Status == 5).Where((x) => x.Checked == false).Count();
+                        _counter3Value = checkList.Where((x) => x.DefconStatus == 3).Where((x) => x.Checked == false).Count();
+                        _counter4Value = checkList.Where((x) => x.DefconStatus == 4).Where((x) => x.Checked == false).Count();
+                        _counter5Value = checkList.Where((x) => x.DefconStatus == 5).Where((x) => x.Checked == false).Count();
 
-                        if (checkList.Where((x) => x.Status == 3).Where((x) => x.Checked == true).Count() == 0 && checkList.Where((x) => x.Status == 3).Count() > 0) _counter3Color = Color.ParseColor("#FC0800");
-                        else if (checkList.Where((x) => x.Status == 3).Where((x) => x.Checked == true).Count() == checkList.Where((x) => x.Status == 3).Count()) _counter3Color = Color.ParseColor("#00FF00");
+                        if (checkList.Where((x) => x.DefconStatus == 3).Where((x) => x.Checked == true).Count() == 0 && checkList.Where((x) => x.DefconStatus == 3).Count() > 0) _counter3Color = Color.ParseColor("#FC0800");
+                        else if (checkList.Where((x) => x.DefconStatus == 3).Where((x) => x.Checked == true).Count() == checkList.Where((x) => x.DefconStatus == 3).Count()) _counter3Color = Color.ParseColor("#00FF00");
                         else _counter3Color = Color.ParseColor("#FFB300");
 
-                        if (checkList.Where((x) => x.Status == 4).Where((x) => x.Checked == true).Count() == 0 && checkList.Where((x) => x.Status == 4).Count() > 0) _counter4Color = Color.ParseColor("#FC0800");
-                        else if (checkList.Where((x) => x.Status == 4).Where((x) => x.Checked == true).Count() == checkList.Where((x) => x.Status == 4).Count()) _counter4Color = Color.ParseColor("#00FF00");
+                        if (checkList.Where((x) => x.DefconStatus == 4).Where((x) => x.Checked == true).Count() == 0 && checkList.Where((x) => x.DefconStatus == 4).Count() > 0) _counter4Color = Color.ParseColor("#FC0800");
+                        else if (checkList.Where((x) => x.DefconStatus == 4).Where((x) => x.Checked == true).Count() == checkList.Where((x) => x.DefconStatus == 4).Count()) _counter4Color = Color.ParseColor("#00FF00");
                         else _counter4Color = Color.ParseColor("#FFB300");
 
-                        if (checkList.Where((x) => x.Status == 5).Where((x) => x.Checked == true).Count() == 0 && checkList.Where((x) => x.Status == 5).Count() > 0) _counter5Color = Color.ParseColor("#FC0800");
-                        else if (checkList.Where((x) => x.Status == 5).Where((x) => x.Checked == true).Count() == checkList.Where((x) => x.Status == 5).Count()) _counter5Color = Color.ParseColor("#00FF00");
+                        if (checkList.Where((x) => x.DefconStatus == 5).Where((x) => x.Checked == true).Count() == 0 && checkList.Where((x) => x.DefconStatus == 5).Count() > 0) _counter5Color = Color.ParseColor("#FC0800");
+                        else if (checkList.Where((x) => x.DefconStatus == 5).Where((x) => x.Checked == true).Count() == checkList.Where((x) => x.DefconStatus == 5).Count()) _counter5Color = Color.ParseColor("#00FF00");
                         else _counter5Color = Color.ParseColor("#FFB300");
                         break;
                     case 4:
@@ -156,15 +156,15 @@ namespace MyDEFCON.Services
                         _counter1Color = Color.ParseColor("#00FF00");
                         _counter2Color = Color.ParseColor("#00FF00");
                         _counter3Color = Color.ParseColor("#00FF00");
-                        _counter4Value = checkList.Where((x) => x.Status == 4).Where((x) => x.Checked == false).Count();
-                        _counter5Value = checkList.Where((x) => x.Status == 5).Where((x) => x.Checked == false).Count();
+                        _counter4Value = checkList.Where((x) => x.DefconStatus == 4).Where((x) => x.Checked == false).Count();
+                        _counter5Value = checkList.Where((x) => x.DefconStatus == 5).Where((x) => x.Checked == false).Count();
 
-                        if (checkList.Where((x) => x.Status == 4).Where((x) => x.Checked == true).Count() == 0 && checkList.Where((x) => x.Status == 4).Count() > 0) _counter4Color = Color.ParseColor("#FC0800");
-                        else if (checkList.Where((x) => x.Status == 4).Where((x) => x.Checked == true).Count() == checkList.Where((x) => x.Status == 4).Count()) _counter4Color = Color.ParseColor("#00FF00");
+                        if (checkList.Where((x) => x.DefconStatus == 4).Where((x) => x.Checked == true).Count() == 0 && checkList.Where((x) => x.DefconStatus == 4).Count() > 0) _counter4Color = Color.ParseColor("#FC0800");
+                        else if (checkList.Where((x) => x.DefconStatus == 4).Where((x) => x.Checked == true).Count() == checkList.Where((x) => x.DefconStatus == 4).Count()) _counter4Color = Color.ParseColor("#00FF00");
                         else _counter4Color = Color.ParseColor("#FFB300");
 
-                        if (checkList.Where((x) => x.Status == 5).Where((x) => x.Checked == true).Count() == 0 && checkList.Where((x) => x.Status == 5).Count() > 0) _counter5Color = Color.ParseColor("#FC0800");
-                        else if (checkList.Where((x) => x.Status == 5).Where((x) => x.Checked == true).Count() == checkList.Where((x) => x.Status == 5).Count()) _counter5Color = Color.ParseColor("#00FF00");
+                        if (checkList.Where((x) => x.DefconStatus == 5).Where((x) => x.Checked == true).Count() == 0 && checkList.Where((x) => x.DefconStatus == 5).Count() > 0) _counter5Color = Color.ParseColor("#FC0800");
+                        else if (checkList.Where((x) => x.DefconStatus == 5).Where((x) => x.Checked == true).Count() == checkList.Where((x) => x.DefconStatus == 5).Count()) _counter5Color = Color.ParseColor("#00FF00");
                         else _counter5Color = Color.ParseColor("#FFB300");
                         break;
                     case 5:
@@ -176,10 +176,10 @@ namespace MyDEFCON.Services
                         _counter2Color = Color.ParseColor("#00FF00");
                         _counter3Color = Color.ParseColor("#00FF00");
                         _counter4Color = Color.ParseColor("#00FF00");
-                        _counter5Value = checkList.Where((x) => x.Status == 5).Where((x) => x.Checked == false).Count();
+                        _counter5Value = checkList.Where((x) => x.DefconStatus == 5).Where((x) => x.Checked == false).Count();
 
-                        if (checkList.Where((x) => x.Status == 5).Where((x) => x.Checked == true).Count() == 0 && checkList.Where((x) => x.Status == 5).Count() > 0) _counter5Color = Color.ParseColor("#FC0800");
-                        else if (checkList.Where((x) => x.Status == 5).Where((x) => x.Checked == true).Count() == checkList.Where((x) => x.Status == 5).Count()) _counter5Color = Color.ParseColor("#00FF00");
+                        if (checkList.Where((x) => x.DefconStatus == 5).Where((x) => x.Checked == true).Count() == 0 && checkList.Where((x) => x.DefconStatus == 5).Count() > 0) _counter5Color = Color.ParseColor("#FC0800");
+                        else if (checkList.Where((x) => x.DefconStatus == 5).Where((x) => x.Checked == true).Count() == checkList.Where((x) => x.DefconStatus == 5).Count()) _counter5Color = Color.ParseColor("#00FF00");
                         else _counter5Color = Color.ParseColor("#FFB300");
                         break;
                     default:

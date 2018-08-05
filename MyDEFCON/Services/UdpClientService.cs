@@ -16,22 +16,32 @@ namespace MyDEFCON.Services
         [return: GeneratedEnum]
         public override StartCommandResult OnStartCommand(Intent intent, [GeneratedEnum] StartCommandFlags flags, int startId)
         {
-            _udpClient = new UdpClient(4536);            
+            _udpClient = new UdpClient(4536);
             Task.Run(async () =>
             {
                 try
                 {
                     while (true)
-                    {                        
+                    {
                         var udpReceiveResult = await _udpClient.ReceiveAsync();
                         var defconStatus = Encoding.ASCII.GetString(udpReceiveResult.Buffer);
-                        new SettingsService().SaveSetting("DefconStatus", defconStatus.ToString());
-                        Intent defconIntent = new Intent("com.marcusrunge.MyDEFCON.DEFCON_UPDATE");
-                        defconIntent.PutExtra("DefconStatus", defconStatus);
-                        SendBroadcast(defconIntent);
+                        if (int.TryParse(defconStatus, out int parsedDefconStatus))
+                        {
+                            if (parsedDefconStatus > 0 && parsedDefconStatus < 6)
+                            {
+                                new SettingsService().SaveSetting("DefconStatus", defconStatus.ToString());
+                            }
+                            else if (parsedDefconStatus == 0)
+                            {
+
+                            }
+                            Intent defconIntent = new Intent("com.marcusrunge.MyDEFCON.DEFCON_UPDATE");
+                            defconIntent.PutExtra("DefconStatus", defconStatus);
+                            SendBroadcast(defconIntent);
+                        }
                     }
                 }
-                catch {}
+                catch { }
             });
 
             //return base.OnStartCommand(intent, flags, startId);

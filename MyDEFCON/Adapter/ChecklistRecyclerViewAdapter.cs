@@ -5,6 +5,7 @@ using Android.Widget;
 using MyDEFCON.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MyDEFCON.Adapter
 {
@@ -28,7 +29,6 @@ namespace MyDEFCON.Adapter
                     ClickedItem = e.Item2;
                     _previousView = e.Item1 as LinearLayout;
                 };
-
             };
         }
         public override int ItemCount => _checkListEntryList.Count;
@@ -37,7 +37,7 @@ namespace MyDEFCON.Adapter
         {
             var checklistItemViewHolder = holder as ChecklistItemViewHolder;
             checklistItemViewHolder.CheckListEntryChecked.Checked = _checkListEntryList[position].Checked;
-            checklistItemViewHolder.CheckListEntry.Text = _checkListEntryList[position].CheckItem;
+            checklistItemViewHolder.CheckListEntry.Text = _checkListEntryList[position].Item;
             holder.ItemView.SetBackgroundColor(ClickedItem == position ? Color.ParseColor("#80ff0000") : Color.Transparent);
         }
 

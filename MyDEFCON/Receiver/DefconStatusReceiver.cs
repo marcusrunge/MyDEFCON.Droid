@@ -23,7 +23,12 @@ namespace MyDEFCON.Receiver
             try
             {
                 var defconStatus = intent.GetStringExtra("DefconStatus");
-                _eventService.OnDefconStatusChangedEvent(new DefconStatusChangedEventArgs(int.Parse(defconStatus)));
+                if (defconStatus.Equals("0"))                    
+                {
+
+                }
+                else _eventService.OnDefconStatusChangedEvent(new DefconStatusChangedEventArgs(int.Parse(defconStatus)));
+                
                 //Toast.MakeText(context, "DEFCON " + defconStatus, ToastLength.Short).Show();
             }
             catch (Exception) { }
