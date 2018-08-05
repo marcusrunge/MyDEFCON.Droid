@@ -1,10 +1,15 @@
-﻿using System.Net.Sockets;
+﻿using System.Collections.Generic;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
+using CommonServiceLocator;
+using MyDEFCON.Models;
+using Newtonsoft.Json;
+using SQLite;
 
 namespace MyDEFCON.Services
 {
@@ -12,10 +17,14 @@ namespace MyDEFCON.Services
     public class UdpClientService : Service
     {
         private UdpClient _udpClient = null;
+        IEventService _eventService;
+        SQLiteAsyncConnection _sqLiteAsyncConnection;
 
         [return: GeneratedEnum]
         public override StartCommandResult OnStartCommand(Intent intent, [GeneratedEnum] StartCommandFlags flags, int startId)
         {
+            _sqLiteAsyncConnection = ServiceLocator.Current.GetInstance<ISQLiteDependencies>().AsyncConnection;
+            _eventService = ServiceLocator.Current.GetInstance<IEventService>();
             _udpClient = new UdpClient(4536);
             Task.Run(async () =>
             {
@@ -33,7 +42,48 @@ namespace MyDEFCON.Services
                             }
                             else if (parsedDefconStatus == 0)
                             {
+                                try
+                                {
+                                    TcpClient tcpClient = new TcpClient(udpReceiveResult.RemoteEndPoint.Address.ToString(), 4537);
+                                    StringBuilder stringBuilder = new StringBuilder();
+                                    using (NetworkStream networkStream = tcpClient.GetStream())
+                                    {
 
+                                        byte[] receiveBuffer = new byte[tcpClient.ReceiveBufferSize];
+                                        int bytes = -1;
+                                        do
+                                        {
+                                            bytes = await networkStream.ReadAsync(receiveBuffer, 0, receiveBuffer.Length);
+                                            stringBuilder.Append(Encoding.ASCII.GetString(receiveBuffer));
+                                            if (stringBuilder.ToString().IndexOf("\0") != -1) break;
+                                        } while (bytes != 0);
+                                    }
+
+                                    var checkListEntries = JsonConvert.DeserializeObject<List<CheckListEntry>>(stringBuilder.ToString());
+                                    foreach (var checkListEntry in checkListEntries)
+
+                                    {
+                                        CheckListEntry foundCheckListEntry = (await _sqLiteAsyncConnection.FindAsync<CheckListEntry>(c => c.UnixTimeStampCreated == checkListEntry.UnixTimeStampCreated));
+                                        if (foundCheckListEntry != null)
+                                        {
+                                            if (foundCheckListEntry.Deleted != checkListEntry.Deleted)
+                                            {
+                                                foundCheckListEntry.Deleted = checkListEntry.Deleted;
+                                                foundCheckListEntry.Visibility = checkListEntry.Visibility;
+                                                foundCheckListEntry.Checked = true;
+                                                await _sqLiteAsyncConnection.UpdateAsync(foundCheckListEntry);
+                                            }
+                                            else if (foundCheckListEntry.UnixTimeStampUpdated < checkListEntry.UnixTimeStampUpdated)
+                                            {
+                                                foundCheckListEntry.Item = checkListEntry.Item;
+                                                foundCheckListEntry.Checked = checkListEntry.Checked;
+                                                await _sqLiteAsyncConnection.UpdateAsync(foundCheckListEntry);
+                                            }
+                                        }
+                                    }
+                                    _eventService.OnChecklistUpdatedEvent();
+                                }
+                                catch { }
                             }
                             Intent defconIntent = new Intent("com.marcusrunge.MyDEFCON.DEFCON_UPDATE");
                             defconIntent.PutExtra("DefconStatus", defconStatus);
