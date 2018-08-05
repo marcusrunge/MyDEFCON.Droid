@@ -112,7 +112,8 @@ namespace MyDEFCON
                 fragment = ChecklistFragment.GetInstance();
                 SupportActionBar.SetTitle(Resource.String.checklistTitle);
                 _lastFragmentId = id;
-                _menu.FindItem(Resource.Id.menu_share).SetVisible(false);
+                if (_settingsService.GetSetting<bool>("IsMulticastEnabled")) _menu.FindItem(Resource.Id.menu_share).SetVisible(true);
+                else _menu.FindItem(Resource.Id.menu_share).SetVisible(false);
                 _menu.FindItem(Resource.Id.menu_create).SetVisible(true);
             }
             else return;

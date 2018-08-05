@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
 using System.Threading.Tasks;
 using Android.Graphics;
 using Android.OS;
@@ -137,6 +140,17 @@ namespace MyDEFCON.Fragments
                     await _sqLiteAsyncConnection.InsertAsync(checkListEntry);
                     _checklistRecyclerViewAdapter.NotifyDataSetChanged();
                     await SetCounter();
+                }
+                if ((e as MenuItemPressedEventArgs).MenuItemTitle.Equals("Share"))
+                {
+                    using (var udpClient = new UdpClient())
+                    {
+                        udpClient.EnableBroadcast = true;
+                        var ipEndpoint = new IPEndPoint(IPAddress.Broadcast, 4536);
+                        var datagram = Encoding.ASCII.GetBytes("0");
+                        await udpClient.SendAsync(datagram, datagram.Length, ipEndpoint);
+                        udpClient.Close();
+                    }
                 }
             };
         }

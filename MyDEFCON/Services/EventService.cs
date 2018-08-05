@@ -8,14 +8,18 @@ namespace MyDEFCON.Services
         void OnMenuItemPressedEvent(MenuItemPressedEventArgs eventArgs);
         event EventHandler DefconStatusChangedEvent;
         void OnDefconStatusChangedEvent(DefconStatusChangedEventArgs eventArgs);
+        event EventHandler ChecklistUpdatedEvent;
+        void OnChecklistUpdatedEvent();
     }
     public class EventService : IEventService
     {
         public static EventService Instance() => new EventService();
         public event EventHandler MenuItemPressedEvent;
         public event EventHandler DefconStatusChangedEvent;
+        public event EventHandler ChecklistUpdatedEvent;
         public void OnMenuItemPressedEvent(MenuItemPressedEventArgs eventArgs) => MenuItemPressedEvent?.Invoke(this, eventArgs);
         public void OnDefconStatusChangedEvent(DefconStatusChangedEventArgs eventArgs) => DefconStatusChangedEvent?.Invoke(this, eventArgs);
+        public void OnChecklistUpdatedEvent() => DefconStatusChangedEvent?.Invoke(this, null);
     }
 
     public class MenuItemPressedEventArgs : EventArgs

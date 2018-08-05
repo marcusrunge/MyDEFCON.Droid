@@ -19,12 +19,19 @@ namespace MyDEFCON.Fragments
         {
             var view = inflater.Inflate(Resource.Layout.settings_fragment, null);
             var isBroadcastEnabledSwitch = view.FindViewById<Android.Support.V7.Widget.SwitchCompat>(Resource.Id.isBroadcastEnabledSwitch);
+            var isMulticastEnabledSwitch = view.FindViewById<Android.Support.V7.Widget.SwitchCompat>(Resource.Id.isMulticastEnabledSwitch);
             isBroadcastEnabledSwitch.Checked = _settingsService.GetSetting<bool>("IsBroadcastEnabled");
             isBroadcastEnabledSwitch.CheckedChange += (s, e) =>
             {
                 _settingsService.SaveSetting("IsBroadcastEnabled", e.IsChecked);
                 if (e.IsChecked) Context.StartService(new Intent(Context, typeof(UdpClientService)));
                 else Context.StopService(new Intent(Context, typeof(UdpClientService)));
+            };
+
+            isMulticastEnabledSwitch.Checked = _settingsService.GetSetting<bool>("IsMulticastEnabled");
+            isMulticastEnabledSwitch.CheckedChange += (s, e) =>
+            {
+                _settingsService.SaveSetting("IsMulticastEnabled", e.IsChecked);
             };
             return view;
         }
