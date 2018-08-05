@@ -24,8 +24,13 @@ namespace MyDEFCON.Services
 
     public class MenuItemPressedEventArgs : EventArgs
     {
-        public MenuItemPressedEventArgs(string menuItemTitle) => MenuItemTitle = menuItemTitle;
+        public MenuItemPressedEventArgs(string menuItemTitle, string fragmentTag)
+        {
+            MenuItemTitle = menuItemTitle;
+            FragmentTag = fragmentTag;
+        }
         public string MenuItemTitle { get; }
+        public string FragmentTag { get; }
     }
 
     public class DefconStatusChangedEventArgs : EventArgs

@@ -28,6 +28,7 @@ namespace MyDEFCON
         IMenu _menu;
         IUnityContainer unityContainer;
         ISettingsService _settingsService;
+        string _fragmentTag;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -90,11 +91,11 @@ namespace MyDEFCON
             existingFragment = SupportFragmentManager.FindFragmentByTag("ABT");
             if (existingFragment != null) SupportFragmentManager.PopBackStackImmediate(existingFragment.Id, 0);
             
-            string fragmentTag;
+            //string fragmentTag;
             Android.Support.V4.App.Fragment fragment = null;
             if (id == Resource.Id.menu_status)
             {
-                fragmentTag = "STS";
+                _fragmentTag = "STS";
                 fragment = StatusFragment.GetInstance(Resources);
 
                 SupportActionBar.SetTitle(Resource.String.statusTitle);
@@ -108,7 +109,7 @@ namespace MyDEFCON
             }
             else if (id == Resource.Id.menu_checklist)
             {
-                fragmentTag = "CHK";
+                _fragmentTag = "CHK";
                 fragment = ChecklistFragment.GetInstance();
                 SupportActionBar.SetTitle(Resource.String.checklistTitle);
                 _lastFragmentId = id;
@@ -118,7 +119,7 @@ namespace MyDEFCON
             }
             else return;
 
-            SupportFragmentManager.BeginTransaction().Replace(Resource.Id.content_frame, fragment, fragmentTag).Commit();
+            SupportFragmentManager.BeginTransaction().Replace(Resource.Id.content_frame, fragment, _fragmentTag).Commit();
         }
 
         public override bool OnOptionsItemSelected(IMenuItem item)
@@ -134,25 +135,27 @@ namespace MyDEFCON
             Android.Support.V4.App.Fragment fragment = null;
             if (item.ItemId == Resource.Id.menu_about)
             {
+                _fragmentTag = "ABT";
                 fragment = AboutFragment.NewInstance();
                 SupportActionBar.SetTitle(Resource.String.aboutTitle);
                 _navigation.Visibility = ViewStates.Gone;
                 _menu.FindItem(Resource.Id.menu_share).SetVisible(false);
                 _menu.FindItem(Resource.Id.menu_create).SetVisible(false);
-                SupportFragmentManager.BeginTransaction().Replace(Resource.Id.content_frame, fragment, "ABT").Commit();
+                SupportFragmentManager.BeginTransaction().Replace(Resource.Id.content_frame, fragment, _fragmentTag).Commit();
             }
 
             if (item.ItemId == Resource.Id.menu_settings)
             {
+                _fragmentTag = "SET";
                 fragment = SettingsFragment.NewInstance();
                 SupportActionBar.SetTitle(Resource.String.settingsTitle);
                 _navigation.Visibility = ViewStates.Gone;
                 _menu.FindItem(Resource.Id.menu_share).SetVisible(false);
                 _menu.FindItem(Resource.Id.menu_create).SetVisible(false);
-                SupportFragmentManager.BeginTransaction().Replace(Resource.Id.content_frame, fragment, "SET").Commit();
+                SupportFragmentManager.BeginTransaction().Replace(Resource.Id.content_frame, fragment, _fragmentTag).Commit();
             }
 
-            _eventService.OnMenuItemPressedEvent(new MenuItemPressedEventArgs(item.TitleFormatted.ToString()));
+            _eventService.OnMenuItemPressedEvent(new MenuItemPressedEventArgs(item.TitleFormatted.ToString(), _fragmentTag));
 
             return base.OnOptionsItemSelected(item);
         }

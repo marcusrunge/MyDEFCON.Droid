@@ -141,7 +141,7 @@ namespace MyDEFCON.Fragments
                     _checklistRecyclerViewAdapter.NotifyDataSetChanged();
                     await SetCounter();
                 }
-                if ((e as MenuItemPressedEventArgs).MenuItemTitle.Equals("Share"))
+                if ((e as MenuItemPressedEventArgs).MenuItemTitle.Equals("Share") && (e as MenuItemPressedEventArgs).FragmentTag.Equals("CHK"))
                 {
                     using (var udpClient = new UdpClient())
                     {

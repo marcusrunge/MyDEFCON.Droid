@@ -78,7 +78,7 @@ namespace MyDEFCON.Fragments
             _eventService.MenuItemPressedEvent += (s, e) =>
             {
                 view.PerformHapticFeedback(FeedbackConstants.VirtualKey, FeedbackFlags.IgnoreGlobalSetting);
-                if ((e as MenuItemPressedEventArgs).MenuItemTitle.Equals("Share"))
+                if ((e as MenuItemPressedEventArgs).MenuItemTitle.Equals("Share") && (e as MenuItemPressedEventArgs).FragmentTag.Equals("STS"))
                 {
                     Bitmap bitmap = BitmapFactory.DecodeResource(_resources, GetDefconFileResource());
                     string path = _settingsService.GetLocalFilePath("shareimage.png");
