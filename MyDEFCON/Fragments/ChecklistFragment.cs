@@ -124,6 +124,7 @@ namespace MyDEFCON.Fragments
                     }
                 };
                 _eventService.MenuItemPressedEvent += _eventService_MenuItemPressedEvent;
+                _eventService.ChecklistUpdatedEvent += async (s, e) => await ReloadCheckList(applicationDefconStatus);
                 await InitButtonAndCounterColors(fragmentDefconStatus);
             }
             catch (Exception) { }

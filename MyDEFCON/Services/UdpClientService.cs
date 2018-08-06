@@ -18,6 +18,7 @@ namespace MyDEFCON.Services
     {
         private UdpClient _udpClient = null;
         IEventService _eventService;
+        ISettingsService _settingsService;
         SQLiteAsyncConnection _sqLiteAsyncConnection;
 
         [return: GeneratedEnum]
@@ -25,6 +26,7 @@ namespace MyDEFCON.Services
         {
             _sqLiteAsyncConnection = ServiceLocator.Current.GetInstance<ISQLiteDependencies>().AsyncConnection;
             _eventService = ServiceLocator.Current.GetInstance<IEventService>();
+            _settingsService = ServiceLocator.Current.GetInstance<ISettingsService>();
             _udpClient = new UdpClient(4536);
             Task.Run(async () =>
             {
@@ -40,15 +42,16 @@ namespace MyDEFCON.Services
                             {
                                 new SettingsService().SaveSetting("DefconStatus", defconStatus.ToString());
                             }
-                            else if (parsedDefconStatus == 0)
+                            else if (parsedDefconStatus == 0 && _settingsService.GetSetting<bool>("IsMulticastEnabled"))
                             {
                                 try
                                 {
-                                    TcpClient tcpClient = new TcpClient(udpReceiveResult.RemoteEndPoint.Address.ToString(), 4537);
+                                    TcpClient tcpClient = new TcpClient();
+                                    await tcpClient.ConnectAsync(udpReceiveResult.RemoteEndPoint.Address.ToString(), 4537);
+                                    var isTcpClientAvailable = tcpClient.Available;
                                     StringBuilder stringBuilder = new StringBuilder();
                                     using (NetworkStream networkStream = tcpClient.GetStream())
                                     {
-
                                         byte[] receiveBuffer = new byte[tcpClient.ReceiveBufferSize];
                                         int bytes = -1;
                                         do
@@ -61,7 +64,6 @@ namespace MyDEFCON.Services
 
                                     var checkListEntries = JsonConvert.DeserializeObject<List<CheckListEntry>>(stringBuilder.ToString());
                                     foreach (var checkListEntry in checkListEntries)
-
                                     {
                                         CheckListEntry foundCheckListEntry = (await _sqLiteAsyncConnection.FindAsync<CheckListEntry>(c => c.UnixTimeStampCreated == checkListEntry.UnixTimeStampCreated));
                                         if (foundCheckListEntry != null)
@@ -80,7 +82,10 @@ namespace MyDEFCON.Services
                                                 await _sqLiteAsyncConnection.UpdateAsync(foundCheckListEntry);
                                             }
                                         }
-                                    }
+                                        else await _sqLiteAsyncConnection.InsertAsync(checkListEntry);
+                                    }                                    
+                                    tcpClient.Close();
+                                    tcpClient.Dispose();
                                     _eventService.OnChecklistUpdatedEvent();
                                 }
                                 catch { }

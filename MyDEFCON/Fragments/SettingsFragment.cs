@@ -24,14 +24,39 @@ namespace MyDEFCON.Fragments
             isBroadcastEnabledSwitch.CheckedChange += (s, e) =>
             {
                 _settingsService.SaveSetting("IsBroadcastEnabled", e.IsChecked);
-                if (e.IsChecked) Context.StartService(new Intent(Context, typeof(UdpClientService)));
-                else Context.StopService(new Intent(Context, typeof(UdpClientService)));
+                if (e.IsChecked)
+                {
+                    Context.StartService(new Intent(Context, typeof(UdpClientService)));
+                    if (isMulticastEnabledSwitch.Checked)
+                    {
+                        var tcpClientServiceIntent = new Intent(Context, typeof(TcpClientService));
+                        Context.StopService(tcpClientServiceIntent);
+                        Context.StartService(tcpClientServiceIntent);
+                    }
+                }
+                else
+                {
+                    Context.StopService(new Intent(Context, typeof(UdpClientService)));
+                    if (isMulticastEnabledSwitch.Checked)
+                    {
+                        isMulticastEnabledSwitch.Checked = false;
+                        var tcpClientServiceIntent = new Intent(Context, typeof(TcpClientService));
+                        Context.StopService(tcpClientServiceIntent);
+                    }
+                }
             };
 
             isMulticastEnabledSwitch.Checked = _settingsService.GetSetting<bool>("IsMulticastEnabled");
             isMulticastEnabledSwitch.CheckedChange += (s, e) =>
             {
                 _settingsService.SaveSetting("IsMulticastEnabled", e.IsChecked);
+                if (e.IsChecked && !isBroadcastEnabledSwitch.Checked) isBroadcastEnabledSwitch.Checked = true;
+                else
+                {
+                    var tcpClientServiceIntent = new Intent(Context, typeof(TcpClientService));
+                    Context.StopService(tcpClientServiceIntent);
+                    Context.StartService(tcpClientServiceIntent);
+                }
             };
             return view;
         }

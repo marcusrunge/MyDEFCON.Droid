@@ -23,14 +23,9 @@ namespace MyDEFCON.Services
         private TcpListener _tcpListener = null;
 
         public override IBinder OnBind(Intent intent)
-
         {
-
             return null;
-
         }
-
-
 
         [return: GeneratedEnum]
         public override StartCommandResult OnStartCommand(Intent intent, [GeneratedEnum] StartCommandFlags flags, int startId)

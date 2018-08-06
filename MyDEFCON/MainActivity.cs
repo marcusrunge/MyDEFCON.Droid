@@ -78,6 +78,12 @@ namespace MyDEFCON
                 var udpClientServiceIntent = new Intent(this, typeof(UdpClientService));
                 StopService(udpClientServiceIntent);
                 StartService(udpClientServiceIntent);
+                if (_settingsService.GetSetting<bool>("IsMulticastEnabled"))
+                {
+                    var tcpClientServiceIntent = new Intent(this, typeof(TcpClientService));
+                    StopService(tcpClientServiceIntent);
+                    StartService(tcpClientServiceIntent);
+                }
             }
         }
 
