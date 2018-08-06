@@ -160,6 +160,7 @@
     <Compile Include="Models\SQLiteDependencies.cs" />
     <Compile Include="MyDefconWidget.cs" />
     <Compile Include="Receiver\DefconStatusReceiver.cs" />
+    <Compile Include="Receiver\TcpActionReceiver.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\CounterService.cs" />

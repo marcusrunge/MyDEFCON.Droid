@@ -45,8 +45,8 @@ namespace MyDEFCON.Services
                         var json = JsonConvert.SerializeObject(checkListEntries);
                         byte[] jsonBytes = Encoding.ASCII.GetBytes(json);
                         await networkStream.WriteAsync(jsonBytes, 0, jsonBytes.Length);
+                        networkStream.Close();
                         tcpClient.Close();
-                        tcpClient.Dispose();
                     }
                     catch { }
                 }
