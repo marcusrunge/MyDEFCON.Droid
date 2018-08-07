@@ -22,7 +22,7 @@ namespace MyDEFCON.Receiver
         IEventService _eventService;
         static bool _isAlreadyConnected = false;
         TcpClient _tcpClient;
-        Context _context;
+        //Context _context;
 
         public TcpActionReceiver()
         {
@@ -33,9 +33,10 @@ namespace MyDEFCON.Receiver
 
         public async override void OnReceive(Context context, Intent intent)
         {
-            _context = context;
+            //_context = context;
             if (!_isAlreadyConnected) await Task<string>.Run(async () =>
               {
+                  Toast.MakeText(context, "New Checklist Update received...", ToastLength.Short).Show();
                   _isAlreadyConnected = true;
                   try
                   {
