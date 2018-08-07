@@ -36,7 +36,7 @@ namespace MyDEFCON.Receiver
             //_context = context;
             if (!_isAlreadyConnected) await Task<string>.Run(async () =>
               {
-                  Toast.MakeText(context, "New Checklist Update received...", ToastLength.Short).Show();
+                  //Toast.MakeText(context, "New Checklist Update received...", ToastLength.Short).Show();
                   _isAlreadyConnected = true;
                   try
                   {
