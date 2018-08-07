@@ -83,7 +83,7 @@ namespace MyDEFCON.Receiver
                     else if (foundCheckListEntry != null) await _sqLiteAsyncConnection?.InsertAsync(checkListEntry);
                 }
                 _eventService?.OnChecklistUpdatedEvent(new EventArgs());
-                //Toast.MakeText(_context, "New Checklist Update received...", ToastLength.Short).Show();
+                Toast.MakeText(_context, "New Checklist Update received...", ToastLength.Short).Show();
             }
             catch { }
             _isAlreadyConnected = false;
