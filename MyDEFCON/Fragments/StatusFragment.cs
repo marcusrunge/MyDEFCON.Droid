@@ -230,6 +230,7 @@ namespace MyDEFCON.Fragments
 
         private async Task BroadcastDefconStatus(int defconStatus)
         {
+            _eventService.OnBlockConnectionEvent(new BlockConnectionEventArgs(true));
             using (var udpClient = new UdpClient())
             {
                 udpClient.EnableBroadcast = true;

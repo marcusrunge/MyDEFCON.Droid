@@ -10,6 +10,8 @@ namespace MyDEFCON.Services
         void OnDefconStatusChangedEvent(DefconStatusChangedEventArgs eventArgs);
         event EventHandler ChecklistUpdatedEvent;
         void OnChecklistUpdatedEvent();
+        event EventHandler BlockConnectionEvent;
+        void OnBlockConnectionEvent(BlockConnectionEventArgs eventArgs);
     }
     public class EventService : IEventService
     {
@@ -17,9 +19,11 @@ namespace MyDEFCON.Services
         public event EventHandler MenuItemPressedEvent;
         public event EventHandler DefconStatusChangedEvent;
         public event EventHandler ChecklistUpdatedEvent;
+        public event EventHandler BlockConnectionEvent;
         public void OnMenuItemPressedEvent(MenuItemPressedEventArgs eventArgs) => MenuItemPressedEvent?.Invoke(this, eventArgs);
         public void OnDefconStatusChangedEvent(DefconStatusChangedEventArgs eventArgs) => DefconStatusChangedEvent?.Invoke(this, eventArgs);
         public void OnChecklistUpdatedEvent() => DefconStatusChangedEvent?.Invoke(this, null);
+        public void OnBlockConnectionEvent(BlockConnectionEventArgs eventArgs) => BlockConnectionEvent?.Invoke(this, eventArgs);
     }
 
     public class MenuItemPressedEventArgs : EventArgs
@@ -37,5 +41,11 @@ namespace MyDEFCON.Services
     {
         public DefconStatusChangedEventArgs(int newDefconStatus) => NewDefconStatus = newDefconStatus;
         public int NewDefconStatus { get; }
+    }
+
+    public class BlockConnectionEventArgs : EventArgs
+    {
+        public BlockConnectionEventArgs(bool blocked) => Blocked = blocked;
+        public bool Blocked { get; }
     }
 }

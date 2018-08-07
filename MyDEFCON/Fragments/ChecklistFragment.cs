@@ -144,6 +144,7 @@ namespace MyDEFCON.Fragments
                 }
                 if ((e as MenuItemPressedEventArgs).MenuItemTitle.Equals("Share") && (e as MenuItemPressedEventArgs).FragmentTag.Equals("CHK"))
                 {
+                    _eventService.OnBlockConnectionEvent(new BlockConnectionEventArgs(true));
                     using (var udpClient = new UdpClient())
                     {
                         udpClient.EnableBroadcast = true;

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,9 +8,6 @@ using Android.Content;
 using Android.OS;
 using Android.Runtime;
 using CommonServiceLocator;
-using MyDEFCON.Models;
-using Newtonsoft.Json;
-using SQLite;
 
 namespace MyDEFCON.Services
 {
@@ -17,12 +15,32 @@ namespace MyDEFCON.Services
     public class UdpClientService : Service
     {
         private UdpClient _udpClient = null;        
-        ISettingsService _settingsService;        
+        ISettingsService _settingsService;
+        IEventService _eventService;
+        private static int _serviceCount;
+        private static DateTimeOffset _lastConnect;
+        private bool _isConnectionBlocked;
+
+        public override void OnCreate()
+        {
+            base.OnCreate();
+            _serviceCount++;
+        }
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+            _serviceCount--;
+        }
 
         [return: GeneratedEnum]
         public override StartCommandResult OnStartCommand(Intent intent, [GeneratedEnum] StartCommandFlags flags, int startId)
-        {            
+        {
+            _isConnectionBlocked = false;
+            _lastConnect = DateTimeOffset.MinValue;
             _settingsService = ServiceLocator.Current.GetInstance<ISettingsService>();
+            _eventService = ServiceLocator.Current.GetInstance<IEventService>();
+            _eventService.BlockConnectionEvent += (s, e) => _isConnectionBlocked = (e as BlockConnectionEventArgs).Blocked;
             _udpClient = new UdpClient(4536);
             Task.Run(async () =>
             {
@@ -32,7 +50,7 @@ namespace MyDEFCON.Services
                     {
                         var udpReceiveResult = await _udpClient.ReceiveAsync();
                         var defconStatus = Encoding.ASCII.GetString(udpReceiveResult.Buffer);
-                        if (int.TryParse(defconStatus, out int parsedDefconStatus))
+                        if (int.TryParse(defconStatus, out int parsedDefconStatus) && !_isConnectionBlocked)
                         {
                             if (parsedDefconStatus > 0 && parsedDefconStatus < 6)
                             {
@@ -41,13 +59,15 @@ namespace MyDEFCON.Services
                                 defconIntent.PutExtra("DefconStatus", defconStatus);
                                 SendBroadcast(defconIntent);
                             }
-                            else if (parsedDefconStatus == 0 && _settingsService.GetSetting<bool>("IsMulticastEnabled"))
+                            else if (parsedDefconStatus == 0 && _settingsService.GetSetting<bool>("IsMulticastEnabled") && DateTimeOffset.Now > _lastConnect.AddSeconds(5))
                             {
                                 Intent tcpActionIntent = new Intent("com.marcusrunge.MyDEFCON.TCP_ACTION");
                                 tcpActionIntent.PutExtra("RemoteEndPointAddress", udpReceiveResult.RemoteEndPoint.Address.ToString());
                                 SendBroadcast(tcpActionIntent);
+                                _lastConnect = DateTimeOffset.Now;
                             }
                         }
+                        _isConnectionBlocked = false;
                     }
                 }
                 catch { }
