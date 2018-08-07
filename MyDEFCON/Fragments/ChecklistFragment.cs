@@ -124,7 +124,7 @@ namespace MyDEFCON.Fragments
                     }
                 };
                 _eventService.MenuItemPressedEvent += _eventService_MenuItemPressedEvent;
-                _eventService.ChecklistUpdatedEvent += async (s, e) => await ReloadCheckList(applicationDefconStatus);
+                _eventService.ChecklistUpdatedEvent += async (s, e) => await ReloadCheckList(fragmentDefconStatus);
                 await InitButtonAndCounterColors(fragmentDefconStatus);
             }
             catch (Exception) { }
@@ -136,7 +136,7 @@ namespace MyDEFCON.Fragments
                 _onCreateView.PerformHapticFeedback(FeedbackConstants.VirtualKey, FeedbackFlags.IgnoreGlobalSetting);
                 if ((e as MenuItemPressedEventArgs).MenuItemTitle.Equals("Create"))
                 {
-                    var checkListEntry = new CheckListEntry() { DefconStatus = fragmentDefconStatus, UnixTimeStampCreated = DateTimeOffset.Now.ToUnixTimeMilliseconds() };
+                    var checkListEntry = new CheckListEntry() { DefconStatus = fragmentDefconStatus, UnixTimeStampCreated = DateTimeOffset.Now.ToUnixTimeMilliseconds(), FontSize = 26 };
                     _checkList.Add(checkListEntry);
                     await _sqLiteAsyncConnection.InsertAsync(checkListEntry);
                     _checklistRecyclerViewAdapter.NotifyDataSetChanged();

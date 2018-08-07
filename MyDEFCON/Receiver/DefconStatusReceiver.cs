@@ -23,7 +23,7 @@ namespace MyDEFCON.Receiver
             try
             {
                 var defconStatus = intent.GetStringExtra("DefconStatus");
-                if (defconStatus.Equals("0"))  _eventService.OnChecklistUpdatedEvent();
+                if (defconStatus.Equals("0")) { }
                 else _eventService.OnDefconStatusChangedEvent(new DefconStatusChangedEventArgs(int.Parse(defconStatus)));
                 
                 //Toast.MakeText(context, "DEFCON " + defconStatus, ToastLength.Short).Show();

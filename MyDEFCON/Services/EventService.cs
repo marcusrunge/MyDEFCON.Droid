@@ -9,7 +9,7 @@ namespace MyDEFCON.Services
         event EventHandler DefconStatusChangedEvent;
         void OnDefconStatusChangedEvent(DefconStatusChangedEventArgs eventArgs);
         event EventHandler ChecklistUpdatedEvent;
-        void OnChecklistUpdatedEvent();
+        void OnChecklistUpdatedEvent(EventArgs eventArgs);
         event EventHandler BlockConnectionEvent;
         void OnBlockConnectionEvent(BlockConnectionEventArgs eventArgs);
     }
@@ -22,7 +22,7 @@ namespace MyDEFCON.Services
         public event EventHandler BlockConnectionEvent;
         public void OnMenuItemPressedEvent(MenuItemPressedEventArgs eventArgs) => MenuItemPressedEvent?.Invoke(this, eventArgs);
         public void OnDefconStatusChangedEvent(DefconStatusChangedEventArgs eventArgs) => DefconStatusChangedEvent?.Invoke(this, eventArgs);
-        public void OnChecklistUpdatedEvent() => DefconStatusChangedEvent?.Invoke(this, null);
+        public void OnChecklistUpdatedEvent(EventArgs eventArgs) => ChecklistUpdatedEvent?.Invoke(this, eventArgs);
         public void OnBlockConnectionEvent(BlockConnectionEventArgs eventArgs) => BlockConnectionEvent?.Invoke(this, eventArgs);
     }
 
