@@ -10,8 +10,6 @@ using System.IO;
 using SQLite;
 using System.Net.Sockets;
 using System.Threading.Tasks;
-using Android.Widget;
-using System.Text;
 
 namespace MyDEFCON.Receiver
 {
@@ -35,28 +33,34 @@ namespace MyDEFCON.Receiver
         public async override void OnReceive(Context context, Intent intent)
         {
             //_context = context;
-            /*if (!_isAlreadyConnected) await Task<string>.Run(async () =>
+            if (!_isAlreadyConnected) await Task<string>.Run(async () =>
               {
-                  //Toast.MakeText(context, "New Checklist Update received...", ToastLength.Short).Show();
                   _isAlreadyConnected = true;
+                  var remoteEndPointAddress = intent.GetStringExtra("RemoteEndPointAddress");
+                  //TcpClient tcpClient = new TcpClient(remoteEndPointAddress, 4537);
+                  TcpClient tcpClient = new TcpClient();
                   try
-                  {
-                      var remoteEndPointAddress = intent.GetStringExtra("RemoteEndPointAddress");
-                      await _tcpClient?.ConnectAsync(remoteEndPointAddress, 4537);
-                      NetworkStream networkStream = _tcpClient?.GetStream();
+                  { 
+                      await tcpClient.ConnectAsync(remoteEndPointAddress, 4537);
+                      NetworkStream networkStream = tcpClient.GetStream();
                       string result;
                       using (StreamReader streamReader = new StreamReader(networkStream))
                       {
-                          result = await streamReader?.ReadLineAsync();
-                          streamReader?.Close();
+                          result = await streamReader.ReadLineAsync();
+                          streamReader.Close();
                       }
-                      networkStream?.Close();
-                      _tcpClient?.Close();
+                      networkStream.Close();
+                      tcpClient.Close();
                       return result;
                   }
-                  catch { return ""; }
-              }).ContinueWith(UpdateDatabase);*/
-            if (!_isAlreadyConnected) await Task.Run(async () =>
+                  catch (Exception)
+                  {
+                      tcpClient.Close();
+                      tcpClient.Dispose();
+                      return "";
+                  }
+              }).ContinueWith(UpdateDatabase);
+            /*if (!_isAlreadyConnected) await Task.Run(async () =>
             {
                 _isAlreadyConnected = true;
                 var remoteEndPointAddress = intent.GetStringExtra("RemoteEndPointAddress");
@@ -88,7 +92,7 @@ namespace MyDEFCON.Receiver
                     _isAlreadyConnected = false;
                     return "";
                 }
-            }).ContinueWith(UpdateDatabase);
+            }).ContinueWith(UpdateDatabase);*/
         }
 
         private async Task UpdateDatabase(Task<string> task)
@@ -115,9 +119,9 @@ namespace MyDEFCON.Receiver
                             await _sqLiteAsyncConnection?.UpdateAsync(foundCheckListEntry);
                         }
                     }
-                    else if (foundCheckListEntry != null) await _sqLiteAsyncConnection?.InsertAsync(checkListEntry);
+                    else if (foundCheckListEntry == null) await _sqLiteAsyncConnection.InsertAsync(checkListEntry);
                 }
-                _eventService?.OnChecklistUpdatedEvent(new EventArgs());
+                _eventService.OnChecklistUpdatedEvent(new EventArgs());
                 //Toast.MakeText(_context, "New Checklist Update received...", ToastLength.Short).Show();
             }
             catch { }
