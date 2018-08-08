@@ -59,10 +59,10 @@ namespace MyDEFCON.Receiver
             if (!_isAlreadyConnected)
             {
                 _isAlreadyConnected = true;
+                var remoteEndPointAddress = intent.GetStringExtra("RemoteEndPointAddress");
+                TcpClient tcpClient = new TcpClient(remoteEndPointAddress, 4537);
                 try
                 {
-                    var remoteEndPointAddress = intent.GetStringExtra("RemoteEndPointAddress");
-                    TcpClient tcpClient = new TcpClient(remoteEndPointAddress, 4537);
                     StringBuilder stringBuilder = new StringBuilder();
                     using (NetworkStream networkStream = tcpClient.GetStream())
                     {
@@ -74,11 +74,17 @@ namespace MyDEFCON.Receiver
                             stringBuilder.Append(Encoding.ASCII.GetString(receiveBuffer));
                             if (stringBuilder.ToString().IndexOf("\0") != -1) break;
                         } while (bytes != 0);
+                        networkStream.Close();
+                        networkStream.Dispose();
                     }
+                    tcpClient.Close();
+                    tcpClient.Dispose();
                     await UpdateDatabase(stringBuilder.ToString());
                 }
                 catch (Exception)
                 {
+                    tcpClient.Close();
+                    tcpClient.Dispose();
                     _isAlreadyConnected = false;
                 }
             }
