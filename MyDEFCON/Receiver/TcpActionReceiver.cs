@@ -56,7 +56,7 @@ namespace MyDEFCON.Receiver
                   }
                   catch { return ""; }
               }).ContinueWith(UpdateDatabase);*/
-            if (!_isAlreadyConnected)
+            if (!_isAlreadyConnected) await Task.Run(async () =>
             {
                 _isAlreadyConnected = true;
                 var remoteEndPointAddress = intent.GetStringExtra("RemoteEndPointAddress");
@@ -79,22 +79,23 @@ namespace MyDEFCON.Receiver
                     }
                     tcpClient.Close();
                     tcpClient.Dispose();
-                    await UpdateDatabase(stringBuilder.ToString());
+                    return stringBuilder.ToString();
                 }
                 catch (Exception)
                 {
                     tcpClient.Close();
                     tcpClient.Dispose();
                     _isAlreadyConnected = false;
+                    return "";
                 }
-            }
+            }).ContinueWith(UpdateDatabase);
         }
 
-        private async Task UpdateDatabase(string jsonString)
+        private async Task UpdateDatabase(Task<string> task)
         {
             try
             {
-                var checkListEntries = JsonConvert.DeserializeObject<List<CheckListEntry>>(jsonString);
+                var checkListEntries = JsonConvert.DeserializeObject<List<CheckListEntry>>(task.Result);
                 foreach (var checkListEntry in checkListEntries)
                 {
                     CheckListEntry foundCheckListEntry = (await _sqLiteAsyncConnection.FindAsync<CheckListEntry>(c => c.UnixTimeStampCreated == checkListEntry.UnixTimeStampCreated));
