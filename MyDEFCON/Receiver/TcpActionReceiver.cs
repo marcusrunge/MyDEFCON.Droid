@@ -59,21 +59,28 @@ namespace MyDEFCON.Receiver
             if (!_isAlreadyConnected)
             {
                 _isAlreadyConnected = true;
-                var remoteEndPointAddress = intent.GetStringExtra("RemoteEndPointAddress");
-                TcpClient tcpClient = new TcpClient(remoteEndPointAddress, 4537);
-                StringBuilder stringBuilder = new StringBuilder();
-                using (NetworkStream networkStream = tcpClient.GetStream())
+                try
                 {
-                    byte[] receiveBuffer = new byte[tcpClient.ReceiveBufferSize];
-                    int bytes = -1;
-                    do
+                    var remoteEndPointAddress = intent.GetStringExtra("RemoteEndPointAddress");
+                    TcpClient tcpClient = new TcpClient(remoteEndPointAddress, 4537);
+                    StringBuilder stringBuilder = new StringBuilder();
+                    using (NetworkStream networkStream = tcpClient.GetStream())
                     {
-                        bytes = await networkStream.ReadAsync(receiveBuffer, 0, receiveBuffer.Length);
-                        stringBuilder.Append(Encoding.ASCII.GetString(receiveBuffer));
-                        if (stringBuilder.ToString().IndexOf("\0") != -1) break;
-                    } while (bytes != 0);
+                        byte[] receiveBuffer = new byte[tcpClient.ReceiveBufferSize];
+                        int bytes = -1;
+                        do
+                        {
+                            bytes = await networkStream.ReadAsync(receiveBuffer, 0, receiveBuffer.Length);
+                            stringBuilder.Append(Encoding.ASCII.GetString(receiveBuffer));
+                            if (stringBuilder.ToString().IndexOf("\0") != -1) break;
+                        } while (bytes != 0);
+                    }
+                    await UpdateDatabase(stringBuilder.ToString());
                 }
-                await UpdateDatabase(stringBuilder.ToString());
+                catch (Exception)
+                {
+                    _isAlreadyConnected = false;
+                }
             }
         }
 
