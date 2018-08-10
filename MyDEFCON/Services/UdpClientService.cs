@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
@@ -16,26 +17,32 @@ namespace MyDEFCON.Services
     {
         private UdpClient _udpClient = null;        
         ISettingsService _settingsService;
-        IEventService _eventService;
-        private static int _serviceCount;
+        IEventService _eventService;        
         private static DateTimeOffset _lastConnect;
-        private bool _isConnectionBlocked;
+        private bool _isConnectionBlocked, _isServiceRunning;
+        CancellationTokenSource _cancellationTokenSource;
+        CancellationToken _cancellationToken;
 
         public override void OnCreate()
         {
             base.OnCreate();
-            _serviceCount++;
+            _cancellationTokenSource = new CancellationTokenSource();
+            _cancellationToken = _cancellationTokenSource.Token;
         }
 
         public override void OnDestroy()
         {
+            _isServiceRunning = false;            
+            _cancellationTokenSource.Cancel();
+            _udpClient.Close();
+            _udpClient = null;
             base.OnDestroy();
-            _serviceCount--;
         }
 
         [return: GeneratedEnum]
         public override StartCommandResult OnStartCommand(Intent intent, [GeneratedEnum] StartCommandFlags flags, int startId)
         {
+            _isServiceRunning = true;
             _isConnectionBlocked = false;
             _lastConnect = DateTimeOffset.MinValue;
             _settingsService = ServiceLocator.Current.GetInstance<ISettingsService>();
@@ -46,7 +53,7 @@ namespace MyDEFCON.Services
             {
                 try
                 {
-                    while (true)
+                    while (_isServiceRunning)
                     {
                         var udpReceiveResult = await _udpClient.ReceiveAsync();
                         var defconStatus = Encoding.ASCII.GetString(udpReceiveResult.Buffer);
@@ -71,7 +78,7 @@ namespace MyDEFCON.Services
                     }
                 }
                 catch { }
-            });
+            }, _cancellationToken);
 
             //return base.OnStartCommand(intent, flags, startId);
             return StartCommandResult.Sticky;

@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MyDEFCON.Services
@@ -16,20 +17,31 @@ namespace MyDEFCON.Services
     public class TcpClientService : Service
     {
         private TcpListener _tcpListener = null;
+        CancellationTokenSource _cancellationTokenSource;
+        CancellationToken _cancellationToken;
+        bool _isServiceRunning;
 
         public override IBinder OnBind(Intent intent)
         {
             return null;
         }
 
+        public override void OnCreate()
+        {
+            base.OnCreate();
+            _cancellationTokenSource = new CancellationTokenSource();
+            _cancellationToken = _cancellationTokenSource.Token;
+        }
+
         [return: GeneratedEnum]
         public override StartCommandResult OnStartCommand(Intent intent, [GeneratedEnum] StartCommandFlags flags, int startId)
         {
+            _isServiceRunning = true;
             Task.Run(async () =>
             {
                 _tcpListener = new TcpListener(IPAddress.Any, 4537);
                 _tcpListener.Start();
-                while (true)
+                while (_isServiceRunning)
                 {
                     try
                     {
@@ -45,8 +57,17 @@ namespace MyDEFCON.Services
                     }
                     catch { }
                 }
-            });
+            }, _cancellationToken);
             return StartCommandResult.Sticky;
+        }
+
+        public override void OnDestroy()
+        {
+            _isServiceRunning = false;
+            _cancellationTokenSource.Cancel();
+            _tcpListener.Stop();
+            _tcpListener = null;                        
+            base.OnDestroy();
         }
     }
 }

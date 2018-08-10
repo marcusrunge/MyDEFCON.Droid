@@ -32,7 +32,7 @@ namespace MyDEFCON.Fragments
                         var tcpClientServiceIntent = new Intent(Context, typeof(TcpClientService));
                         Context.StopService(tcpClientServiceIntent);
                         Context.StartService(tcpClientServiceIntent);
-                    }
+                    }                    
                 }
                 else
                 {

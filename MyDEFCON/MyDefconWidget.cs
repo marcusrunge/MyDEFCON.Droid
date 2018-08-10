@@ -10,11 +10,12 @@ using System;
 namespace MyDEFCON
 {
     [BroadcastReceiver(Enabled = true, Label = "MyDEFCON")]
-    [IntentFilter(new string[] { "android.appwidget.action.APPWIDGET_UPDATE", "android.appwidget.action.ACTION_APPWIDGET_OPTIONS_CHANGED", "com.marcusrunge.MyDEFCON.DEFCON_UPDATE" })]
+    [IntentFilter(new string[] { "android.appwidget.action.APPWIDGET_UPDATE", "android.appwidget.action.ACTION_APPWIDGET_OPTIONS_CHANGED", "com.marcusrunge.MyDEFCON.DEFCON_UPDATE"})]
     [MetaData("android.appwidget.provider", Resource = "@xml/mydefconwidgetprovider")]
 
     public class MyDefconWidget : AppWidgetProvider
     {
+
         public override void OnUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
         {
             base.OnUpdate(context, appWidgetManager, appWidgetIds);
@@ -31,12 +32,6 @@ namespace MyDEFCON
                 remoteViews.SetInt(Resource.Id.mydefconFrameLayout, "setBackgroundColor", GetLightColor(defconStatus));
                 remoteViews.SetOnClickPendingIntent(Resource.Id.mydefconWidgetLinearLayout, pendingIntent);
                 appWidgetManager.UpdateAppWidget(appWidgetId, remoteViews);
-            }
-            if (new SettingsService().GetSetting<bool>("IsBroadcastEnabled"))
-            {
-                var udpClientServiceIntent = new Intent(context, typeof(UdpClientService));
-                context.StopService(udpClientServiceIntent);
-                context.StartService(udpClientServiceIntent);
             }
         }
         public override void OnAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions)
@@ -83,32 +78,30 @@ namespace MyDEFCON
         public override void OnReceive(Context context, Intent intent)
         {
             base.OnReceive(context, intent);
-            var defconStatus = intent.GetStringExtra("DefconStatus");
-            if (defconStatus != null && !defconStatus.Equals("0"))
+            //Toast.MakeText(context, intent.Action + " in widged received...", ToastLength.Short).Show();
+            if (intent.Action.Equals("com.marcusrunge.MyDEFCON.DEFCON_UPDATE"))
             {
-                Intent mainActivityIntent = new Intent(context, typeof(MainActivity));
-                PendingIntent pendingIntent = PendingIntent.GetActivity(context, 0, mainActivityIntent, 0);
-                ComponentName componentName = new ComponentName(context, Java.Lang.Class.FromType(typeof(MyDefconWidget)).Name);
-                AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
-                RemoteViews remoteViews = new RemoteViews(context.PackageName, Resource.Layout.mydefcon_widget);
-                remoteViews.SetTextViewText(Resource.Id.mydefconWidgetTextView, defconStatus);
-                remoteViews.SetTextColor(Resource.Id.mydefconWidgetTextView, GetLightColor(defconStatus));
-                remoteViews.SetInt(Resource.Id.mydefconWidgetLinearLayout, "setBackgroundColor", GetDarkColor(defconStatus));
-                remoteViews.SetInt(Resource.Id.mydefconFrameLayout, "setBackgroundColor", GetLightColor(defconStatus));
-                remoteViews.SetOnClickPendingIntent(Resource.Id.mydefconWidgetLinearLayout, pendingIntent);
-                appWidgetManager.UpdateAppWidget(componentName, remoteViews);
+                var defconStatus = intent.GetStringExtra("DefconStatus");
+                if (defconStatus != null && !defconStatus.Equals("0"))
+                {
+                    Intent mainActivityIntent = new Intent(context, typeof(MainActivity));
+                    PendingIntent pendingIntent = PendingIntent.GetActivity(context, 0, mainActivityIntent, 0);
+                    ComponentName componentName = new ComponentName(context, Java.Lang.Class.FromType(typeof(MyDefconWidget)).Name);
+                    AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
+                    RemoteViews remoteViews = new RemoteViews(context.PackageName, Resource.Layout.mydefcon_widget);
+                    remoteViews.SetTextViewText(Resource.Id.mydefconWidgetTextView, defconStatus);
+                    remoteViews.SetTextColor(Resource.Id.mydefconWidgetTextView, GetLightColor(defconStatus));
+                    remoteViews.SetInt(Resource.Id.mydefconWidgetLinearLayout, "setBackgroundColor", GetDarkColor(defconStatus));
+                    remoteViews.SetInt(Resource.Id.mydefconFrameLayout, "setBackgroundColor", GetLightColor(defconStatus));
+                    remoteViews.SetOnClickPendingIntent(Resource.Id.mydefconWidgetLinearLayout, pendingIntent);
+                    appWidgetManager.UpdateAppWidget(componentName, remoteViews);
+                }
             }
         }
 
         public override void OnEnabled(Context context)
         {
-            base.OnEnabled(context);
-            if (new SettingsService().GetSetting<bool>("IsBroadcastEnabled"))
-            {
-                var udpClientServiceIntent = new Intent(context, typeof(UdpClientService));
-                context.StopService(udpClientServiceIntent);
-                context.StartService(udpClientServiceIntent);
-            }
+            base.OnEnabled(context);            
         }
 
         private int GetApplicationDefconStatus()

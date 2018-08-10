@@ -200,6 +200,12 @@ namespace MyDEFCON
                 StartService(udpClientServiceIntent);
             }
         }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            StopService(new Intent(this, typeof(UdpClientService)));
+            StopService(new Intent(this, typeof(TcpClientService)));
+        }
     }
 }
-
