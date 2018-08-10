@@ -58,7 +58,6 @@ namespace MyDEFCON.Fragments
             return checklistFragment;
         }
 
-
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             var view = inflater.Inflate(Resource.Layout.checklist_fragment, null);
@@ -124,13 +123,13 @@ namespace MyDEFCON.Fragments
                     }
                 };
                 _eventService.MenuItemPressedEvent += _eventService_MenuItemPressedEvent;
-                //_eventService.ChecklistUpdatedEvent += async (s, e) => await ReloadCheckList(fragmentDefconStatus);
+                _eventService.ChecklistUpdatedEvent += (s, e) => Activity.RunOnUiThread(async () => await ReloadCheckList(fragmentDefconStatus));
                 await InitButtonAndCounterColors(fragmentDefconStatus);
             }
             catch (Exception) { }
-        }        
+        }
 
-        private async void _eventService_MenuItemPressedEvent(object sender, System.EventArgs e)
+        private async void _eventService_MenuItemPressedEvent(object sender, EventArgs e)
         {
             {
                 _onCreateView.PerformHapticFeedback(FeedbackConstants.VirtualKey, FeedbackFlags.IgnoreGlobalSetting);
@@ -168,9 +167,10 @@ namespace MyDEFCON.Fragments
                     _checkList.Add(checkListEntry);
                 }
                 _checklistRecyclerViewAdapter.NotifyDataSetChanged();
+                await SetCounter();
             }
             catch (Exception) { }
-        }
+        }        
 
         private async Task InitButtonAndCounterColors(int defconStatus)
         {
@@ -285,12 +285,13 @@ namespace MyDEFCON.Fragments
             }
         }
 
-        private async Task<List<CheckListEntry>> LoadChecklist(int defconStatus)
+        private async Task<List<CheckListEntry>> LoadChecklist(int defconStatus, bool includeDeleted = false)
         {
             if (_sqLiteAsyncConnection == null) return new List<CheckListEntry>();
             var queryList = await Task.Factory.StartNew(async () =>
             {
-                return await _sqLiteAsyncConnection.QueryAsync<CheckListEntry>("SELECT * FROM CheckListEntry WHERE DefconStatus = ? AND Deleted = 0", defconStatus);
+                if (!includeDeleted) return await _sqLiteAsyncConnection.QueryAsync<CheckListEntry>("SELECT * FROM CheckListEntry WHERE DefconStatus = ? AND Deleted = 0", defconStatus);
+                else return await _sqLiteAsyncConnection.QueryAsync<CheckListEntry>("SELECT * FROM CheckListEntry WHERE DefconStatus = ?", defconStatus);
             }).Result;
             if (queryList.Count > 0) return queryList;
             else return new List<CheckListEntry>();
@@ -304,7 +305,7 @@ namespace MyDEFCON.Fragments
                 var checkListEntry = _checkList[_actionModeItemId];
                 checkListEntry.Checked = true;
                 checkListEntry.Visibility = 1;
-                checkListEntry.Deleted = true;                
+                checkListEntry.Deleted = true;
                 //_sqLiteAsyncConnection.DeleteAsync(checkListEntry);
                 _checkList.RemoveAt(_actionModeItemId);
                 _checklistRecyclerViewAdapter.NotifyDataSetChanged();
@@ -347,7 +348,7 @@ namespace MyDEFCON.Fragments
 
         public override void OnResume()
         {
-            base.OnResume();            
+            base.OnResume();
             if (_checklistRecyclerViewAdapter != null && _recyclerView != null)
             {
                 _recyclerView.GetLayoutManager().ScrollToPosition(_checklistRecyclerViewAdapter.ItemCount);

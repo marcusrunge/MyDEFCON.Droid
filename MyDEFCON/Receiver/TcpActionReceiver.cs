@@ -112,10 +112,13 @@ namespace MyDEFCON.Receiver
                             foundCheckListEntry.Checked = true;
                             await _sqLiteAsyncConnection?.UpdateAsync(foundCheckListEntry);
                         }
-                        else if (foundCheckListEntry.UnixTimeStampUpdated < checkListEntry.UnixTimeStampUpdated)
+                        else if (foundCheckListEntry.UnixTimeStampUpdated != checkListEntry.UnixTimeStampUpdated)
                         {
                             foundCheckListEntry.Item = checkListEntry.Item;
                             foundCheckListEntry.Checked = checkListEntry.Checked;
+                            foundCheckListEntry.FontSize = checkListEntry.FontSize;
+                            foundCheckListEntry.Width = checkListEntry.Width;
+                            foundCheckListEntry.Visibility = checkListEntry.Visibility;
                             await _sqLiteAsyncConnection?.UpdateAsync(foundCheckListEntry);
                         }
                     }
