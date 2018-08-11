@@ -69,11 +69,11 @@ namespace MyDEFCON.Fragments
             defcon4Button = view.FindViewById<Button>(Resource.Id.defcon4Button);
             defcon5Button = view.FindViewById<Button>(Resource.Id.defcon5Button);
 
-            defcon1Button.Click += async (s, e) => { _isButtonPressed = true; view.PerformHapticFeedback(FeedbackConstants.VirtualKey, FeedbackFlags.IgnoreGlobalSetting); await SetButtonColors(1); await BroadcastDefconStatus(1); };
-            defcon2Button.Click += async (s, e) => { _isButtonPressed = true; view.PerformHapticFeedback(FeedbackConstants.VirtualKey, FeedbackFlags.IgnoreGlobalSetting); await SetButtonColors(2); await BroadcastDefconStatus(2); };
-            defcon3Button.Click += async (s, e) => { _isButtonPressed = true; view.PerformHapticFeedback(FeedbackConstants.VirtualKey, FeedbackFlags.IgnoreGlobalSetting); await SetButtonColors(3); await BroadcastDefconStatus(3); };
-            defcon4Button.Click += async (s, e) => { _isButtonPressed = true; view.PerformHapticFeedback(FeedbackConstants.VirtualKey, FeedbackFlags.IgnoreGlobalSetting); await SetButtonColors(4); await BroadcastDefconStatus(4); };
-            defcon5Button.Click += async (s, e) => { _isButtonPressed = true; view.PerformHapticFeedback(FeedbackConstants.VirtualKey, FeedbackFlags.IgnoreGlobalSetting); await SetButtonColors(5); await BroadcastDefconStatus(5); };
+            defcon1Button.Click += async (s, e) => { _isButtonPressed = true; view.PerformHapticFeedback(FeedbackConstants.VirtualKey, FeedbackFlags.IgnoreGlobalSetting); await SetButtonColors(1); await BroadcastDefconStatus(1); SendDefconIntent(1); };
+            defcon2Button.Click += async (s, e) => { _isButtonPressed = true; view.PerformHapticFeedback(FeedbackConstants.VirtualKey, FeedbackFlags.IgnoreGlobalSetting); await SetButtonColors(2); await BroadcastDefconStatus(2); SendDefconIntent(2); };
+            defcon3Button.Click += async (s, e) => { _isButtonPressed = true; view.PerformHapticFeedback(FeedbackConstants.VirtualKey, FeedbackFlags.IgnoreGlobalSetting); await SetButtonColors(3); await BroadcastDefconStatus(3); SendDefconIntent(3); };
+            defcon4Button.Click += async (s, e) => { _isButtonPressed = true; view.PerformHapticFeedback(FeedbackConstants.VirtualKey, FeedbackFlags.IgnoreGlobalSetting); await SetButtonColors(4); await BroadcastDefconStatus(4); SendDefconIntent(4); };
+            defcon5Button.Click += async (s, e) => { _isButtonPressed = true; view.PerformHapticFeedback(FeedbackConstants.VirtualKey, FeedbackFlags.IgnoreGlobalSetting); await SetButtonColors(5); await BroadcastDefconStatus(5); SendDefconIntent(5); };
 
             _eventService.MenuItemPressedEvent += (s, e) =>
             {
@@ -133,11 +133,18 @@ namespace MyDEFCON.Fragments
             _isInitializing = false;
         }
 
+        private void SendDefconIntent(int defconStatus)
+        {
+            Intent intent = new Intent(Activity, typeof(MyDefconWidget));
+            intent.SetAction("com.marcusrunge.MyDEFCON.DEFCON_UPDATE");
+            intent.PutExtra("DefconStatus", defconStatus.ToString());
+            if (!_isReceiving) Context.SendBroadcast(intent);
+        }
+
         private async Task SetButtonColors(int defconStatus)
         {
             _applicationDefconStatus = defconStatus;
-            Intent intent = new Intent("com.marcusrunge.MyDEFCON.DEFCON_UPDATE");
-            intent.PutExtra("DefconStatus", defconStatus.ToString());
+
             switch (defconStatus)
             {
                 case 1:
@@ -214,7 +221,7 @@ namespace MyDEFCON.Fragments
                     break;
             }
             _settingsService.SaveSetting("DefconStatus", defconStatus.ToString());
-            if (!_isReceiving) Context.SendBroadcast(intent);
+
             await _counterService.CalculateCounter(defconStatus);
             _isButtonPressed = false;
         }
@@ -242,7 +249,6 @@ namespace MyDEFCON.Fragments
                     udpClient.Close();
                 }
             }
-
         }
 
         public override void OnPause()

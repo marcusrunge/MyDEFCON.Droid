@@ -8,7 +8,7 @@ using MyDEFCON.Services;
 namespace MyDEFCON.Receiver
 {
     [BroadcastReceiver(Enabled = true)]
-    [IntentFilter(new string[] { "com.marcusrunge.MyDEFCON.DEFCON_UPDATE" })]
+    [IntentFilter(new string[] { "com.marcusrunge.MyDEFCON.STATUS_RECEIVER_ACTION" })]
     public class DefconStatusReceiver : BroadcastReceiver        
     {
         IEventService _eventService;
