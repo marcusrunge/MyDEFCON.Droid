@@ -14,14 +14,14 @@ using System.Text;
 namespace MyDEFCON
 {
     [BroadcastReceiver(Enabled = true, Label = "MyDEFCON")]
-    [IntentFilter(new string[] { "android.appwidget.action.APPWIDGET_UPDATE", "android.appwidget.action.ACTION_APPWIDGET_OPTIONS_CHANGED", "com.marcusrunge.MyDEFCON.DEFCON_UPDATE"})]
+    [IntentFilter(new string[] { "android.appwidget.action.APPWIDGET_UPDATE", "android.appwidget.action.ACTION_APPWIDGET_OPTIONS_CHANGED", "com.marcusrunge.MyDEFCON.DEFCON_UPDATE" })]
     [MetaData("android.appwidget.provider", Resource = "@xml/mydefconwidgetprovider")]
 
     public class MyDefconWidget : AppWidgetProvider
     {
         CancellationTokenSource _cancellationTokenSource;
         CancellationToken _cancellationToken;
-        public override void OnUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
+        public override async void OnUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
         {
             _cancellationTokenSource = new CancellationTokenSource();
             _cancellationTokenSource?.Cancel();
@@ -40,7 +40,7 @@ namespace MyDEFCON
                 remoteViews.SetOnClickPendingIntent(Resource.Id.mydefconWidgetLinearLayout, pendingIntent);
                 appWidgetManager.UpdateAppWidget(appWidgetId, remoteViews);
             }
-            if(new SettingsService().GetSetting<bool>("IsBroadcastEnabled")) Task.Run(()=> DefconStatusUdpListener(context), _cancellationToken);
+            if (new SettingsService().GetSetting<bool>("IsBroadcastEnabled")) await DefconStatusUdpListener(context, _cancellationToken);
         }
         public override void OnAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions)
         {
@@ -109,7 +109,7 @@ namespace MyDEFCON
 
         public override void OnEnabled(Context context)
         {
-            base.OnEnabled(context);            
+            base.OnEnabled(context);
         }
 
         private int GetApplicationDefconStatus()
@@ -120,36 +120,39 @@ namespace MyDEFCON
             return defconStatus;
         }
 
-        private async Task DefconStatusUdpListener(Context context)
+        private Task DefconStatusUdpListener(Context context, CancellationToken cancellationToken)
         {
-            UdpClient udpClient = null; 
-            try
+            return Task.Run(async () =>
             {
-                udpClient = new UdpClient(4536);
-                while (true)
+                UdpClient udpClient = null;
+                try
                 {
-                    var udpReceiveResult = await udpClient.ReceiveAsync();
-                    var defconStatus = Encoding.ASCII.GetString(udpReceiveResult.Buffer);
-                    if (int.TryParse(defconStatus, out int parsedDefconStatus) && parsedDefconStatus > 0 && parsedDefconStatus < 6)
+                    udpClient = new UdpClient(4536);
+                    while (true)
                     {
-                        Intent mainActivityIntent = new Intent(context, typeof(MainActivity));
-                        PendingIntent pendingIntent = PendingIntent.GetActivity(context, 0, mainActivityIntent, 0);
-                        ComponentName componentName = new ComponentName(context, Java.Lang.Class.FromType(typeof(MyDefconWidget)).Name);
-                        AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
-                        RemoteViews remoteViews = new RemoteViews(context.PackageName, Resource.Layout.mydefcon_widget);
-                        remoteViews.SetTextViewText(Resource.Id.mydefconWidgetTextView, defconStatus);
-                        remoteViews.SetTextColor(Resource.Id.mydefconWidgetTextView, GetLightColor(defconStatus));
-                        remoteViews.SetInt(Resource.Id.mydefconWidgetLinearLayout, "setBackgroundColor", GetDarkColor(defconStatus));
-                        remoteViews.SetInt(Resource.Id.mydefconFrameLayout, "setBackgroundColor", GetLightColor(defconStatus));
-                        remoteViews.SetOnClickPendingIntent(Resource.Id.mydefconWidgetLinearLayout, pendingIntent);
-                        appWidgetManager.UpdateAppWidget(componentName, remoteViews);
+                        var udpReceiveResult = await udpClient.ReceiveAsync();
+                        var defconStatus = Encoding.ASCII.GetString(udpReceiveResult.Buffer);
+                        if (int.TryParse(defconStatus, out int parsedDefconStatus) && parsedDefconStatus > 0 && parsedDefconStatus < 6)
+                        {
+                            Intent mainActivityIntent = new Intent(context, typeof(MainActivity));
+                            PendingIntent pendingIntent = PendingIntent.GetActivity(context, 0, mainActivityIntent, 0);
+                            ComponentName componentName = new ComponentName(context, Java.Lang.Class.FromType(typeof(MyDefconWidget)).Name);
+                            AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
+                            RemoteViews remoteViews = new RemoteViews(context.PackageName, Resource.Layout.mydefcon_widget);
+                            remoteViews.SetTextViewText(Resource.Id.mydefconWidgetTextView, defconStatus);
+                            remoteViews.SetTextColor(Resource.Id.mydefconWidgetTextView, GetLightColor(defconStatus));
+                            remoteViews.SetInt(Resource.Id.mydefconWidgetLinearLayout, "setBackgroundColor", GetDarkColor(defconStatus));
+                            remoteViews.SetInt(Resource.Id.mydefconFrameLayout, "setBackgroundColor", GetLightColor(defconStatus));
+                            remoteViews.SetOnClickPendingIntent(Resource.Id.mydefconWidgetLinearLayout, pendingIntent);
+                            appWidgetManager.UpdateAppWidget(componentName, remoteViews);
+                        }
                     }
                 }
-            }
-            catch (Exception)
-            {
-                udpClient.Close();
-            }
+                catch (Exception)
+                {
+                    udpClient.Close();
+                }
+            }, cancellationToken);
         }
     }
 }
