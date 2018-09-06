@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" package="com.marcusrunge.MyDEFCON" android:versionCode="233" android:versionName="1.3.9" android:windowSoftInputMode="adjustPan">
-	<uses-sdk android:minSdkVersion="22" android:targetSdkVersion="27" />
+	<uses-sdk android:minSdkVersion="22" android:targetSdkVersion="28" />
 	<uses-permission android:name="android.permission.VIBRATE" />
 	<!-- Apex -->
 	<uses-permission android:name="com.anddoes.launcher.permission.UPDATE_COUNT" />
