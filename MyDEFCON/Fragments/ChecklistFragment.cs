@@ -131,10 +131,10 @@ namespace MyDEFCON.Fragments
 
         private async void _eventService_MenuItemPressedEvent(object sender, EventArgs e)
         {
-            {
-                _onCreateView.PerformHapticFeedback(FeedbackConstants.VirtualKey, FeedbackFlags.IgnoreGlobalSetting);
+            {                
                 if ((e as MenuItemPressedEventArgs).MenuItemTitle.Equals("Create"))
                 {
+                    _onCreateView.PerformHapticFeedback(FeedbackConstants.VirtualKey, FeedbackFlags.IgnoreGlobalSetting);
                     var checkListEntry = new CheckListEntry() { DefconStatus = fragmentDefconStatus, UnixTimeStampCreated = DateTimeOffset.Now.ToUnixTimeMilliseconds(), FontSize = 26 };
                     _checkList.Add(checkListEntry);
                     await _sqLiteAsyncConnection.InsertAsync(checkListEntry);
@@ -143,6 +143,7 @@ namespace MyDEFCON.Fragments
                 }
                 if ((e as MenuItemPressedEventArgs).MenuItemTitle.Equals("Share") && (e as MenuItemPressedEventArgs).FragmentTag.Equals("CHK"))
                 {
+                    _onCreateView.PerformHapticFeedback(FeedbackConstants.VirtualKey, FeedbackFlags.IgnoreGlobalSetting);
                     _eventService.OnBlockConnectionEvent(new BlockConnectionEventArgs(true));
                     using (var udpClient = new UdpClient())
                     {
