@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Android.Graphics;
 using Android.OS;
+using Android.Support.Design.Widget;
 using Android.Support.V4.App;
 using Android.Support.V7.Widget;
 using Android.Views;
@@ -23,6 +24,7 @@ namespace MyDEFCON.Fragments
     public class ChecklistFragment : Fragment, ActionMode.ICallback
     {
         Button checklist1Button, checklist2Button, checklist3Button, checklist4Button, checklist5Button;
+        FloatingActionButton addFloatingActionButton;
         TextView itemsCounter1, itemsCounter2, itemsCounter3, itemsCounter4, itemsCounter5;
         int fragmentDefconStatus, applicationDefconStatus, _actionModeItemId;
         List<CheckListEntry> _checkList;
@@ -68,11 +70,23 @@ namespace MyDEFCON.Fragments
             checklist4Button = view.FindViewById<Button>(Resource.Id.checklist4Button);
             checklist5Button = view.FindViewById<Button>(Resource.Id.checklist5Button);
 
+            addFloatingActionButton = view.FindViewById<FloatingActionButton>(Resource.Id.addFloatingActionButton);
+
             checklist1Button.Click += async (s, e) => { fragmentDefconStatus = 1; SetButtonColors(1); await ReloadCheckList(1); };
             checklist2Button.Click += async (s, e) => { fragmentDefconStatus = 2; SetButtonColors(2); await ReloadCheckList(2); };
             checklist3Button.Click += async (s, e) => { fragmentDefconStatus = 3; SetButtonColors(3); await ReloadCheckList(3); };
             checklist4Button.Click += async (s, e) => { fragmentDefconStatus = 4; SetButtonColors(4); await ReloadCheckList(4); };
             checklist5Button.Click += async (s, e) => { fragmentDefconStatus = 5; SetButtonColors(5); await ReloadCheckList(5); };
+
+            addFloatingActionButton.Click += async (s, e) => 
+            {
+                _onCreateView.PerformHapticFeedback(FeedbackConstants.VirtualKey, FeedbackFlags.IgnoreGlobalSetting);
+                var checkListEntry = new CheckListEntry() { DefconStatus = fragmentDefconStatus, UnixTimeStampCreated = DateTimeOffset.Now.ToUnixTimeMilliseconds(), FontSize = 26 };
+                _checkList.Add(checkListEntry);
+                await _sqLiteAsyncConnection.InsertAsync(checkListEntry);
+                _checklistRecyclerViewAdapter.NotifyDataSetChanged();
+                await SetCounter();
+            };
 
             itemsCounter1 = view.FindViewById<TextView>(Resource.Id.counterOne);
             itemsCounter2 = view.FindViewById<TextView>(Resource.Id.counterTwo);
@@ -131,16 +145,7 @@ namespace MyDEFCON.Fragments
 
         private async void _eventService_MenuItemPressedEvent(object sender, EventArgs e)
         {
-            {                
-                if ((e as MenuItemPressedEventArgs).MenuItemTitle.Equals("Create"))
-                {
-                    _onCreateView.PerformHapticFeedback(FeedbackConstants.VirtualKey, FeedbackFlags.IgnoreGlobalSetting);
-                    var checkListEntry = new CheckListEntry() { DefconStatus = fragmentDefconStatus, UnixTimeStampCreated = DateTimeOffset.Now.ToUnixTimeMilliseconds(), FontSize = 26 };
-                    _checkList.Add(checkListEntry);
-                    await _sqLiteAsyncConnection.InsertAsync(checkListEntry);
-                    _checklistRecyclerViewAdapter.NotifyDataSetChanged();
-                    await SetCounter();
-                }
+            {   
                 if ((e as MenuItemPressedEventArgs).MenuItemTitle.Equals("Share") && (e as MenuItemPressedEventArgs).FragmentTag.Equals("CHK"))
                 {
                     _onCreateView.PerformHapticFeedback(FeedbackConstants.VirtualKey, FeedbackFlags.IgnoreGlobalSetting);

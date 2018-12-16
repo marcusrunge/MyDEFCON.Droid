@@ -109,7 +109,6 @@ namespace MyDEFCON
                 if (_menu != null)
                 {
                     _menu.FindItem(Resource.Id.menu_share).SetVisible(true);
-                    _menu.FindItem(Resource.Id.menu_create).SetVisible(false);
                 }
 
             }
@@ -121,7 +120,6 @@ namespace MyDEFCON
                 _lastFragmentId = id;
                 if (_settingsService.GetSetting<bool>("IsMulticastEnabled")) _menu.FindItem(Resource.Id.menu_share).SetVisible(true);
                 else _menu.FindItem(Resource.Id.menu_share).SetVisible(false);
-                _menu.FindItem(Resource.Id.menu_create).SetVisible(true);
             }
             else return;
 
@@ -146,7 +144,6 @@ namespace MyDEFCON
                 SupportActionBar.SetTitle(Resource.String.aboutTitle);
                 _navigation.Visibility = ViewStates.Gone;
                 _menu.FindItem(Resource.Id.menu_share).SetVisible(false);
-                _menu.FindItem(Resource.Id.menu_create).SetVisible(false);
                 SupportFragmentManager.BeginTransaction().Replace(Resource.Id.content_frame, fragment, _fragmentTag).Commit();
             }
 
@@ -157,7 +154,6 @@ namespace MyDEFCON
                 SupportActionBar.SetTitle(Resource.String.settingsTitle);
                 _navigation.Visibility = ViewStates.Gone;
                 _menu.FindItem(Resource.Id.menu_share).SetVisible(false);
-                _menu.FindItem(Resource.Id.menu_create).SetVisible(false);
                 SupportFragmentManager.BeginTransaction().Replace(Resource.Id.content_frame, fragment, _fragmentTag).Commit();
             }
 
@@ -176,7 +172,6 @@ namespace MyDEFCON
         {
             _menu = menu;
             MenuInflater.Inflate(Resource.Menu.toolbar_menu, _menu);
-            _menu.FindItem(Resource.Id.menu_create).SetVisible(false);
             return base.OnCreateOptionsMenu(menu);
         }
 
