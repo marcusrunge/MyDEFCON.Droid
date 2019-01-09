@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
   <style name="Theme.MyTheme" parent="Theme.MyTheme.Base">
   </style>
   <!-- Base theme applied no matter what API -->
@@ -13,7 +13,7 @@
     <!-- colorPrimaryDark is used for the status bar -->
     <item name="colorPrimaryDark">@color/primaryDark</item>
     <item name="drawerArrowStyle">@style/DrawerIcon</item>
-    
+    <item name="android:navigationBarColor" tools:targetApi="21">#000000</item>
 
 
     <!--<item name="android:textColorPrimary">@color/primaryText</item>
@@ -69,6 +69,7 @@
     <item name="android:windowFullscreen">false</item>
     <item name="windowActionModeOverlay">true</item>
     <item name="actionModeBackground">@color/primary</item>
+    <item name="android:navigationBarColor">#000000</item>
   </style>
 
   <style name="CheckBoxStyle" parent="Theme.AppCompat">
