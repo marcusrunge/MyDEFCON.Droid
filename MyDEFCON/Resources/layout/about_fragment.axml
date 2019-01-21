@@ -74,7 +74,7 @@
                             android:layout_marginRight="12dp">
                             <TextView
                                 android:textColor="@android:color/white"
-                                android:text="Copyright (c) 2018"
+                                android:text="Copyright (c) 2019"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />
                             <TextView
