@@ -16,6 +16,7 @@ using Unity.ServiceLocation;
 using CommonServiceLocator;
 using Android.Support.V7.Widget;
 using Android.Content;
+using Android.Support.Transitions;
 
 namespace MyDEFCON
 {
@@ -99,11 +100,14 @@ namespace MyDEFCON
             
             //string fragmentTag;
             Android.Support.V4.App.Fragment fragment = null;
+            Fade fade = new Fade();
+            fade.SetDuration(200);
             if (id == Resource.Id.menu_status)
             {
                 _fragmentTag = "STS";
                 fragment = StatusFragment.GetInstance(Resources);
-
+                fragment.EnterTransition = fade;
+                fragment.ExitTransition = fade;
                 SupportActionBar.SetTitle(Resource.String.statusTitle);
                 _lastFragmentId = id;
                 if (_menu != null)
@@ -116,6 +120,8 @@ namespace MyDEFCON
             {
                 _fragmentTag = "CHK";
                 fragment = ChecklistFragment.GetInstance();
+                fragment.EnterTransition = fade;
+                fragment.ExitTransition = fade;
                 SupportActionBar.SetTitle(Resource.String.checklistTitle);
                 _lastFragmentId = id;
                 if (_settingsService.GetSetting<bool>("IsMulticastEnabled")) _menu.FindItem(Resource.Id.menu_share).SetVisible(true);
