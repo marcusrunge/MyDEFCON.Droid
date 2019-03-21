@@ -17,6 +17,7 @@ using CommonServiceLocator;
 using Android.Support.V7.Widget;
 using Android.Content;
 using Android.Support.Transitions;
+using MyDEFCON.Receiver;
 
 namespace MyDEFCON
 {
@@ -30,6 +31,7 @@ namespace MyDEFCON
         IUnityContainer unityContainer;
         ISettingsService _settingsService;
         string _fragmentTag;
+        AppRestrictionsReceiver _appRestrictiosReceiver;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -86,6 +88,7 @@ namespace MyDEFCON
                     StartService(tcpClientServiceIntent);
                 }
             }
+            _appRestrictiosReceiver = new AppRestrictionsReceiver();
         }
 
         void LoadFragment(int id)
@@ -200,6 +203,13 @@ namespace MyDEFCON
                 StopService(udpClientServiceIntent);
                 StartService(udpClientServiceIntent);
             }
+            RegisterReceiver(_appRestrictiosReceiver, new IntentFilter(Intent.ActionApplicationRestrictionsChanged));
+        }
+
+        protected override void OnPause()
+        {
+            UnregisterReceiver(_appRestrictiosReceiver);
+            base.OnPause();
         }
 
         protected override void OnDestroy()

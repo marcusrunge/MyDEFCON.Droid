@@ -14,7 +14,7 @@ using System.Text;
 namespace MyDEFCON
 {
     [BroadcastReceiver(Enabled = true, Label = "MyDEFCON")]
-    [IntentFilter(new string[] { "android.appwidget.action.APPWIDGET_UPDATE", "android.appwidget.action.ACTION_APPWIDGET_OPTIONS_CHANGED", "com.marcusrunge.MyDEFCON.DEFCON_UPDATE" })]
+    [IntentFilter(new string[] { "android.appwidget.action.APPWIDGET_UPDATE", "android.appwidget.action.ACTION_APPWIDGET_OPTIONS_CHANGED", "com.marcusrunge.MyDEFCON.DEFCON_UPDATE", "android.intent.action.APPLICATION_RESTRICTIONS_CHANGED" })]
     [MetaData("android.appwidget.provider", Resource = "@xml/mydefconwidgetprovider")]
 
     public class MyDefconWidget : AppWidgetProvider
@@ -88,23 +88,41 @@ namespace MyDEFCON
         {
             base.OnReceive(context, intent);
             //Toast.MakeText(context, intent.Action + " in widged received...", ToastLength.Short).Show();
+            string defconStatus = null;
             if (intent.Action.Equals("com.marcusrunge.MyDEFCON.DEFCON_UPDATE"))
             {
-                var defconStatus = intent.GetStringExtra("DefconStatus");
-                if (defconStatus != null && !defconStatus.Equals("0"))
+                defconStatus = intent.GetStringExtra("DefconStatus");                
+            }
+            else if (intent.Action.Equals("android.intent.action.APPLICATION_RESTRICTIONS_CHANGED"))
+            {
+                var restrictionsManager = (RestrictionsManager)context.GetSystemService(Context.RestrictionsService);
+                var applicationRestrictions = restrictionsManager.ApplicationRestrictions;
+                var restrictionEntries = restrictionsManager.GetManifestRestrictions(context.ApplicationContext.PackageName);
+                foreach (var restrictionEntry in restrictionEntries)
                 {
-                    Intent mainActivityIntent = new Intent(context, typeof(MainActivity));
-                    PendingIntent pendingIntent = PendingIntent.GetActivity(context, 0, mainActivityIntent, 0);
-                    ComponentName componentName = new ComponentName(context, Java.Lang.Class.FromType(typeof(MyDefconWidget)).Name);
-                    AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
-                    RemoteViews remoteViews = new RemoteViews(context.PackageName, Resource.Layout.mydefcon_widget);
-                    remoteViews.SetTextViewText(Resource.Id.mydefconWidgetTextView, defconStatus);
-                    remoteViews.SetTextColor(Resource.Id.mydefconWidgetTextView, GetLightColor(defconStatus));
-                    remoteViews.SetInt(Resource.Id.mydefconWidgetLinearLayout, "setBackgroundColor", GetDarkColor(defconStatus));
-                    remoteViews.SetInt(Resource.Id.mydefconFrameLayout, "setBackgroundColor", GetLightColor(defconStatus));
-                    remoteViews.SetOnClickPendingIntent(Resource.Id.mydefconWidgetLinearLayout, pendingIntent);
-                    appWidgetManager.UpdateAppWidget(componentName, remoteViews);
+                    switch (restrictionEntry.Key)
+                    {
+                        case "defconStatus":
+                            defconStatus = applicationRestrictions.GetInt("defconStatus").ToString();
+                            break;
+                        default:
+                            break;
+                    }
                 }
+            }
+            if (defconStatus != null && !defconStatus.Equals("0"))
+            {
+                Intent mainActivityIntent = new Intent(context, typeof(MainActivity));
+                PendingIntent pendingIntent = PendingIntent.GetActivity(context, 0, mainActivityIntent, 0);
+                ComponentName componentName = new ComponentName(context, Java.Lang.Class.FromType(typeof(MyDefconWidget)).Name);
+                AppWidgetManager appWidgetManager = AppWidgetManager.GetInstance(context);
+                RemoteViews remoteViews = new RemoteViews(context.PackageName, Resource.Layout.mydefcon_widget);
+                remoteViews.SetTextViewText(Resource.Id.mydefconWidgetTextView, defconStatus);
+                remoteViews.SetTextColor(Resource.Id.mydefconWidgetTextView, GetLightColor(defconStatus));
+                remoteViews.SetInt(Resource.Id.mydefconWidgetLinearLayout, "setBackgroundColor", GetDarkColor(defconStatus));
+                remoteViews.SetInt(Resource.Id.mydefconFrameLayout, "setBackgroundColor", GetLightColor(defconStatus));
+                remoteViews.SetOnClickPendingIntent(Resource.Id.mydefconWidgetLinearLayout, pendingIntent);
+                appWidgetManager.UpdateAppWidget(componentName, remoteViews);
             }
         }
 
