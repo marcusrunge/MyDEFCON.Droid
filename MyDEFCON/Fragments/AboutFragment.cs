@@ -1,6 +1,5 @@
 ﻿using Android.OS;
 using Android.Support.V4.App;
-using Android.Test.Suitebuilder.Annotation;
 using Android.Text;
 using Android.Text.Method;
 using Android.Views;

@@ -234,6 +234,7 @@
     <Compile Include="Models\CheckListEntry.cs" />
     <Compile Include="Models\SQLiteDependencies.cs" />
     <Compile Include="MyDefconWidget.cs" />
+    <Compile Include="Receiver\AppRestrictionsReceiver.cs" />
     <Compile Include="Receiver\DefconStatusReceiver.cs" />
     <Compile Include="Receiver\TcpActionReceiver.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
@@ -415,6 +416,9 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-xxxhdpi\ic_action_add.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\XML\app_restrictions.xml" />
   </ItemGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
