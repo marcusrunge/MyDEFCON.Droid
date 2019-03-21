@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+	android:background="@layout/backrepeat">
     <include
         android:id="@+id/toolbar"
         layout="@layout/toolbar" />
