@@ -139,6 +139,7 @@ namespace MyDEFCON.Fragments
             intent.SetAction("com.marcusrunge.MyDEFCON.DEFCON_UPDATE");
             intent.PutExtra("DefconStatus", defconStatus.ToString());
             if (!_isReceiving) Context.SendBroadcast(intent);
+            _eventService.OnDefconStatusChangedEvent(new DefconStatusChangedEventArgs(defconStatus));
         }
 
         private async Task SetButtonColors(int defconStatus)

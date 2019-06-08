@@ -88,6 +88,13 @@ namespace MyDEFCON
                 }
             }
             _appRestrictiosReceiver = new AppRestrictionsReceiver();
+            Intent startServiceIntent = new Intent(this, typeof(ForegroundService));
+            startServiceIntent.SetAction(Constants.ACTION_START_SERVICE);
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)StartForegroundService(startServiceIntent);            
+            else StartService(startServiceIntent);
+            
+            //Intent stopServiceIntentnew = new Intent(this, typeof(ForegroundService));
+            //stopServiceIntent.SetAction(Constants.ACTION_STOP_SERVICE);
         }
 
         void LoadFragment(int id)

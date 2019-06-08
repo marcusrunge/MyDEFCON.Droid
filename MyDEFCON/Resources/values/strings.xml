@@ -11,4 +11,9 @@
   <string name="e_mail"><a href="mailto:code_m@outlook.de">technical support/feedback email</a></string>
   <string name="title_status">Status</string>
   <string name="title_checklist">Checklist</string>
+  <string name="defcon_one">DEFCON 1</string>
+  <string name="defcon_two">DEFCON 2</string>
+  <string name="defcon_three">DEFCON 3</string>
+  <string name="defcon_four">DEFCON 4</string>
+  <string name="defcon_five">DEFCON 5</string>
 </resources>
