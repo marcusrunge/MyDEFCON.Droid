@@ -14,6 +14,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using static MyDEFCON.Services.ForegroundService;
 
 namespace MyDEFCON.Fragments
 {
@@ -135,10 +136,17 @@ namespace MyDEFCON.Fragments
 
         private void SendDefconIntent(int defconStatus)
         {
-            Intent intent = new Intent(Activity, typeof(MyDefconWidget));
-            intent.SetAction("com.marcusrunge.MyDEFCON.DEFCON_UPDATE");
-            intent.PutExtra("DefconStatus", defconStatus.ToString());
-            if (!_isReceiving) Context.SendBroadcast(intent);
+            Intent widgetStatusIntent = new Intent(Activity, typeof(MyDefconWidget));
+            widgetStatusIntent.SetAction("com.marcusrunge.MyDEFCON.DEFCON_UPDATE");
+            widgetStatusIntent.PutExtra("DefconStatus", defconStatus.ToString());
+            if (!_isReceiving) Context.SendBroadcast(widgetStatusIntent);
+            if (_settingsService.GetSetting<bool>("IsForegroundServiceEnabled"))
+            {
+                Intent foregroundStatusIntent = new Intent(Activity, typeof(ForegroundDefconStatusReceiver));
+                foregroundStatusIntent.SetAction("com.marcusrunge.MyDEFCON.DEFCON_UPDATE");
+                foregroundStatusIntent.PutExtra("DefconStatus", defconStatus.ToString());
+                Context.SendBroadcast(foregroundStatusIntent);
+            }
             _eventService.OnDefconStatusChangedEvent(new DefconStatusChangedEventArgs(defconStatus));
         }
 

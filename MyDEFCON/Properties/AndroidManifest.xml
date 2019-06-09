@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="preferExternal" package="com.marcusrunge.MyDEFCON" android:versionCode="248" android:versionName="1.5.4" android:windowSoftInputMode="adjustPan">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="preferExternal" package="com.marcusrunge.MyDEFCON" android:versionCode="249" android:versionName="1.5.5" android:windowSoftInputMode="adjustPan">
 	<uses-sdk android:minSdkVersion="22" android:targetSdkVersion="28" />
 	<uses-permission android:name="android.permission.VIBRATE" />
 	<!-- Apex -->

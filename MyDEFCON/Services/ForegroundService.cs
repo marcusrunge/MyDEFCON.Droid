@@ -3,6 +3,7 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
+using Android.Support.V4.Content;
 using CommonServiceLocator;
 using MyDEFCON.Models;
 using MyDEFCON.Receiver;
@@ -21,11 +22,14 @@ namespace MyDEFCON.Services
     {
         bool _isStarted;
         ISettingsService _settingsService;
-        IEventService _eventService;
         Task _udpClientTask/*, _tcpClientTask*/;
         static DateTimeOffset _lastConnect;
         CancellationTokenSource _cancellationTokenSource;
         CancellationToken _cancellationToken;
+        ForegroundDefconStatusReceiver _defconStatusReceiver;
+        UdpClient udpClient;
+
+        public delegate void CallBack(string defconStatus);
 
         public override void OnCreate()
         {
@@ -34,19 +38,19 @@ namespace MyDEFCON.Services
             _cancellationToken = _cancellationTokenSource.Token;
             _lastConnect = DateTimeOffset.MinValue;
             _settingsService = ServiceLocator.Current.GetInstance<ISettingsService>();
-            _eventService = ServiceLocator.Current.GetInstance<IEventService>();                        
-            _eventService.DefconStatusChangedEvent += (s, e) =>
+            _defconStatusReceiver = new ForegroundDefconStatusReceiver(new CallBack((x) =>
             {
                 var notificationManager = (NotificationManager)GetSystemService(NotificationService);
                 notificationManager.Notify(Constants.SERVICE_RUNNING_NOTIFICATION_ID, BuildNotification());
-            };
+            }));
+            LocalBroadcastManager.GetInstance(this).RegisterReceiver(_defconStatusReceiver, new IntentFilter("com.marcusrunge.MyDEFCON.DEFCON_UPDATE"));
         }
 
         private async void UdpClientAction()
         {
             try
             {
-                UdpClient udpClient = new UdpClient(4536);
+                udpClient = new UdpClient(4536);
                 while (_isStarted)
                 {
                     var udpReceiveResult = await udpClient.ReceiveAsync();
@@ -61,7 +65,7 @@ namespace MyDEFCON.Services
                             widgetIntent.SetAction("com.marcusrunge.MyDEFCON.DEFCON_UPDATE");
                             widgetIntent.PutExtra("DefconStatus", defconStatus.ToString());
 
-                            Intent statusReceiverIntent = new Intent(this, typeof(DefconStatusReceiver));
+                            Intent statusReceiverIntent = new Intent(this, typeof(ForegroundDefconStatusReceiver));
                             statusReceiverIntent.SetAction("com.marcusrunge.MyDEFCON.STATUS_RECEIVER_ACTION");
                             statusReceiverIntent.PutExtra("DefconStatus", defconStatus.ToString());
 
@@ -78,8 +82,11 @@ namespace MyDEFCON.Services
                         }
                     }
                 }
-                udpClient.Close();
-                udpClient.Dispose();
+                if (udpClient != null)
+                {
+                    udpClient.Close();
+                    udpClient.Dispose();
+                }
             }
             catch { }
         }
@@ -128,7 +135,6 @@ namespace MyDEFCON.Services
             {
                 StopForeground(true);
                 StopSelf();
-                _cancellationTokenSource.Cancel();
                 _isStarted = false;
             }
             return StartCommandResult.Sticky;
@@ -145,6 +151,10 @@ namespace MyDEFCON.Services
             notificationManager.Cancel(Constants.SERVICE_RUNNING_NOTIFICATION_ID);
             _isStarted = false;
             _cancellationTokenSource.Cancel();
+            LocalBroadcastManager.GetInstance(this).UnregisterReceiver(_defconStatusReceiver);
+            udpClient.Close();
+            udpClient.Dispose();
+            _udpClientTask.Dispose();
             base.OnDestroy();
         }
 
@@ -159,7 +169,7 @@ namespace MyDEFCON.Services
                 var notificationManager = (NotificationManager)GetSystemService(NotificationService);
                 notificationManager.CreateNotificationChannel(notificationChannel);
             }
-            
+
             StartForeground(Constants.SERVICE_RUNNING_NOTIFICATION_ID, BuildNotification());
         }
 
@@ -201,6 +211,30 @@ namespace MyDEFCON.Services
             notificationIntent.PutExtra(Constants.SERVICE_STARTED_KEY, true);
             var pendingIntent = PendingIntent.GetActivity(this, 0, notificationIntent, PendingIntentFlags.UpdateCurrent);
             return pendingIntent;
+        }
+
+        [BroadcastReceiver(Enabled = true)]
+        [IntentFilter(new string[] { "com.marcusrunge.MyDEFCON.STATUS_RECEIVER_ACTION" })]
+        public class ForegroundDefconStatusReceiver : BroadcastReceiver
+        {
+            private static CallBack _callBack;
+
+            public ForegroundDefconStatusReceiver()
+            {
+
+            }
+
+            public ForegroundDefconStatusReceiver(CallBack callBack)
+            {
+                _callBack = callBack;
+            }
+
+            public override void OnReceive(Context context, Intent intent)
+            {
+                var defconStatus = intent.GetStringExtra("DefconStatus");
+                if (defconStatus.Equals("0")) { }
+                else _callBack(defconStatus);
+            }
         }
     }
 }
