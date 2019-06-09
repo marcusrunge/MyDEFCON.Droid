@@ -34,7 +34,7 @@ namespace MyDEFCON.Services
         {
             _isServiceRunning = false;            
             _cancellationTokenSource.Cancel();
-            _udpClient?.Close();
+            _udpClient.Close();
             base.OnDestroy();
         }
 

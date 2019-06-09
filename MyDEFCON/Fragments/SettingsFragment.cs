@@ -20,6 +20,7 @@ namespace MyDEFCON.Fragments
             var view = inflater.Inflate(Resource.Layout.settings_fragment, null);
             var isBroadcastEnabledSwitch = view.FindViewById<Android.Support.V7.Widget.SwitchCompat>(Resource.Id.isBroadcastEnabledSwitch);
             var isMulticastEnabledSwitch = view.FindViewById<Android.Support.V7.Widget.SwitchCompat>(Resource.Id.isMulticastEnabledSwitch);
+            var isForegroundServiceEnabledSwitch = view.FindViewById<Android.Support.V7.Widget.SwitchCompat>(Resource.Id.isForegroundServiceEnabledSwitch);
             isBroadcastEnabledSwitch.Checked = _settingsService.GetSetting<bool>("IsBroadcastEnabled");
             isBroadcastEnabledSwitch.CheckedChange += (s, e) =>
             {
@@ -40,6 +41,7 @@ namespace MyDEFCON.Fragments
                     if (isMulticastEnabledSwitch.Checked)
                     {
                         isMulticastEnabledSwitch.Checked = false;
+                        isForegroundServiceEnabledSwitch.Checked = false;
                         var tcpClientServiceIntent = new Intent(Context, typeof(TcpClientService));
                         Context.StopService(tcpClientServiceIntent);
                     }
@@ -58,6 +60,32 @@ namespace MyDEFCON.Fragments
                     Context.StartService(tcpClientServiceIntent);
                 }
             };
+            isForegroundServiceEnabledSwitch.Checked = _settingsService.GetSetting<bool>("IsForegroundServiceEnabled");
+            isForegroundServiceEnabledSwitch.CheckedChange += (s, e) =>
+            {                
+                if (!e.IsChecked)
+                {
+                    Intent stopServiceIntent = new Intent(Context, typeof(ForegroundService));
+                    stopServiceIntent.SetAction(Constants.ACTION_STOP_SERVICE);
+                    Context.StopService(stopServiceIntent);
+                    if (_settingsService.GetSetting<bool>("IsBroadcastEnabled")) Context.StartService(new Intent(Context, typeof(UdpClientService)));
+                }
+                else
+                {
+                    if (!_settingsService.GetSetting<bool>("IsBroadcastEnabled"))
+                    {
+                        isForegroundServiceEnabledSwitch.Checked = false;
+                        return;
+                    }
+                    Context.StopService(new Intent(Context, typeof(UdpClientService)));
+                    Intent startServiceIntent = new Intent(Context, typeof(ForegroundService));
+                    startServiceIntent.SetAction(Constants.ACTION_START_SERVICE);
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.O) Context.StartForegroundService(startServiceIntent);
+                    else Context.StartService(startServiceIntent);
+                }
+                _settingsService.SaveSetting("IsForegroundServiceEnabled", e.IsChecked);
+            };
+
             return view;
         }
 

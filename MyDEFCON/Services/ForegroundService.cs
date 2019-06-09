@@ -3,10 +3,12 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
-using Android.Support.V4.Content;
 using CommonServiceLocator;
+using MyDEFCON.Models;
 using MyDEFCON.Receiver;
+using Newtonsoft.Json;
 using System;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -17,64 +19,93 @@ namespace MyDEFCON.Services
     [Service]
     public class ForegroundService : Service
     {
-        bool _isStarted, _isConnectionBlocked;
+        bool _isStarted;
         ISettingsService _settingsService;
         IEventService _eventService;
-        Task _task;
-        UdpClient _udpClient;
+        Task _udpClientTask/*, _tcpClientTask*/;
         static DateTimeOffset _lastConnect;
+        CancellationTokenSource _cancellationTokenSource;
+        CancellationToken _cancellationToken;
 
         public override void OnCreate()
         {
             base.OnCreate();
+            _cancellationTokenSource = new CancellationTokenSource();
+            _cancellationToken = _cancellationTokenSource.Token;
             _lastConnect = DateTimeOffset.MinValue;
             _settingsService = ServiceLocator.Current.GetInstance<ISettingsService>();
-            _eventService = ServiceLocator.Current.GetInstance<IEventService>();
-            _eventService.BlockConnectionEvent += (s, e) => _isConnectionBlocked = (e as BlockConnectionEventArgs).Blocked;
-            _udpClient = new UdpClient(4536);
-            _task = Task.Factory.StartNew(async () =>
-            {
-                try
-                {
-                    while (true)
-                    {
-                        var udpReceiveResult = await _udpClient.ReceiveAsync();
-                        var defconStatus = Encoding.ASCII.GetString(udpReceiveResult.Buffer);
-                        if (int.TryParse(defconStatus, out int parsedDefconStatus) /*&& !_isConnectionBlocked*/)
-                        {
-                            if (parsedDefconStatus > 0 && parsedDefconStatus < 6)
-                            {
-                                new SettingsService().SaveSetting("DefconStatus", defconStatus.ToString());
-
-                                Intent widgetIntent = new Intent(this, typeof(MyDefconWidget));
-                                widgetIntent.SetAction("com.marcusrunge.MyDEFCON.DEFCON_UPDATE");
-                                widgetIntent.PutExtra("DefconStatus", defconStatus.ToString());
-
-                                Intent statusReceiverIntent = new Intent(this, typeof(DefconStatusReceiver));
-                                statusReceiverIntent.SetAction("com.marcusrunge.MyDEFCON.STATUS_RECEIVER_ACTION");
-                                statusReceiverIntent.PutExtra("DefconStatus", defconStatus.ToString());
-
-                                SendBroadcast(widgetIntent);
-                                SendBroadcast(statusReceiverIntent);
-                            }
-                            //else if (parsedDefconStatus == 0 && _settingsService.GetSetting<bool>("IsMulticastEnabled") && DateTimeOffset.Now > _lastConnect.AddSeconds(5))
-                            //{
-                            //    Intent tcpActionIntent = new Intent(this, typeof(TcpActionReceiver));
-                            //    tcpActionIntent.SetAction("com.marcusrunge.MyDEFCON.TCP_ACTION");
-                            //    tcpActionIntent.PutExtra("RemoteEndPointAddress", udpReceiveResult.RemoteEndPoint.Address.ToString());
-                            //    SendBroadcast(tcpActionIntent);
-                            //    _lastConnect = DateTimeOffset.Now;
-                            //}
-                        }
-                    }
-                }
-                catch { }
-            });
+            _eventService = ServiceLocator.Current.GetInstance<IEventService>();                        
             _eventService.DefconStatusChangedEvent += (s, e) =>
             {
                 var notificationManager = (NotificationManager)GetSystemService(NotificationService);
                 notificationManager.Notify(Constants.SERVICE_RUNNING_NOTIFICATION_ID, BuildNotification());
             };
+        }
+
+        private async void UdpClientAction()
+        {
+            try
+            {
+                UdpClient udpClient = new UdpClient(4536);
+                while (_isStarted)
+                {
+                    var udpReceiveResult = await udpClient.ReceiveAsync();
+                    var defconStatus = Encoding.ASCII.GetString(udpReceiveResult.Buffer);
+                    if (int.TryParse(defconStatus, out int parsedDefconStatus))
+                    {
+                        if (parsedDefconStatus > 0 && parsedDefconStatus < 6)
+                        {
+                            new SettingsService().SaveSetting("DefconStatus", defconStatus.ToString());
+
+                            Intent widgetIntent = new Intent(this, typeof(MyDefconWidget));
+                            widgetIntent.SetAction("com.marcusrunge.MyDEFCON.DEFCON_UPDATE");
+                            widgetIntent.PutExtra("DefconStatus", defconStatus.ToString());
+
+                            Intent statusReceiverIntent = new Intent(this, typeof(DefconStatusReceiver));
+                            statusReceiverIntent.SetAction("com.marcusrunge.MyDEFCON.STATUS_RECEIVER_ACTION");
+                            statusReceiverIntent.PutExtra("DefconStatus", defconStatus.ToString());
+
+                            SendBroadcast(widgetIntent);
+                            SendBroadcast(statusReceiverIntent);
+                        }
+                        else if (parsedDefconStatus == 0 && _settingsService.GetSetting<bool>("IsMulticastEnabled") && DateTimeOffset.Now > _lastConnect.AddSeconds(5))
+                        {
+                            Intent tcpActionIntent = new Intent(this, typeof(TcpActionReceiver));
+                            tcpActionIntent.SetAction("com.marcusrunge.MyDEFCON.TCP_ACTION");
+                            tcpActionIntent.PutExtra("RemoteEndPointAddress", udpReceiveResult.RemoteEndPoint.Address.ToString());
+                            SendBroadcast(tcpActionIntent);
+                            _lastConnect = DateTimeOffset.Now;
+                        }
+                    }
+                }
+                udpClient.Close();
+                udpClient.Dispose();
+            }
+            catch { }
+        }
+
+        private async void TcpClientAction()
+        {
+            TcpListener tcpListener = new TcpListener(IPAddress.Any, 4537);
+            tcpListener.Start();
+            while (_isStarted)
+            {
+                try
+                {
+                    TcpClient tcpClient = await tcpListener.AcceptTcpClientAsync();
+                    NetworkStream networkStream = tcpClient.GetStream();
+                    var sqLiteAsyncConnection = ServiceLocator.Current.GetInstance<ISQLiteDependencies>().AsyncConnection;
+                    var checkListEntries = await sqLiteAsyncConnection.QueryAsync<CheckListEntry>("SELECT * FROM CheckListEntry");
+                    var json = JsonConvert.SerializeObject(checkListEntries);
+                    byte[] jsonBytes = Encoding.ASCII.GetBytes(json);
+                    await networkStream.WriteAsync(jsonBytes, 0, jsonBytes.Length);
+                    networkStream.Close();
+                    tcpClient.Close();
+                }
+                catch { }
+            }
+            tcpListener.Stop();
+            tcpListener.Server.Dispose();
         }
 
         [return: GeneratedEnum]
@@ -89,14 +120,16 @@ namespace MyDEFCON.Services
                 {
                     RegisterForegroundService();
                     _isStarted = true;
+                    //_tcpClientTask = Task.Factory.StartNew(TcpClientAction, _cancellationToken);
+                    _udpClientTask = Task.Factory.StartNew(UdpClientAction, _cancellationToken);
                 }
             }
             else if (intent.Action.Equals(Constants.ACTION_STOP_SERVICE))
             {
                 StopForeground(true);
                 StopSelf();
+                _cancellationTokenSource.Cancel();
                 _isStarted = false;
-
             }
             return StartCommandResult.Sticky;
         }
@@ -111,6 +144,7 @@ namespace MyDEFCON.Services
             var notificationManager = (NotificationManager)GetSystemService(NotificationService);
             notificationManager.Cancel(Constants.SERVICE_RUNNING_NOTIFICATION_ID);
             _isStarted = false;
+            _cancellationTokenSource.Cancel();
             base.OnDestroy();
         }
 
@@ -118,7 +152,7 @@ namespace MyDEFCON.Services
         {
             if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
             {
-                var notificationChannel = new NotificationChannel("DefconNotificationChannel", "DefconNotificationChannel", NotificationImportance.Default)
+                var notificationChannel = new NotificationChannel("DefconNotificationChannel", "DefconNotificationChannel", NotificationImportance.Low)
                 {
                     Description = "Foreground Service Notification Channel"
                 };

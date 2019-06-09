@@ -23,7 +23,7 @@ namespace MyDEFCON
 {
     [Activity(Label = "@string/app_name", MainLauncher = true, Theme = "@style/splashscreen", LaunchMode = LaunchMode.SingleTop, Icon = "@drawable/Icon", RoundIcon = "@mipmap/ic_launcher")]
     public class MainActivity : AppCompatActivity, BottomNavigationView.IOnNavigationItemSelectedListener
-    {      
+    {
         BottomNavigationView _navigation;
         int _lastFragmentId;
         IEventService _eventService;
@@ -35,7 +35,7 @@ namespace MyDEFCON
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
-            base.OnCreate(savedInstanceState);            
+            base.OnCreate(savedInstanceState);
             unityContainer = new UnityContainer();
             unityContainer.RegisterSingleton<IEventService, EventService>();
             unityContainer.RegisterInstance<ISettingsService>(SettingsService.Instance());
@@ -87,14 +87,15 @@ namespace MyDEFCON
                     StartService(tcpClientServiceIntent);
                 }
             }
+
+            if (_settingsService.GetSetting<bool>("IsForegroundServiceEnabled"))
+            {
+                Intent startServiceIntent = new Intent(this, typeof(ForegroundService));
+                startServiceIntent.SetAction(Constants.ACTION_START_SERVICE);
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.O) StartForegroundService(startServiceIntent);
+                else StartService(startServiceIntent);
+            }
             _appRestrictiosReceiver = new AppRestrictionsReceiver();
-            Intent startServiceIntent = new Intent(this, typeof(ForegroundService));
-            startServiceIntent.SetAction(Constants.ACTION_START_SERVICE);
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)StartForegroundService(startServiceIntent);            
-            else StartService(startServiceIntent);
-            
-            //Intent stopServiceIntentnew = new Intent(this, typeof(ForegroundService));
-            //stopServiceIntent.SetAction(Constants.ACTION_STOP_SERVICE);
         }
 
         void LoadFragment(int id)
@@ -106,7 +107,7 @@ namespace MyDEFCON
             if (existingFragment != null) SupportFragmentManager.PopBackStackImmediate(existingFragment.Id, 0);
             existingFragment = SupportFragmentManager.FindFragmentByTag("ABT");
             if (existingFragment != null) SupportFragmentManager.PopBackStackImmediate(existingFragment.Id, 0);
-            
+
             //string fragmentTag;
             Android.Support.V4.App.Fragment fragment = null;
             Fade fade = new Fade();
@@ -203,7 +204,7 @@ namespace MyDEFCON
         protected override void OnResume()
         {
             base.OnResume();
-            if (_settingsService.GetSetting<bool>("IsBroadcastEnabled"))
+            if (_settingsService.GetSetting<bool>("IsBroadcastEnabled") && !_settingsService.GetSetting<bool>("IsForegroundServiceEnabled"))
             {
                 var udpClientServiceIntent = new Intent(this, typeof(UdpClientService));
                 StopService(udpClientServiceIntent);

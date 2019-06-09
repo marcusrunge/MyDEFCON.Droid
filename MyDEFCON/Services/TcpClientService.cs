@@ -65,7 +65,7 @@ namespace MyDEFCON.Services
         {
             _isServiceRunning = false;
             _cancellationTokenSource.Cancel();
-            _tcpListener?.Stop();                      
+            _tcpListener.Stop();                      
             base.OnDestroy();
         }
     }
