@@ -37,12 +37,14 @@ namespace MyDEFCON
         {
             base.OnCreate(savedInstanceState);
             unityContainer = new UnityContainer();
+            unityContainer.RegisterInstance<Context>(ApplicationContext);
             unityContainer.RegisterSingleton<IEventService, EventService>();
             unityContainer.RegisterInstance<ISettingsService>(SettingsService.Instance());
             _eventService = unityContainer.Resolve<IEventService>();
             _settingsService = unityContainer.Resolve<ISettingsService>();
             unityContainer.RegisterInstance<ISQLiteDependencies>(SQLiteDependencies.GetInstance(_settingsService.GetLocalFilePath("checklist.db")));
             unityContainer.RegisterType<ICounterService, CounterService>();
+            unityContainer.RegisterSingleton<IJobService, JobManagementService>();
             UnityServiceLocator unityServiceLocator = new UnityServiceLocator(unityContainer);
             ServiceLocator.SetLocatorProvider(() => unityServiceLocator);
 
