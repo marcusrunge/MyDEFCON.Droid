@@ -129,6 +129,9 @@
     <Reference Include="Xamarin.Android.Arch.Lifecycle.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Xamarin.Android.Arch.Lifecycle.Common.1.1.1.1\lib\monoandroid90\Xamarin.Android.Arch.Lifecycle.Common.dll</HintPath>
     </Reference>
+    <Reference Include="Xamarin.Android.Arch.Lifecycle.Extensions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xamarin.Android.Arch.Lifecycle.Extensions.1.1.1.1\lib\monoandroid90\Xamarin.Android.Arch.Lifecycle.Extensions.dll</HintPath>
+    </Reference>
     <Reference Include="Xamarin.Android.Arch.Lifecycle.LiveData, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Xamarin.Android.Arch.Lifecycle.LiveData.1.1.1.1\lib\monoandroid90\Xamarin.Android.Arch.Lifecycle.LiveData.dll</HintPath>
     </Reference>
@@ -140,6 +143,21 @@
     </Reference>
     <Reference Include="Xamarin.Android.Arch.Lifecycle.ViewModel, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Xamarin.Android.Arch.Lifecycle.ViewModel.1.1.1.1\lib\monoandroid90\Xamarin.Android.Arch.Lifecycle.ViewModel.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Android.Arch.Persistence.Db, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xamarin.Android.Arch.Persistence.Db.1.1.1.1\lib\monoandroid90\Xamarin.Android.Arch.Persistence.Db.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Android.Arch.Persistence.Db.Framework, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xamarin.Android.Arch.Persistence.Db.Framework.1.1.1.1\lib\monoandroid90\Xamarin.Android.Arch.Persistence.Db.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Android.Arch.Persistence.Room.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xamarin.Android.Arch.Persistence.Room.Common.1.1.1.1\lib\monoandroid90\Xamarin.Android.Arch.Persistence.Room.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Android.Arch.Persistence.Room.Runtime, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xamarin.Android.Arch.Persistence.Room.Runtime.1.1.1.1\lib\monoandroid90\Xamarin.Android.Arch.Persistence.Room.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Android.Arch.Work.Runtime, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xamarin.Android.Arch.Work.Runtime.1.0.0\lib\monoandroid90\Xamarin.Android.Arch.Work.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Android.Support.Animated.Vector.Drawable, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Xamarin.Android.Support.Animated.Vector.Drawable.28.0.0.1\lib\monoandroid90\Xamarin.Android.Support.Animated.Vector.Drawable.dll</HintPath>
@@ -225,6 +243,9 @@
     <Reference Include="Xamarin.Android.Support.ViewPager, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Xamarin.Android.Support.ViewPager.28.0.0.1\lib\monoandroid90\Xamarin.Android.Support.ViewPager.dll</HintPath>
     </Reference>
+    <Reference Include="Xamarin.Google.Guava.ListenableFuture, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xamarin.Google.Guava.ListenableFuture.1.0.0\lib\monoandroid50\Xamarin.Google.Guava.ListenableFuture.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Adapter\ChecklistRecyclerViewAdapter.cs" />
@@ -244,8 +265,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\CounterService.cs" />
     <Compile Include="Services\ForegroundService.cs" />
-    <Compile Include="Services\JobManagementService.cs" />
-    <Compile Include="Services\KeepForegroundServiceRunningJob.cs" />
+    <Compile Include="Services\WorkerService.cs" />
+    <Compile Include="Services\KeepForegroundServiceRunningWorker.cs" />
     <Compile Include="Services\SettingsService.cs" />
     <Compile Include="Services\EventService.cs" />
     <Compile Include="Services\TcpClientService.cs" />
@@ -542,6 +563,12 @@
     <Error Condition="!Exists('..\packages\Xamarin.Android.Support.v7.AppCompat.28.0.0.1\build\monoandroid90\Xamarin.Android.Support.v7.AppCompat.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Xamarin.Android.Support.v7.AppCompat.28.0.0.1\build\monoandroid90\Xamarin.Android.Support.v7.AppCompat.targets'))" />
     <Error Condition="!Exists('..\packages\Xamarin.Android.Support.v7.RecyclerView.28.0.0.1\build\monoandroid90\Xamarin.Android.Support.v7.RecyclerView.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Xamarin.Android.Support.v7.RecyclerView.28.0.0.1\build\monoandroid90\Xamarin.Android.Support.v7.RecyclerView.targets'))" />
     <Error Condition="!Exists('..\packages\Xamarin.Android.Support.Design.28.0.0.1\build\monoandroid90\Xamarin.Android.Support.Design.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Xamarin.Android.Support.Design.28.0.0.1\build\monoandroid90\Xamarin.Android.Support.Design.targets'))" />
+    <Error Condition="!Exists('..\packages\Xamarin.Android.Arch.Persistence.Db.1.1.1.1\build\Xamarin.Android.Arch.Persistence.Db.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Xamarin.Android.Arch.Persistence.Db.1.1.1.1\build\Xamarin.Android.Arch.Persistence.Db.targets'))" />
+    <Error Condition="!Exists('..\packages\Xamarin.Android.Arch.Persistence.Db.Framework.1.1.1.1\build\Xamarin.Android.Arch.Persistence.Db.Framework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Xamarin.Android.Arch.Persistence.Db.Framework.1.1.1.1\build\Xamarin.Android.Arch.Persistence.Db.Framework.targets'))" />
+    <Error Condition="!Exists('..\packages\Xamarin.Android.Arch.Persistence.Room.Common.1.1.1.1\build\Xamarin.Android.Arch.Persistence.Room.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Xamarin.Android.Arch.Persistence.Room.Common.1.1.1.1\build\Xamarin.Android.Arch.Persistence.Room.Common.targets'))" />
+    <Error Condition="!Exists('..\packages\Xamarin.Android.Arch.Persistence.Room.Runtime.1.1.1.1\build\Xamarin.Android.Arch.Persistence.Room.Runtime.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Xamarin.Android.Arch.Persistence.Room.Runtime.1.1.1.1\build\Xamarin.Android.Arch.Persistence.Room.Runtime.targets'))" />
+    <Error Condition="!Exists('..\packages\Xamarin.Android.Arch.Lifecycle.Extensions.1.1.1.1\build\monoandroid90\Xamarin.Android.Arch.Lifecycle.Extensions.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Xamarin.Android.Arch.Lifecycle.Extensions.1.1.1.1\build\monoandroid90\Xamarin.Android.Arch.Lifecycle.Extensions.targets'))" />
+    <Error Condition="!Exists('..\packages\Xamarin.Android.Arch.Work.Runtime.1.0.0\build\Xamarin.Android.Arch.Work.Runtime.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Xamarin.Android.Arch.Work.Runtime.1.0.0\build\Xamarin.Android.Arch.Work.Runtime.targets'))" />
   </Target>
   <Import Project="..\packages\Xamarin.Build.Download.0.4.11\build\Xamarin.Build.Download.targets" Condition="Exists('..\packages\Xamarin.Build.Download.0.4.11\build\Xamarin.Build.Download.targets')" />
   <Import Project="..\packages\Xamarin.Android.Support.Annotations.28.0.0.1\build\monoandroid90\Xamarin.Android.Support.Annotations.targets" Condition="Exists('..\packages\Xamarin.Android.Support.Annotations.28.0.0.1\build\monoandroid90\Xamarin.Android.Support.Annotations.targets')" />
@@ -579,4 +606,10 @@
   <Import Project="..\packages\Xamarin.Android.Support.v7.AppCompat.28.0.0.1\build\monoandroid90\Xamarin.Android.Support.v7.AppCompat.targets" Condition="Exists('..\packages\Xamarin.Android.Support.v7.AppCompat.28.0.0.1\build\monoandroid90\Xamarin.Android.Support.v7.AppCompat.targets')" />
   <Import Project="..\packages\Xamarin.Android.Support.v7.RecyclerView.28.0.0.1\build\monoandroid90\Xamarin.Android.Support.v7.RecyclerView.targets" Condition="Exists('..\packages\Xamarin.Android.Support.v7.RecyclerView.28.0.0.1\build\monoandroid90\Xamarin.Android.Support.v7.RecyclerView.targets')" />
   <Import Project="..\packages\Xamarin.Android.Support.Design.28.0.0.1\build\monoandroid90\Xamarin.Android.Support.Design.targets" Condition="Exists('..\packages\Xamarin.Android.Support.Design.28.0.0.1\build\monoandroid90\Xamarin.Android.Support.Design.targets')" />
+  <Import Project="..\packages\Xamarin.Android.Arch.Persistence.Db.1.1.1.1\build\Xamarin.Android.Arch.Persistence.Db.targets" Condition="Exists('..\packages\Xamarin.Android.Arch.Persistence.Db.1.1.1.1\build\Xamarin.Android.Arch.Persistence.Db.targets')" />
+  <Import Project="..\packages\Xamarin.Android.Arch.Persistence.Db.Framework.1.1.1.1\build\Xamarin.Android.Arch.Persistence.Db.Framework.targets" Condition="Exists('..\packages\Xamarin.Android.Arch.Persistence.Db.Framework.1.1.1.1\build\Xamarin.Android.Arch.Persistence.Db.Framework.targets')" />
+  <Import Project="..\packages\Xamarin.Android.Arch.Persistence.Room.Common.1.1.1.1\build\Xamarin.Android.Arch.Persistence.Room.Common.targets" Condition="Exists('..\packages\Xamarin.Android.Arch.Persistence.Room.Common.1.1.1.1\build\Xamarin.Android.Arch.Persistence.Room.Common.targets')" />
+  <Import Project="..\packages\Xamarin.Android.Arch.Persistence.Room.Runtime.1.1.1.1\build\Xamarin.Android.Arch.Persistence.Room.Runtime.targets" Condition="Exists('..\packages\Xamarin.Android.Arch.Persistence.Room.Runtime.1.1.1.1\build\Xamarin.Android.Arch.Persistence.Room.Runtime.targets')" />
+  <Import Project="..\packages\Xamarin.Android.Arch.Lifecycle.Extensions.1.1.1.1\build\monoandroid90\Xamarin.Android.Arch.Lifecycle.Extensions.targets" Condition="Exists('..\packages\Xamarin.Android.Arch.Lifecycle.Extensions.1.1.1.1\build\monoandroid90\Xamarin.Android.Arch.Lifecycle.Extensions.targets')" />
+  <Import Project="..\packages\Xamarin.Android.Arch.Work.Runtime.1.0.0\build\Xamarin.Android.Arch.Work.Runtime.targets" Condition="Exists('..\packages\Xamarin.Android.Arch.Work.Runtime.1.0.0\build\Xamarin.Android.Arch.Work.Runtime.targets')" />
 </Project>

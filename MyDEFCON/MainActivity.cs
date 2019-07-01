@@ -18,6 +18,7 @@ using Android.Support.V7.Widget;
 using Android.Content;
 using Android.Support.Transitions;
 using MyDEFCON.Receiver;
+using System;
 
 namespace MyDEFCON
 {
@@ -32,19 +33,21 @@ namespace MyDEFCON
         ISettingsService _settingsService;
         string _fragmentTag;
         AppRestrictionsReceiver _appRestrictiosReceiver;
+        IWorkerService _workerService;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             unityContainer = new UnityContainer();
-            unityContainer.RegisterInstance<Context>(ApplicationContext);
+            //unityContainer.RegisterInstance<Context>(ApplicationContext);
             unityContainer.RegisterSingleton<IEventService, EventService>();
             unityContainer.RegisterInstance<ISettingsService>(SettingsService.Instance());
             _eventService = unityContainer.Resolve<IEventService>();
             _settingsService = unityContainer.Resolve<ISettingsService>();
             unityContainer.RegisterInstance<ISQLiteDependencies>(SQLiteDependencies.GetInstance(_settingsService.GetLocalFilePath("checklist.db")));
             unityContainer.RegisterType<ICounterService, CounterService>();
-            unityContainer.RegisterSingleton<IJobService, JobManagementService>();
+            unityContainer.RegisterSingleton<IWorkerService, WorkerService>();
+            _workerService = unityContainer.Resolve<IWorkerService>();
             UnityServiceLocator unityServiceLocator = new UnityServiceLocator(unityContainer);
             ServiceLocator.SetLocatorProvider(() => unityServiceLocator);
 
@@ -96,6 +99,7 @@ namespace MyDEFCON
                 startServiceIntent.SetAction(Constants.ACTION_START_SERVICE);
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.O) StartForegroundService(startServiceIntent);
                 else StartService(startServiceIntent);
+                _workerService.CreateUniquePeriodicWorker<KeepForegroundServiceRunningWorker>(TimeSpan.FromMinutes(15));
             }
             _appRestrictiosReceiver = new AppRestrictionsReceiver();
         }

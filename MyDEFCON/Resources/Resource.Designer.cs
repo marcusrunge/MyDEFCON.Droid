@@ -1607,8 +1607,17 @@ namespace MyDEFCON
 			// aapt resource value: 0x7f0e0002
 			public const int abc_config_actionMenuItemAllCaps = 2131623938;
 			
+			// aapt resource value: 0x7f0e0004
+			public const int enable_system_alarm_service_default = 2131623940;
+			
+			// aapt resource value: 0x7f0e0005
+			public const int enable_system_job_service_default = 2131623941;
+			
 			// aapt resource value: 0x7f0e0003
 			public const int mtrl_btn_textappearance_all_caps = 2131623939;
+			
+			// aapt resource value: 0x7f0e0006
+			public const int workmanager_test_configuration = 2131623942;
 			
 			static Boolean()
 			{

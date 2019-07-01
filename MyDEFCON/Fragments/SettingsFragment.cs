@@ -3,16 +3,19 @@ using Android.OS;
 using Android.Views;
 using CommonServiceLocator;
 using MyDEFCON.Services;
+using System;
 
 namespace MyDEFCON.Fragments
 {
     public class SettingsFragment : Android.Support.V4.App.Fragment
     {
         ISettingsService _settingsService;
+        IWorkerService _workerService;
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             _settingsService = ServiceLocator.Current.GetInstance<ISettingsService>();
+            _workerService = ServiceLocator.Current.GetInstance<IWorkerService>();
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -69,6 +72,7 @@ namespace MyDEFCON.Fragments
                     stopServiceIntent.SetAction(Constants.ACTION_STOP_SERVICE);
                     Context.StopService(stopServiceIntent);
                     if (_settingsService.GetSetting<bool>("IsBroadcastEnabled")) Context.StartService(new Intent(Context, typeof(UdpClientService)));
+                    _workerService.CancelWorker<KeepForegroundServiceRunningWorker>();
                 }
                 else
                 {
@@ -82,6 +86,7 @@ namespace MyDEFCON.Fragments
                     startServiceIntent.SetAction(Constants.ACTION_START_SERVICE);
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.O) Context.StartForegroundService(startServiceIntent);
                     else Context.StartService(startServiceIntent);
+                    _workerService.CreateUniquePeriodicWorker<KeepForegroundServiceRunningWorker>(TimeSpan.FromMinutes(15));
                 }
                 _settingsService.SaveSetting("IsForegroundServiceEnabled", e.IsChecked);
             };
