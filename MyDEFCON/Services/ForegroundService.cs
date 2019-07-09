@@ -14,6 +14,8 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Unity;
+using Unity.ServiceLocation;
 
 namespace MyDEFCON.Services
 {
@@ -37,6 +39,13 @@ namespace MyDEFCON.Services
             _cancellationTokenSource = new CancellationTokenSource();
             _cancellationToken = _cancellationTokenSource.Token;
             _lastConnect = DateTimeOffset.MinValue;
+            if (!ServiceLocator.IsLocationProviderSet)
+            {
+                var unityContainer = new UnityContainer();
+                unityContainer.RegisterInstance<ISettingsService>(SettingsService.Instance());
+                UnityServiceLocator unityServiceLocator = new UnityServiceLocator(unityContainer);
+                ServiceLocator.SetLocatorProvider(() => unityServiceLocator);
+            }
             _settingsService = ServiceLocator.Current.GetInstance<ISettingsService>();
             _defconStatusReceiver = new ForegroundDefconStatusReceiver(new CallBack((x) =>
             {
