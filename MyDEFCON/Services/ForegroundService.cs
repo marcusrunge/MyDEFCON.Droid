@@ -3,6 +3,7 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
+using Android.Support.V4.App;
 using Android.Support.V4.Content;
 using CommonServiceLocator;
 using MyDEFCON.Models;
@@ -204,7 +205,8 @@ namespace MyDEFCON.Services
                 default:
                     break;
             }
-            return new Notification.Builder(this, "DefconNotificationChannel")
+
+            return new NotificationCompat.Builder(this, "DefconNotificationChannel")
                 .SetContentTitle(contentText)
                 .SetSmallIcon(smallIconResourceId)
                 .SetContentIntent(BuildIntentToShowMainActivity())
