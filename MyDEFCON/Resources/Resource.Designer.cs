@@ -3222,8 +3222,8 @@ namespace MyDEFCON
 			// aapt resource value: 0x7f0a008e
 			public const int action_context_bar = 2131361934;
 			
-			// aapt resource value: 0x7f0a00e3
-			public const int action_delete = 2131362019;
+			// aapt resource value: 0x7f0a00e4
+			public const int action_delete = 2131362020;
 			
 			// aapt resource value: 0x7f0a00cb
 			public const int action_divider = 2131361995;
@@ -3381,20 +3381,20 @@ namespace MyDEFCON
 			// aapt resource value: 0x7f0a006f
 			public const int default_activity_button = 2131361903;
 			
-			// aapt resource value: 0x7f0a00db
-			public const int defcon1Button = 2131362011;
-			
 			// aapt resource value: 0x7f0a00dc
-			public const int defcon2Button = 2131362012;
+			public const int defcon1Button = 2131362012;
 			
 			// aapt resource value: 0x7f0a00dd
-			public const int defcon3Button = 2131362013;
+			public const int defcon2Button = 2131362013;
 			
 			// aapt resource value: 0x7f0a00de
-			public const int defcon4Button = 2131362014;
+			public const int defcon3Button = 2131362014;
 			
 			// aapt resource value: 0x7f0a00df
-			public const int defcon5Button = 2131362015;
+			public const int defcon4Button = 2131362015;
+			
+			// aapt resource value: 0x7f0a00e0
+			public const int defcon5Button = 2131362016;
 			
 			// aapt resource value: 0x7f0a00ba
 			public const int design_bottom_sheet = 2131361978;
@@ -3501,6 +3501,9 @@ namespace MyDEFCON
 			// aapt resource value: 0x7f0a00d9
 			public const int isMulticastEnabledSwitch = 2131362009;
 			
+			// aapt resource value: 0x7f0a00db
+			public const int isStatusUpdateAlertEnabledSwitch = 2131362011;
+			
 			// aapt resource value: 0x7f0a0068
 			public const int italic = 2131361896;
 			
@@ -3528,26 +3531,26 @@ namespace MyDEFCON
 			// aapt resource value: 0x7f0a0070
 			public const int list_item = 2131361904;
 			
-			// aapt resource value: 0x7f0a00e2
-			public const int masked = 2131362018;
+			// aapt resource value: 0x7f0a00e3
+			public const int masked = 2131362019;
 			
 			// aapt resource value: 0x7f0a00ca
 			public const int media_actions = 2131361994;
 			
-			// aapt resource value: 0x7f0a00e8
-			public const int menu_about = 2131362024;
-			
-			// aapt resource value: 0x7f0a00e5
-			public const int menu_checklist = 2131362021;
-			
-			// aapt resource value: 0x7f0a00e7
-			public const int menu_settings = 2131362023;
+			// aapt resource value: 0x7f0a00e9
+			public const int menu_about = 2131362025;
 			
 			// aapt resource value: 0x7f0a00e6
-			public const int menu_share = 2131362022;
+			public const int menu_checklist = 2131362022;
 			
-			// aapt resource value: 0x7f0a00e4
-			public const int menu_status = 2131362020;
+			// aapt resource value: 0x7f0a00e8
+			public const int menu_settings = 2131362024;
+			
+			// aapt resource value: 0x7f0a00e7
+			public const int menu_share = 2131362023;
+			
+			// aapt resource value: 0x7f0a00e5
+			public const int menu_status = 2131362021;
 			
 			// aapt resource value: 0x7f0a009c
 			public const int message = 2131361948;
@@ -3570,8 +3573,8 @@ namespace MyDEFCON
 			// aapt resource value: 0x7f0a00c1
 			public const int mydefconFrameLayout = 2131361985;
 			
-			// aapt resource value: 0x7f0a00e0
-			public const int mydefconWidgetBackgroundShape = 2131362016;
+			// aapt resource value: 0x7f0a00e1
+			public const int mydefconWidgetBackgroundShape = 2131362017;
 			
 			// aapt resource value: 0x7f0a00c2
 			public const int mydefconWidgetLinearLayout = 2131361986;
@@ -3858,8 +3861,8 @@ namespace MyDEFCON
 			// aapt resource value: 0x7f0a001b
 			public const int view_offset_helper = 2131361819;
 			
-			// aapt resource value: 0x7f0a00e1
-			public const int visible = 2131362017;
+			// aapt resource value: 0x7f0a00e2
+			public const int visible = 2131362018;
 			
 			// aapt resource value: 0x7f0a0043
 			public const int withText = 2131361859;

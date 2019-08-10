@@ -24,6 +24,8 @@ namespace MyDEFCON.Fragments
             var isBroadcastEnabledSwitch = view.FindViewById<Android.Support.V7.Widget.SwitchCompat>(Resource.Id.isBroadcastEnabledSwitch);
             var isMulticastEnabledSwitch = view.FindViewById<Android.Support.V7.Widget.SwitchCompat>(Resource.Id.isMulticastEnabledSwitch);
             var isForegroundServiceEnabledSwitch = view.FindViewById<Android.Support.V7.Widget.SwitchCompat>(Resource.Id.isForegroundServiceEnabledSwitch);
+            var isStatusUpdateAlertEnabledSwitch = view.FindViewById<Android.Support.V7.Widget.SwitchCompat>(Resource.Id.isStatusUpdateAlertEnabledSwitch);
+            var statusUpdateAlertSelectSpinner = view.FindViewById<Android.Widget.Spinner>(Resource.Id.statusUpdateAlertSelectSpinner);
             isBroadcastEnabledSwitch.Checked = _settingsService.GetSetting<bool>("IsBroadcastEnabled");
             isBroadcastEnabledSwitch.CheckedChange += (s, e) =>
             {
@@ -89,6 +91,12 @@ namespace MyDEFCON.Fragments
                     _workerService.CreateUniquePeriodicWorker<KeepForegroundServiceRunningWorker>(TimeSpan.FromMinutes(15));
                 }
                 _settingsService.SaveSetting("IsForegroundServiceEnabled", e.IsChecked);
+            };
+
+            isStatusUpdateAlertEnabledSwitch.Checked= _settingsService.GetSetting<bool>("isStatusUpdateAlertEnabled");
+            isStatusUpdateAlertEnabledSwitch.CheckedChange += (s, e) => 
+            {
+                _settingsService.SaveSetting("isStatusUpdateAlertEnabled", e.IsChecked);
             };
 
             return view;
