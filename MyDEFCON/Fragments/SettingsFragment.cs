@@ -15,15 +15,19 @@ namespace MyDEFCON.Fragments
     {
         ISettingsService _settingsService;
         IWorkerService _workerService;
+        bool _isOnCreateView;
+        ViewStates _statusUpdateAlertSelectSpinnerViewState;
+
         public override void OnCreate(Bundle savedInstanceState)
         {
-            base.OnCreate(savedInstanceState);
+            base.OnCreate(savedInstanceState);            
             _settingsService = ServiceLocator.Current.GetInstance<ISettingsService>();
             _workerService = ServiceLocator.Current.GetInstance<IWorkerService>();
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
+            _isOnCreateView = true;
             var view = inflater.Inflate(Resource.Layout.settings_fragment, null);
             var isBroadcastEnabledSwitch = view.FindViewById<Android.Support.V7.Widget.SwitchCompat>(Resource.Id.isBroadcastEnabledSwitch);
             var isMulticastEnabledSwitch = view.FindViewById<Android.Support.V7.Widget.SwitchCompat>(Resource.Id.isMulticastEnabledSwitch);
@@ -42,7 +46,7 @@ namespace MyDEFCON.Fragments
                         var tcpClientServiceIntent = new Intent(Context, typeof(TcpClientService));
                         Context.StopService(tcpClientServiceIntent);
                         Context.StartService(tcpClientServiceIntent);
-                    }                    
+                    }
                 }
                 else
                 {
@@ -71,7 +75,7 @@ namespace MyDEFCON.Fragments
             };
             isForegroundServiceEnabledSwitch.Checked = _settingsService.GetSetting<bool>("IsForegroundServiceEnabled");
             isForegroundServiceEnabledSwitch.CheckedChange += (s, e) =>
-            {                
+            {
                 if (!e.IsChecked)
                 {
                     Intent stopServiceIntent = new Intent(Context, typeof(ForegroundService));
@@ -97,8 +101,8 @@ namespace MyDEFCON.Fragments
                 _settingsService.SaveSetting("IsForegroundServiceEnabled", e.IsChecked);
             };
 
-            isStatusUpdateAlertEnabledSwitch.Checked= _settingsService.GetSetting<bool>("isStatusUpdateAlertEnabled");
-            isStatusUpdateAlertEnabledSwitch.CheckedChange += (s, e) => 
+            isStatusUpdateAlertEnabledSwitch.Checked = _settingsService.GetSetting<bool>("isStatusUpdateAlertEnabled");
+            isStatusUpdateAlertEnabledSwitch.CheckedChange += (s, e) =>
             {
                 _settingsService.SaveSetting("isStatusUpdateAlertEnabled", e.IsChecked);
                 statusUpdateAlertSelectSpinner.Visibility = e.IsChecked ? ViewStates.Visible : ViewStates.Gone;
@@ -114,14 +118,25 @@ namespace MyDEFCON.Fragments
             }
             var arrayAdapter = new ArrayAdapter<string>(Context, Resource.Layout.CustomSpinnerItem, ringtoneTitles.ToArray());
             arrayAdapter.SetDropDownViewResource(Android.Resource.Layout.SimpleSpinnerDropDownItem);
-            statusUpdateAlertSelectSpinner.Visibility= isStatusUpdateAlertEnabledSwitch.Checked? ViewStates.Visible : ViewStates.Gone;
+            _statusUpdateAlertSelectSpinnerViewState = isStatusUpdateAlertEnabledSwitch.Checked ? ViewStates.Visible : ViewStates.Gone;
+            statusUpdateAlertSelectSpinner.Visibility = _statusUpdateAlertSelectSpinnerViewState;
             statusUpdateAlertSelectSpinner.Adapter = arrayAdapter;
-            statusUpdateAlertSelectSpinner.ItemSelected += (s, e) => 
+            int statusUpdateAlertSelection = _settingsService.GetSetting<int>("StatusUpdateAlertSelection");
+            statusUpdateAlertSelectSpinner.SetSelection(statusUpdateAlertSelection > -1 ? statusUpdateAlertSelection : 0);
+            statusUpdateAlertSelectSpinner.ItemSelected += (s, e) =>
             {
-                _settingsService.SaveSetting("StatusUpdateAlertSelection", e.Position);                
-            };
-            statusUpdateAlertSelectSpinner.SetSelection(_settingsService.GetSetting<int>("StatusUpdateAlertSelection"));
-                        
+                if ((s as Spinner).Visibility == _statusUpdateAlertSelectSpinnerViewState && !_isOnCreateView)
+                {
+                    _settingsService.SaveSetting("StatusUpdateAlertSelection", e.Position);
+                    Notifier.AlertWithAudioNotification(Context, e.Position);
+                }
+                else
+                {
+                    _statusUpdateAlertSelectSpinnerViewState = (s as Spinner).Visibility;
+                    _isOnCreateView = false;
+                }
+            };            
+
             return view;
         }
 
