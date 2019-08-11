@@ -8,6 +8,7 @@ using Android.Support.V4.Content;
 using CommonServiceLocator;
 using MyDEFCON.Models;
 using MyDEFCON.Receiver;
+using MyDEFCON.Utilities;
 using Newtonsoft.Json;
 using System;
 using System.Net;
@@ -64,31 +65,40 @@ namespace MyDEFCON.Services
                 while (_isStarted)
                 {
                     var udpReceiveResult = await udpClient.ReceiveAsync();
-                    var defconStatus = Encoding.ASCII.GetString(udpReceiveResult.Buffer);
-                    if (int.TryParse(defconStatus, out int parsedDefconStatus))
+                    if (!udpReceiveResult.RemoteEndPoint.Address.ToString().Equals(Networker.GetLocalIp()))
                     {
-                        if (parsedDefconStatus > 0 && parsedDefconStatus < 6)
+                        var defconStatus = Encoding.ASCII.GetString(udpReceiveResult.Buffer);
+                        if (int.TryParse(defconStatus, out int parsedDefconStatus))
                         {
-                            new SettingsService().SaveSetting("DefconStatus", defconStatus.ToString());
+                            if (parsedDefconStatus > 0 && parsedDefconStatus < 6)
+                            {
+                                new SettingsService().SaveSetting("DefconStatus", defconStatus.ToString());
 
-                            Intent widgetIntent = new Intent(this, typeof(MyDefconWidget));
-                            widgetIntent.SetAction("com.marcusrunge.MyDEFCON.DEFCON_UPDATE");
-                            widgetIntent.PutExtra("DefconStatus", defconStatus.ToString());
+                                Intent widgetIntent = new Intent(this, typeof(MyDefconWidget));
+                                widgetIntent.SetAction("com.marcusrunge.MyDEFCON.DEFCON_UPDATE");
+                                widgetIntent.PutExtra("DefconStatus", defconStatus.ToString());
 
-                            Intent statusReceiverIntent = new Intent(this, typeof(ForegroundDefconStatusReceiver));
-                            statusReceiverIntent.SetAction("com.marcusrunge.MyDEFCON.STATUS_RECEIVER_ACTION");
-                            statusReceiverIntent.PutExtra("DefconStatus", defconStatus.ToString());
+                                Intent statusReceiverIntent = new Intent(this, typeof(ForegroundDefconStatusReceiver));
+                                statusReceiverIntent.SetAction("com.marcusrunge.MyDEFCON.STATUS_RECEIVER_ACTION");
+                                statusReceiverIntent.PutExtra("DefconStatus", defconStatus.ToString());
 
-                            SendBroadcast(widgetIntent);
-                            SendBroadcast(statusReceiverIntent);
-                        }
-                        else if (parsedDefconStatus == 0 && _settingsService.GetSetting<bool>("IsMulticastEnabled") && DateTimeOffset.Now > _lastConnect.AddSeconds(5))
-                        {
-                            Intent tcpActionIntent = new Intent(this, typeof(TcpActionReceiver));
-                            tcpActionIntent.SetAction("com.marcusrunge.MyDEFCON.TCP_ACTION");
-                            tcpActionIntent.PutExtra("RemoteEndPointAddress", udpReceiveResult.RemoteEndPoint.Address.ToString());
-                            SendBroadcast(tcpActionIntent);
-                            _lastConnect = DateTimeOffset.Now;
+                                SendBroadcast(widgetIntent);
+                                SendBroadcast(statusReceiverIntent);
+
+                                if (_settingsService.GetSetting<bool>("isStatusUpdateAlertEnabled"))
+                                {
+                                    Notifier.AlertWithVibration();
+                                    Notifier.AlertWithAudioNotification(this, _settingsService.GetSetting<int>("StatusUpdateAlertSelection"));
+                                }
+                            }
+                            else if (parsedDefconStatus == 0 && _settingsService.GetSetting<bool>("IsMulticastEnabled") && DateTimeOffset.Now > _lastConnect.AddSeconds(5))
+                            {
+                                Intent tcpActionIntent = new Intent(this, typeof(TcpActionReceiver));
+                                tcpActionIntent.SetAction("com.marcusrunge.MyDEFCON.TCP_ACTION");
+                                tcpActionIntent.PutExtra("RemoteEndPointAddress", udpReceiveResult.RemoteEndPoint.Address.ToString());
+                                SendBroadcast(tcpActionIntent);
+                                _lastConnect = DateTimeOffset.Now;
+                            }
                         }
                     }
                 }

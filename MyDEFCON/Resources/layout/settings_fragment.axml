@@ -182,8 +182,13 @@
             <Spinner
                 android:id="@+id/statusUpdateAlertSelectSpinner"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_conten"
-            android:layout_gravity="center_horizontal"/>
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:visibility="gone"
+                android:paddingEnd="2dp"
+                android:paddingStart="2dp"
+                android:background="@drawable/border"
+                android:layout_gravity="center_horizontal"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

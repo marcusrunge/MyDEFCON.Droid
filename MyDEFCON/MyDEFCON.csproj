@@ -281,6 +281,8 @@
     <Compile Include="Services\EventService.cs" />
     <Compile Include="Services\TcpClientService.cs" />
     <Compile Include="Services\UdpClientService.cs" />
+    <Compile Include="Utilities\Notifier.cs" />
+    <Compile Include="Utilities\Networker.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
@@ -531,6 +533,14 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-xxxhdpi\ic_stat_5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\CustomSpinnerItem.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\border.xml" />
   </ItemGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

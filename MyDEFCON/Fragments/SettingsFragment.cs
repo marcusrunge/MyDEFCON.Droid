@@ -1,9 +1,13 @@
 ﻿using Android.Content;
+using Android.Media;
 using Android.OS;
 using Android.Views;
+using Android.Widget;
 using CommonServiceLocator;
 using MyDEFCON.Services;
+using MyDEFCON.Utilities;
 using System;
+using System.Collections.Generic;
 
 namespace MyDEFCON.Fragments
 {
@@ -97,8 +101,27 @@ namespace MyDEFCON.Fragments
             isStatusUpdateAlertEnabledSwitch.CheckedChange += (s, e) => 
             {
                 _settingsService.SaveSetting("isStatusUpdateAlertEnabled", e.IsChecked);
+                statusUpdateAlertSelectSpinner.Visibility = e.IsChecked ? ViewStates.Visible : ViewStates.Gone;
             };
 
+            var ringtoneManager = new RingtoneManager(Context);
+            var ringtoneCursor = ringtoneManager.Cursor;
+            List<string> ringtoneTitles = new List<string>();
+            ringtoneCursor.MoveToFirst();
+            while (ringtoneCursor.MoveToNext())
+            {
+                ringtoneTitles.Add(ringtoneCursor.GetString(1));
+            }
+            var arrayAdapter = new ArrayAdapter<string>(Context, Resource.Layout.CustomSpinnerItem, ringtoneTitles.ToArray());
+            arrayAdapter.SetDropDownViewResource(Android.Resource.Layout.SimpleSpinnerDropDownItem);
+            statusUpdateAlertSelectSpinner.Visibility= isStatusUpdateAlertEnabledSwitch.Checked? ViewStates.Visible : ViewStates.Gone;
+            statusUpdateAlertSelectSpinner.Adapter = arrayAdapter;
+            statusUpdateAlertSelectSpinner.ItemSelected += (s, e) => 
+            {
+                _settingsService.SaveSetting("StatusUpdateAlertSelection", e.Position);                
+            };
+            statusUpdateAlertSelectSpinner.SetSelection(_settingsService.GetSetting<int>("StatusUpdateAlertSelection"));
+                        
             return view;
         }
 
