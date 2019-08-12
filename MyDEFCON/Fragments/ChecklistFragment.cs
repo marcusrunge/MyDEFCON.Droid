@@ -78,7 +78,7 @@ namespace MyDEFCON.Fragments
             checklist4Button.Click += async (s, e) => { fragmentDefconStatus = 4; SetButtonColors(4); await ReloadCheckList(4); };
             checklist5Button.Click += async (s, e) => { fragmentDefconStatus = 5; SetButtonColors(5); await ReloadCheckList(5); };
 
-            addFloatingActionButton.Click += async (s, e) => 
+            addFloatingActionButton.Click += async (s, e) =>
             {
                 _onCreateView.PerformHapticFeedback(FeedbackConstants.VirtualKey, FeedbackFlags.IgnoreGlobalSetting);
                 var checkListEntry = new CheckListEntry() { DefconStatus = fragmentDefconStatus, UnixTimeStampCreated = DateTimeOffset.Now.ToUnixTimeMilliseconds(), FontSize = 26 };
@@ -145,7 +145,7 @@ namespace MyDEFCON.Fragments
 
         private async void _eventService_MenuItemPressedEvent(object sender, EventArgs e)
         {
-            {   
+            {
                 if ((e as MenuItemPressedEventArgs).MenuItemTitle.Equals("Share") && (e as MenuItemPressedEventArgs).FragmentTag.Equals("CHK"))
                 {
                     _onCreateView.PerformHapticFeedback(FeedbackConstants.VirtualKey, FeedbackFlags.IgnoreGlobalSetting);
@@ -155,7 +155,12 @@ namespace MyDEFCON.Fragments
                         udpClient.EnableBroadcast = true;
                         var ipEndpoint = new IPEndPoint(IPAddress.Broadcast, 4536);
                         var datagram = Encoding.ASCII.GetBytes("0");
-                        await udpClient.SendAsync(datagram, datagram.Length, ipEndpoint);
+                        try
+                        {
+                            await udpClient.SendAsync(datagram, datagram.Length, ipEndpoint);
+                        }
+                        catch { }
+
                         udpClient.Close();
                     }
                 }
@@ -176,7 +181,7 @@ namespace MyDEFCON.Fragments
                 await SetCounter();
             }
             catch (Exception) { }
-        }        
+        }
 
         private async Task InitButtonAndCounterColors(int defconStatus)
         {
