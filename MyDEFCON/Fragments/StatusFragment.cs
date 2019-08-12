@@ -11,6 +11,7 @@ using MyDEFCON.Services;
 using System;
 using System.IO;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -254,7 +255,12 @@ namespace MyDEFCON.Fragments
                     udpClient.EnableBroadcast = true;
                     var ipEndpoint = new IPEndPoint(IPAddress.Broadcast, 4536);
                     var datagram = Encoding.ASCII.GetBytes(defconStatus.ToString());
-                    await udpClient.SendAsync(datagram, datagram.Length, ipEndpoint);
+                    try
+                    {
+                        await udpClient.SendAsync(datagram, datagram.Length, ipEndpoint);
+                    }
+                    catch { }
+
                     udpClient.Close();
                 }
             }
