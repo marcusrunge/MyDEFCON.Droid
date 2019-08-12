@@ -10,6 +10,7 @@ namespace MyDEFCON.Utilities
         public static void AlertWithAudioNotification(Context context, int ringtoneUriIndex)
         {
             var ringtoneManager = new RingtoneManager(context);
+            ringtoneManager.SetType(RingtoneType.All);
             var ringtoneCursor = ringtoneManager.Cursor;
             ringtoneCursor.MoveToFirst();
             var ringtoneUri = ringtoneManager.GetRingtoneUri(ringtoneUriIndex);

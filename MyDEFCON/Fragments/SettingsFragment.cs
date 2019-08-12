@@ -109,6 +109,7 @@ namespace MyDEFCON.Fragments
             };
 
             var ringtoneManager = new RingtoneManager(Context);
+            ringtoneManager.SetType(RingtoneType.All);
             var ringtoneCursor = ringtoneManager.Cursor;
             List<string> ringtoneTitles = new List<string>();
             ringtoneCursor.MoveToFirst();
