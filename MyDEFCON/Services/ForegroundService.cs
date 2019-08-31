@@ -138,26 +138,47 @@ namespace MyDEFCON.Services
         [return: GeneratedEnum]
         public override StartCommandResult OnStartCommand(Intent intent, [GeneratedEnum] StartCommandFlags flags, int startId)
         {
-            if (intent.Action.Equals(Constants.ACTION_START_SERVICE))
+            if (intent != null)
             {
-                if (_isStarted)
+                try
                 {
+                    if (intent.Action.Equals(Constants.ACTION_START_SERVICE))
+                    {
+                        if (_isStarted)
+                        {
+                        }
+                        else
+                        {
+                            RegisterForegroundService();
+                            _isStarted = true;
+                            //_tcpClientTask = Task.Factory.StartNew(TcpClientAction, _cancellationToken);
+                            _udpClientTask = Task.Factory.StartNew(UdpClientAction, _cancellationToken);
+                        }
+                    }
+                    else if (intent.Action.Equals(Constants.ACTION_STOP_SERVICE))
+                    {
+                        StopForeground(true);
+                        StopSelf();
+                        _isStarted = false;
+                    }
                 }
-                else
+                catch { }
+            }
+            try
+            {
+                return StartCommandResult.Sticky;
+            }
+            catch
+            {
+                try
                 {
-                    RegisterForegroundService();
-                    _isStarted = true;
-                    //_tcpClientTask = Task.Factory.StartNew(TcpClientAction, _cancellationToken);
-                    _udpClientTask = Task.Factory.StartNew(UdpClientAction, _cancellationToken);
+                    return StartCommandResult.StickyCompatibility;
+                }
+                catch
+                {
+                    return StartCommandResult.NotSticky;
                 }
             }
-            else if (intent.Action.Equals(Constants.ACTION_STOP_SERVICE))
-            {
-                StopForeground(true);
-                StopSelf();
-                _isStarted = false;
-            }
-            return StartCommandResult.Sticky;
         }
 
         public override IBinder OnBind(Intent intent)
@@ -180,17 +201,21 @@ namespace MyDEFCON.Services
 
         void RegisterForegroundService()
         {
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+            try
             {
-                var notificationChannel = new NotificationChannel("DefconNotificationChannel", "DefconNotificationChannel", NotificationImportance.Low)
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                 {
-                    Description = "Foreground Service Notification Channel"
-                };
-                var notificationManager = (NotificationManager)GetSystemService(NotificationService);
-                notificationManager.CreateNotificationChannel(notificationChannel);
-            }
+                    var notificationChannel = new NotificationChannel("DefconNotificationChannel", "DefconNotificationChannel", NotificationImportance.Low)
+                    {
+                        Description = "Foreground Service Notification Channel"
+                    };
+                    var notificationManager = (NotificationManager)GetSystemService(NotificationService);
+                    notificationManager.CreateNotificationChannel(notificationChannel);
+                }
 
-            StartForeground(Constants.SERVICE_RUNNING_NOTIFICATION_ID, BuildNotification());
+                StartForeground(Constants.SERVICE_RUNNING_NOTIFICATION_ID, BuildNotification());
+            }
+            catch { }
         }
 
         Notification BuildNotification()
