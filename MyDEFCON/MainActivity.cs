@@ -48,9 +48,11 @@ namespace MyDEFCON
             unityContainer.RegisterType<ICounterService, CounterService>();
             unityContainer.RegisterSingleton<IWorkerService, WorkerService>();
             _workerService = unityContainer.Resolve<IWorkerService>();
-            UnityServiceLocator unityServiceLocator = new UnityServiceLocator(unityContainer);
-            ServiceLocator.SetLocatorProvider(() => unityServiceLocator);
-
+            if (!ServiceLocator.IsLocationProviderSet)
+            {
+                UnityServiceLocator unityServiceLocator = new UnityServiceLocator(unityContainer);
+                ServiceLocator.SetLocatorProvider(() => unityServiceLocator);
+            }
             SetContentView(Resource.Layout.activity_main);
             _navigation = FindViewById<BottomNavigationView>(Resource.Id.bottomNavigationView);
             _navigation.SetOnNavigationItemSelectedListener(this);
