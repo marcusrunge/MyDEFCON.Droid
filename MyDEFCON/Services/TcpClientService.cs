@@ -64,8 +64,16 @@ namespace MyDEFCON.Services
         public override void OnDestroy()
         {
             _isServiceRunning = false;
-            _cancellationTokenSource.Cancel();
-            _tcpListener.Stop();                      
+            try
+            {
+                _cancellationTokenSource.Cancel();
+            }
+            catch { }
+            try
+            {
+                _tcpListener.Stop();
+            }
+            catch { }
             base.OnDestroy();
         }
     }
