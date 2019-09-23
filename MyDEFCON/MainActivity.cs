@@ -19,6 +19,7 @@ using Android.Content;
 using Android.Support.Transitions;
 using MyDEFCON.Receiver;
 using System;
+using ForegroundService = MyDEFCON.Services.ForegroundService;
 
 namespace MyDEFCON
 {
