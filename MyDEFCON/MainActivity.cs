@@ -1,24 +1,23 @@
 using Android.App;
+using Android.Content;
 using Android.Content.PM;
+using Android.Graphics;
 using Android.OS;
-using Android.Views;
-
-using MyDEFCON.Fragments;
-using Android.Support.V7.App;
 using Android.Support.Design.Widget;
+using Android.Support.Transitions;
+using Android.Support.V7.App;
+using Android.Support.V7.Widget;
+using Android.Views;
+using CommonServiceLocator;
+using MyDEFCON.Fragments;
+using MyDEFCON.Models;
+using MyDEFCON.Receiver;
 using MyDEFCON.Services;
 using SQLite;
-using MyDEFCON.Models;
-using static Android.App.ActivityManager;
-using Android.Graphics;
+using System;
 using Unity;
 using Unity.ServiceLocation;
-using CommonServiceLocator;
-using Android.Support.V7.Widget;
-using Android.Content;
-using Android.Support.Transitions;
-using MyDEFCON.Receiver;
-using System;
+using static Android.App.ActivityManager;
 using ForegroundService = MyDEFCON.Services.ForegroundService;
 
 namespace MyDEFCON

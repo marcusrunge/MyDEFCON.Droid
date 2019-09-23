@@ -1,10 +1,10 @@
 ﻿using Android.App;
-using Android.Content;
-using Android.Widget;
 using Android.Appwidget;
-using MyDEFCON.Services;
+using Android.Content;
 using Android.Graphics;
 using Android.OS;
+using Android.Widget;
+using MyDEFCON.Services;
 using System;
 
 namespace MyDEFCON
@@ -14,9 +14,9 @@ namespace MyDEFCON
     [MetaData("android.appwidget.provider", Resource = "@xml/mydefconwidgetprovider")]
 
     public class MyDefconWidget : AppWidgetProvider
-    {        
+    {
         public override void OnUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
-        {            
+        {
             base.OnUpdate(context, appWidgetManager, appWidgetIds);
             var defconStatus = GetApplicationDefconStatus().ToString();
             for (int i = 0; i < appWidgetIds.Length; i++)
@@ -80,7 +80,7 @@ namespace MyDEFCON
             string defconStatus = null;
             if (intent.Action.Equals("com.marcusrunge.MyDEFCON.DEFCON_UPDATE"))
             {
-                defconStatus = intent.GetStringExtra("DefconStatus");                
+                defconStatus = intent.GetStringExtra("DefconStatus");
             }
             else if (intent.Action.Equals("android.intent.action.APPLICATION_RESTRICTIONS_CHANGED"))
             {
@@ -113,7 +113,7 @@ namespace MyDEFCON
                 remoteViews.SetOnClickPendingIntent(Resource.Id.mydefconWidgetLinearLayout, pendingIntent);
                 appWidgetManager.UpdateAppWidget(componentName, remoteViews);
             }
-        }        
+        }
 
         private int GetApplicationDefconStatus()
         {
@@ -121,6 +121,6 @@ namespace MyDEFCON
             var returnedDefconStatus = new SettingsService().GetSetting<string>("DefconStatus");
             if (!String.IsNullOrEmpty(returnedDefconStatus)) return int.Parse(returnedDefconStatus);
             return defconStatus;
-        }        
+        }
     }
 }

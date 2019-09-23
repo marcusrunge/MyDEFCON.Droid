@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 using Android.Graphics;
 using Android.OS;
 using Android.Support.Design.Widget;
@@ -17,6 +11,12 @@ using MyDEFCON.Adapter;
 using MyDEFCON.Models;
 using MyDEFCON.Services;
 using SQLite;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace MyDEFCON.Fragments
 {

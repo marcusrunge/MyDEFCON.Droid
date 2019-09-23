@@ -7,10 +7,10 @@ namespace MyDEFCON.Models
         SQLiteAsyncConnection AsyncConnection { get; set; }
     }
     public class SQLiteDependencies : ISQLiteDependencies
-    {       
+    {
         public SQLiteAsyncConnection AsyncConnection { get; set; }
         public SQLiteDependencies(string localFilePath)
-        {            
+        {
             AsyncConnection = new SQLiteAsyncConnection(localFilePath);
         }
         public static SQLiteDependencies GetInstance(string localFilePath)

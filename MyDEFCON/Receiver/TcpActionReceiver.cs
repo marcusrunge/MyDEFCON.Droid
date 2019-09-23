@@ -4,10 +4,10 @@ using CommonServiceLocator;
 using MyDEFCON.Models;
 using MyDEFCON.Services;
 using Newtonsoft.Json;
+using SQLite;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using SQLite;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 
@@ -40,7 +40,7 @@ namespace MyDEFCON.Receiver
                   //TcpClient tcpClient = new TcpClient(remoteEndPointAddress, 4537);
                   TcpClient tcpClient = new TcpClient();
                   try
-                  { 
+                  {
                       await tcpClient.ConnectAsync(remoteEndPointAddress, 4537);
                       NetworkStream networkStream = tcpClient.GetStream();
                       string result;

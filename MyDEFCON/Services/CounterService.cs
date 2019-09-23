@@ -1,9 +1,9 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using Android.Graphics;
+﻿using Android.Graphics;
 using MyDEFCON.Models;
 using Plugin.Badge;
 using SQLite;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace MyDEFCON.Services
 {

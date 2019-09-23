@@ -20,7 +20,7 @@ namespace MyDEFCON.Fragments
 
         public override void OnCreate(Bundle savedInstanceState)
         {
-            base.OnCreate(savedInstanceState);            
+            base.OnCreate(savedInstanceState);
             _settingsService = ServiceLocator.Current.GetInstance<ISettingsService>();
             _workerService = ServiceLocator.Current.GetInstance<IWorkerService>();
         }
@@ -136,7 +136,7 @@ namespace MyDEFCON.Fragments
                     _statusUpdateAlertSelectSpinnerViewState = (s as Spinner).Visibility;
                     _isOnCreateView = false;
                 }
-            };            
+            };
 
             return view;
         }

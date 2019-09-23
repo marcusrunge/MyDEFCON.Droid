@@ -1,24 +1,24 @@
-﻿using System;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Android.App;
+﻿using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
 using CommonServiceLocator;
 using MyDEFCON.Receiver;
 using MyDEFCON.Utilities;
+using System;
+using System.Net.Sockets;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MyDEFCON.Services
 {
     [Service(Exported = false, Name = "com.marcusrunge.MyDEFCON.UdpClientService")]
     public class UdpClientService : Service
     {
-        private UdpClient _udpClient = null;        
+        private UdpClient _udpClient = null;
         ISettingsService _settingsService;
-        IEventService _eventService;        
+        IEventService _eventService;
         private static DateTimeOffset _lastConnect;
         private bool _isConnectionBlocked, _isServiceRunning;
         CancellationTokenSource _cancellationTokenSource;
@@ -33,7 +33,7 @@ namespace MyDEFCON.Services
 
         public override void OnDestroy()
         {
-            _isServiceRunning = false;            
+            _isServiceRunning = false;
             _cancellationTokenSource.Cancel();
             _udpClient.Close();
             base.OnDestroy();

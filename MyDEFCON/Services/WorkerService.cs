@@ -1,5 +1,5 @@
-﻿using System;
-using AndroidX.Work;
+﻿using AndroidX.Work;
+using System;
 
 namespace MyDEFCON.Services
 {
