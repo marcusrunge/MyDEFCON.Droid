@@ -34,8 +34,8 @@ namespace MyDEFCON.Services
         public override void OnDestroy()
         {
             _isServiceRunning = false;
-            _cancellationTokenSource.Cancel();
-            _udpClient.Close();
+            if (_cancellationTokenSource != null) _cancellationTokenSource.Cancel();
+            if (_udpClient != null) _udpClient.Close();
             base.OnDestroy();
         }
 

@@ -222,75 +222,75 @@ namespace MyDEFCON.Fragments
             switch (defconStatus)
             {
                 case 1:
-                    checklist1Button.Background.SetColorFilter(Color.ParseColor("#FFFFFFFF"), PorterDuff.Mode.Multiply);
+                    checklist1Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FFFFFFFF"), BlendMode.SrcAtop));
                     checklist1Button.SetTextColor(Color.ParseColor("#FF404040"));
-                    checklist2Button.Background.SetColorFilter(Color.ParseColor("#FF400C00"), PorterDuff.Mode.Multiply);
+                    checklist2Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF400C00"), BlendMode.SrcAtop));
                     checklist2Button.SetTextColor(Color.ParseColor("#FFFF7100"));
-                    checklist3Button.Background.SetColorFilter(Color.ParseColor("#FF404000"), PorterDuff.Mode.Multiply);
+                    checklist3Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF404000"), BlendMode.SrcAtop));
                     checklist3Button.SetTextColor(Color.ParseColor("#FFFFFF00"));
-                    checklist4Button.Background.SetColorFilter(Color.ParseColor("#FF003500"), PorterDuff.Mode.Multiply);
+                    checklist4Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF003500"), BlendMode.SrcAtop));
                     checklist4Button.SetTextColor(Color.ParseColor("#FF00F200"));
-                    checklist5Button.Background.SetColorFilter(Color.ParseColor("#FF002340"), PorterDuff.Mode.Multiply);
+                    checklist5Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF002340"), BlendMode.SrcAtop));
                     checklist5Button.SetTextColor(Color.ParseColor("#FF0066FF"));
                     break;
                 case 2:
-                    checklist1Button.Background.SetColorFilter(Color.ParseColor("#FF404040"), PorterDuff.Mode.Multiply);
+                    checklist1Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF404040"), BlendMode.SrcAtop));
                     checklist1Button.SetTextColor(Color.ParseColor("#FFFFFFFF"));
-                    checklist2Button.Background.SetColorFilter(Color.ParseColor("#FFFF7100"), PorterDuff.Mode.Multiply);
+                    checklist2Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FFFF7100"), BlendMode.SrcAtop));
                     checklist2Button.SetTextColor(Color.ParseColor("#FF400C00"));
-                    checklist3Button.Background.SetColorFilter(Color.ParseColor("#FF404000"), PorterDuff.Mode.Multiply);
+                    checklist3Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF404000"), BlendMode.SrcAtop));
                     checklist3Button.SetTextColor(Color.ParseColor("#FFFFFF00"));
-                    checklist4Button.Background.SetColorFilter(Color.ParseColor("#FF003500"), PorterDuff.Mode.Multiply);
+                    checklist4Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF003500"), BlendMode.SrcAtop));
                     checklist4Button.SetTextColor(Color.ParseColor("#FF00F200"));
-                    checklist5Button.Background.SetColorFilter(Color.ParseColor("#FF002340"), PorterDuff.Mode.Multiply);
+                    checklist5Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF002340"), BlendMode.SrcAtop));
                     checklist5Button.SetTextColor(Color.ParseColor("#FF0066FF"));
                     break;
                 case 3:
-                    checklist1Button.Background.SetColorFilter(Color.ParseColor("#FF404040"), PorterDuff.Mode.Multiply);
+                    checklist1Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF404040"), BlendMode.SrcAtop));
                     checklist1Button.SetTextColor(Color.ParseColor("#FFFFFFFF"));
-                    checklist2Button.Background.SetColorFilter(Color.ParseColor("#FF400C00"), PorterDuff.Mode.Multiply);
+                    checklist2Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF400C00"), BlendMode.SrcAtop));
                     checklist2Button.SetTextColor(Color.ParseColor("#FFFF7100"));
-                    checklist3Button.Background.SetColorFilter(Color.ParseColor("#FFFFFF00"), PorterDuff.Mode.Multiply);
+                    checklist3Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FFFFFF00"), BlendMode.SrcAtop));
                     checklist3Button.SetTextColor(Color.ParseColor("#FF404000"));
-                    checklist4Button.Background.SetColorFilter(Color.ParseColor("#FF003500"), PorterDuff.Mode.Multiply);
+                    checklist4Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF003500"), BlendMode.SrcAtop));
                     checklist4Button.SetTextColor(Color.ParseColor("#FF00F200"));
-                    checklist5Button.Background.SetColorFilter(Color.ParseColor("#FF002340"), PorterDuff.Mode.Multiply);
+                    checklist5Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF002340"), BlendMode.SrcAtop));
                     checklist5Button.SetTextColor(Color.ParseColor("#FF0066FF"));
                     break;
                 case 4:
-                    checklist1Button.Background.SetColorFilter(Color.ParseColor("#FF404040"), PorterDuff.Mode.Multiply);
+                    checklist1Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF404040"), BlendMode.SrcAtop));
                     checklist1Button.SetTextColor(Color.ParseColor("#FFFFFFFF"));
-                    checklist2Button.Background.SetColorFilter(Color.ParseColor("#FF400C00"), PorterDuff.Mode.Multiply);
+                    checklist2Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF400C00"), BlendMode.SrcAtop));
                     checklist2Button.SetTextColor(Color.ParseColor("#FFFF7100"));
-                    checklist3Button.Background.SetColorFilter(Color.ParseColor("#FF404000"), PorterDuff.Mode.Multiply);
+                    checklist3Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF404000"), BlendMode.SrcAtop));
                     checklist3Button.SetTextColor(Color.ParseColor("#FFFFFF00"));
-                    checklist4Button.Background.SetColorFilter(Color.ParseColor("#FF00F200"), PorterDuff.Mode.Multiply);
+                    checklist4Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF00F200"), BlendMode.SrcAtop));
                     checklist4Button.SetTextColor(Color.ParseColor("#FF003500"));
-                    checklist5Button.Background.SetColorFilter(Color.ParseColor("#FF002340"), PorterDuff.Mode.Multiply);
+                    checklist5Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF002340"), BlendMode.SrcAtop));
                     checklist5Button.SetTextColor(Color.ParseColor("#FF0066FF"));
                     break;
                 case 5:
-                    checklist1Button.Background.SetColorFilter(Color.ParseColor("#FF404040"), PorterDuff.Mode.Multiply);
+                    checklist1Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF404040"), BlendMode.SrcAtop));
                     checklist1Button.SetTextColor(Color.ParseColor("#FFFFFFFF"));
-                    checklist2Button.Background.SetColorFilter(Color.ParseColor("#FF400C00"), PorterDuff.Mode.Multiply);
+                    checklist2Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF400C00"), BlendMode.SrcAtop));
                     checklist2Button.SetTextColor(Color.ParseColor("#FFFF7100"));
-                    checklist3Button.Background.SetColorFilter(Color.ParseColor("#FF404000"), PorterDuff.Mode.Multiply);
+                    checklist3Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF404000"), BlendMode.SrcAtop));
                     checklist3Button.SetTextColor(Color.ParseColor("#FFFFFF00"));
-                    checklist4Button.Background.SetColorFilter(Color.ParseColor("#FF003500"), PorterDuff.Mode.Multiply);
+                    checklist4Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF003500"), BlendMode.SrcAtop));
                     checklist4Button.SetTextColor(Color.ParseColor("#FF00F200"));
-                    checklist5Button.Background.SetColorFilter(Color.ParseColor("#FF0066FF"), PorterDuff.Mode.Multiply);
+                    checklist5Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF0066FF"), BlendMode.SrcAtop));
                     checklist5Button.SetTextColor(Color.ParseColor("#FF002340"));
                     break;
                 default:
-                    checklist1Button.Background.SetColorFilter(Color.ParseColor("#FF404040"), PorterDuff.Mode.Multiply);
+                    checklist1Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF404040"), BlendMode.SrcAtop));
                     checklist1Button.SetTextColor(Color.ParseColor("#FFFFFFFF"));
-                    checklist2Button.Background.SetColorFilter(Color.ParseColor("#FF400C00"), PorterDuff.Mode.Multiply);
+                    checklist2Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF400C00"), BlendMode.SrcAtop));
                     checklist2Button.SetTextColor(Color.ParseColor("#FFFF7100"));
-                    checklist3Button.Background.SetColorFilter(Color.ParseColor("#FF404000"), PorterDuff.Mode.Multiply);
+                    checklist3Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF404000"), BlendMode.SrcAtop));
                     checklist3Button.SetTextColor(Color.ParseColor("#FFFFFF00"));
-                    checklist4Button.Background.SetColorFilter(Color.ParseColor("#FF003500"), PorterDuff.Mode.Multiply);
+                    checklist4Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF003500"), BlendMode.SrcAtop));
                     checklist4Button.SetTextColor(Color.ParseColor("#FF00F200"));
-                    checklist5Button.Background.SetColorFilter(Color.ParseColor("#FF002340"), PorterDuff.Mode.Multiply);
+                    checklist5Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF002340"), BlendMode.SrcAtop));
                     checklist5Button.SetTextColor(Color.ParseColor("#FF0066FF"));
                     break;
             }
@@ -326,7 +326,7 @@ namespace MyDEFCON.Fragments
                 //    await SetCounter();
                 //});
                 _sqLiteAsyncConnection.UpdateAsync(checkListEntry);
-                SetCounter();
+                Task.Run(() => Activity.RunOnUiThread(async () => await SetCounter()));
                 _checklistRecyclerViewAdapter.ClickedItem = -1;
                 mode.Finish();
             }

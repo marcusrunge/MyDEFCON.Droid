@@ -66,12 +66,12 @@ namespace MyDEFCON.Services
             _isServiceRunning = false;
             try
             {
-                _cancellationTokenSource.Cancel();
+                if (_cancellationTokenSource != null) _cancellationTokenSource.Cancel();
             }
             catch { }
             try
             {
-                _tcpListener.Stop();
+                if (_tcpListener != null) _tcpListener.Stop();
             }
             catch { }
             base.OnDestroy();
