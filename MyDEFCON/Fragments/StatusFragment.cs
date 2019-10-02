@@ -162,75 +162,141 @@ namespace MyDEFCON.Fragments
             switch (defconStatus)
             {
                 case 1:
-                    defcon1Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FFFFFFFF"), BlendMode.SrcAtop));
-                    defcon1Button.SetTextColor(Color.ParseColor("#FF404040"));
-                    defcon2Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF400C00"), BlendMode.SrcAtop));
-                    defcon2Button.SetTextColor(Color.ParseColor("#FFFF7100"));
-                    defcon3Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF404000"), BlendMode.SrcAtop));
-                    defcon3Button.SetTextColor(Color.ParseColor("#FFFFFF00"));
-                    defcon4Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF003500"), BlendMode.SrcAtop));
-                    defcon4Button.SetTextColor(Color.ParseColor("#FF00F200"));
-                    defcon5Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF002340"), BlendMode.SrcAtop));
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.Q) 
+                    {
+                        defcon1Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FFFFFFFF"), BlendMode.SrcAtop));
+                        defcon2Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF400C00"), BlendMode.SrcAtop));
+                        defcon3Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF404000"), BlendMode.SrcAtop));
+                        defcon4Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF003500"), BlendMode.SrcAtop));
+                        defcon5Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF002340"), BlendMode.SrcAtop));
+                    }
+                    else
+                    {
+                        defcon1Button.Background.SetColorFilter(Color.ParseColor("#FFFFFFFF"), PorterDuff.Mode.Multiply);
+                        defcon2Button.Background.SetColorFilter(Color.ParseColor("#FF400C00"), PorterDuff.Mode.Multiply);
+                        defcon3Button.Background.SetColorFilter(Color.ParseColor("#FF404000"), PorterDuff.Mode.Multiply);
+                        defcon4Button.Background.SetColorFilter(Color.ParseColor("#FF003500"), PorterDuff.Mode.Multiply);
+                        defcon5Button.Background.SetColorFilter(Color.ParseColor("#FF002340"), PorterDuff.Mode.Multiply);
+                    }                        
+                    defcon1Button.SetTextColor(Color.ParseColor("#FF404040"));                    
+                    defcon2Button.SetTextColor(Color.ParseColor("#FFFF7100"));                    
+                    defcon3Button.SetTextColor(Color.ParseColor("#FFFFFF00"));                    
+                    defcon4Button.SetTextColor(Color.ParseColor("#FF00F200"));                    
                     defcon5Button.SetTextColor(Color.ParseColor("#FF0066FF"));
                     break;
                 case 2:
-                    defcon1Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF404040"), BlendMode.SrcAtop));
-                    defcon1Button.SetTextColor(Color.ParseColor("#FFFFFFFF"));
-                    defcon2Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FFFF7100"), BlendMode.SrcAtop));
-                    defcon2Button.SetTextColor(Color.ParseColor("#FF400C00"));
-                    defcon3Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF404000"), BlendMode.SrcAtop));
-                    defcon3Button.SetTextColor(Color.ParseColor("#FFFFFF00"));
-                    defcon4Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF003500"), BlendMode.SrcAtop));
-                    defcon4Button.SetTextColor(Color.ParseColor("#FF00F200"));
-                    defcon5Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF002340"), BlendMode.SrcAtop));
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+                    {
+                        defcon1Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF404040"), BlendMode.SrcAtop));
+                        defcon2Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FFFF7100"), BlendMode.SrcAtop));
+                        defcon3Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF404000"), BlendMode.SrcAtop));
+                        defcon4Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF003500"), BlendMode.SrcAtop));
+                        defcon5Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF002340"), BlendMode.SrcAtop));
+                    }
+                    else
+                    {
+                        defcon1Button.Background.SetColorFilter(Color.ParseColor("#FF404040"), PorterDuff.Mode.Multiply);
+                        defcon2Button.Background.SetColorFilter(Color.ParseColor("#FFFF7100"), PorterDuff.Mode.Multiply);
+                        defcon3Button.Background.SetColorFilter(Color.ParseColor("#FF404000"), PorterDuff.Mode.Multiply);
+                        defcon4Button.Background.SetColorFilter(Color.ParseColor("#FF003500"), PorterDuff.Mode.Multiply);
+                        defcon5Button.Background.SetColorFilter(Color.ParseColor("#FF002340"), PorterDuff.Mode.Multiply);
+                    }                    
+                    defcon1Button.SetTextColor(Color.ParseColor("#FFFFFFFF"));                    
+                    defcon2Button.SetTextColor(Color.ParseColor("#FF400C00"));                    
+                    defcon3Button.SetTextColor(Color.ParseColor("#FFFFFF00"));                    
+                    defcon4Button.SetTextColor(Color.ParseColor("#FF00F200"));                    
                     defcon5Button.SetTextColor(Color.ParseColor("#FF0066FF"));
                     break;
                 case 3:
-                    defcon1Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF404040"), BlendMode.SrcAtop));
-                    defcon1Button.SetTextColor(Color.ParseColor("#FFFFFFFF"));
-                    defcon2Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF400C00"), BlendMode.SrcAtop));
-                    defcon2Button.SetTextColor(Color.ParseColor("#FFFF7100"));
-                    defcon3Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FFFFFF00"), BlendMode.SrcAtop));
-                    defcon3Button.SetTextColor(Color.ParseColor("#FF404000"));
-                    defcon4Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF003500"), BlendMode.SrcAtop));
-                    defcon4Button.SetTextColor(Color.ParseColor("#FF00F200"));
-                    defcon5Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF002340"), BlendMode.SrcAtop));
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+                    {
+                        defcon1Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF404040"), BlendMode.SrcAtop));
+                        defcon2Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF400C00"), BlendMode.SrcAtop));
+                        defcon3Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FFFFFF00"), BlendMode.SrcAtop));
+                        defcon4Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF003500"), BlendMode.SrcAtop));
+                        defcon5Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF002340"), BlendMode.SrcAtop));
+                    }
+                    else
+                    {
+                        defcon1Button.Background.SetColorFilter(Color.ParseColor("#FF404040"), PorterDuff.Mode.Multiply);
+                        defcon2Button.Background.SetColorFilter(Color.ParseColor("#FF400C00"), PorterDuff.Mode.Multiply);
+                        defcon3Button.Background.SetColorFilter(Color.ParseColor("#FFFFFF00"), PorterDuff.Mode.Multiply);
+                        defcon4Button.Background.SetColorFilter(Color.ParseColor("#FF003500"), PorterDuff.Mode.Multiply);
+                        defcon5Button.Background.SetColorFilter(Color.ParseColor("#FF002340"), PorterDuff.Mode.Multiply);
+                    }
+                    defcon1Button.SetTextColor(Color.ParseColor("#FFFFFFFF"));                    
+                    defcon2Button.SetTextColor(Color.ParseColor("#FFFF7100"));                    
+                    defcon3Button.SetTextColor(Color.ParseColor("#FF404000"));                    
+                    defcon4Button.SetTextColor(Color.ParseColor("#FF00F200"));                    
                     defcon5Button.SetTextColor(Color.ParseColor("#FF0066FF"));
                     break;
                 case 4:
-                    defcon1Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF404040"), BlendMode.SrcAtop));
-                    defcon1Button.SetTextColor(Color.ParseColor("#FFFFFFFF"));
-                    defcon2Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF400C00"), BlendMode.SrcAtop));
-                    defcon2Button.SetTextColor(Color.ParseColor("#FFFF7100"));
-                    defcon3Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF404000"), BlendMode.SrcAtop));
-                    defcon3Button.SetTextColor(Color.ParseColor("#FFFFFF00"));
-                    defcon4Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF00F200"), BlendMode.SrcAtop));
-                    defcon4Button.SetTextColor(Color.ParseColor("#FF003500"));
-                    defcon5Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF002340"), BlendMode.SrcAtop));
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+                    {
+                        defcon1Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF404040"), BlendMode.SrcAtop));
+                        defcon2Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF400C00"), BlendMode.SrcAtop));
+                        defcon3Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF404000"), BlendMode.SrcAtop));
+                        defcon4Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF00F200"), BlendMode.SrcAtop));
+                        defcon5Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF002340"), BlendMode.SrcAtop));
+                    }
+                    else
+                    {
+                        defcon1Button.Background.SetColorFilter(Color.ParseColor("#FF404040"), PorterDuff.Mode.Multiply);
+                        defcon2Button.Background.SetColorFilter(Color.ParseColor("#FF400C00"), PorterDuff.Mode.Multiply);
+                        defcon3Button.Background.SetColorFilter(Color.ParseColor("#FF404000"), PorterDuff.Mode.Multiply);
+                        defcon4Button.Background.SetColorFilter(Color.ParseColor("#FF00F200"), PorterDuff.Mode.Multiply);
+                        defcon5Button.Background.SetColorFilter(Color.ParseColor("#FF002340"), PorterDuff.Mode.Multiply);
+                    }                    
+                    defcon1Button.SetTextColor(Color.ParseColor("#FFFFFFFF"));                    
+                    defcon2Button.SetTextColor(Color.ParseColor("#FFFF7100"));                    
+                    defcon3Button.SetTextColor(Color.ParseColor("#FFFFFF00"));                    
+                    defcon4Button.SetTextColor(Color.ParseColor("#FF003500"));                    
                     defcon5Button.SetTextColor(Color.ParseColor("#FF0066FF"));
                     break;
                 case 5:
-                    defcon1Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF404040"), BlendMode.SrcAtop));
-                    defcon1Button.SetTextColor(Color.ParseColor("#FFFFFFFF"));
-                    defcon2Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF400C00"), BlendMode.SrcAtop));
-                    defcon2Button.SetTextColor(Color.ParseColor("#FFFF7100"));
-                    defcon3Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF404000"), BlendMode.SrcAtop));
-                    defcon3Button.SetTextColor(Color.ParseColor("#FFFFFF00"));
-                    defcon4Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF003500"), BlendMode.SrcAtop));
-                    defcon4Button.SetTextColor(Color.ParseColor("#FF00F200"));
-                    defcon5Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF0066FF"), BlendMode.SrcAtop));
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+                    {
+                        defcon1Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF404040"), BlendMode.SrcAtop));
+                        defcon2Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF400C00"), BlendMode.SrcAtop));
+                        defcon3Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF404000"), BlendMode.SrcAtop));
+                        defcon4Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF003500"), BlendMode.SrcAtop));
+                        defcon5Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF0066FF"), BlendMode.SrcAtop));
+                    }
+                    else
+                    {
+                        defcon1Button.Background.SetColorFilter(Color.ParseColor("#FF404040"), PorterDuff.Mode.Multiply);
+                        defcon2Button.Background.SetColorFilter(Color.ParseColor("#FF400C00"), PorterDuff.Mode.Multiply);
+                        defcon3Button.Background.SetColorFilter(Color.ParseColor("#FF404000"), PorterDuff.Mode.Multiply);
+                        defcon4Button.Background.SetColorFilter(Color.ParseColor("#FF003500"), PorterDuff.Mode.Multiply);
+                        defcon5Button.Background.SetColorFilter(Color.ParseColor("#FF0066FF"), PorterDuff.Mode.Multiply);
+                    }                    
+                    defcon1Button.SetTextColor(Color.ParseColor("#FFFFFFFF"));                    
+                    defcon2Button.SetTextColor(Color.ParseColor("#FFFF7100"));                    
+                    defcon3Button.SetTextColor(Color.ParseColor("#FFFFFF00"));                    
+                    defcon4Button.SetTextColor(Color.ParseColor("#FF00F200"));                    
                     defcon5Button.SetTextColor(Color.ParseColor("#FF002340"));
                     break;
                 default:
-                    defcon1Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF404040"), BlendMode.SrcAtop));
-                    defcon1Button.SetTextColor(Color.ParseColor("#FFFFFFFF"));
-                    defcon2Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF400C00"), BlendMode.SrcAtop));
-                    defcon2Button.SetTextColor(Color.ParseColor("#FFFF7100"));
-                    defcon3Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF404000"), BlendMode.SrcAtop));
-                    defcon3Button.SetTextColor(Color.ParseColor("#FFFFFF00"));
-                    defcon4Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF003500"), BlendMode.SrcAtop));
-                    defcon4Button.SetTextColor(Color.ParseColor("#FF00F200"));
-                    defcon5Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF002340"), BlendMode.SrcAtop));
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
+                    {
+                        defcon1Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF404040"), BlendMode.SrcAtop));
+                        defcon2Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF400C00"), BlendMode.SrcAtop));
+                        defcon3Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF404000"), BlendMode.SrcAtop));
+                        defcon4Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF003500"), BlendMode.SrcAtop));
+                        defcon5Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF002340"), BlendMode.SrcAtop));
+                    }
+                    else
+                    {
+                        defcon1Button.Background.SetColorFilter(Color.ParseColor("#FF404040"), PorterDuff.Mode.Multiply);
+                        defcon2Button.Background.SetColorFilter(Color.ParseColor("#FF400C00"), PorterDuff.Mode.Multiply);
+                        defcon3Button.Background.SetColorFilter(Color.ParseColor("#FF404000"), PorterDuff.Mode.Multiply);
+                        defcon4Button.Background.SetColorFilter(Color.ParseColor("#FF003500"), PorterDuff.Mode.Multiply);
+                        defcon5Button.Background.SetColorFilter(Color.ParseColor("#FF002340"), PorterDuff.Mode.Multiply);
+                    }                    
+                    defcon1Button.SetTextColor(Color.ParseColor("#FFFFFFFF"));                    
+                    defcon2Button.SetTextColor(Color.ParseColor("#FFFF7100"));                    
+                    defcon3Button.SetTextColor(Color.ParseColor("#FFFFFF00"));                    
+                    defcon4Button.SetTextColor(Color.ParseColor("#FF00F200"));                    
                     defcon5Button.SetTextColor(Color.ParseColor("#FF0066FF"));
                     break;
             }

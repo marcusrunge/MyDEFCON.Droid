@@ -9,7 +9,7 @@ using System;
 
 namespace MyDEFCON
 {
-    [BroadcastReceiver(Enabled = true, Label = "MyDEFCON")]
+    [BroadcastReceiver/*(Enabled = true, Label = "MyDEFCON")*/]
     [IntentFilter(new string[] { "android.appwidget.action.APPWIDGET_UPDATE", "android.appwidget.action.ACTION_APPWIDGET_OPTIONS_CHANGED", "com.marcusrunge.MyDEFCON.DEFCON_UPDATE", "android.intent.action.APPLICATION_RESTRICTIONS_CHANGED" })]
     [MetaData("android.appwidget.provider", Resource = "@xml/mydefconwidgetprovider")]
 
