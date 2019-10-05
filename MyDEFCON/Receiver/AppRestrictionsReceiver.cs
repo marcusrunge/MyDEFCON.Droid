@@ -14,7 +14,7 @@ namespace MyDEFCON.Receiver
 
         public override void OnReceive(Context context, Intent intent)
         {
-            _eventService = ServiceLocator.Current.GetInstance<IEventService>();
+            _eventService = ServiceLocator.Current.GetInstance<EventService>();
             var restrictionsManager = (RestrictionsManager)context.GetSystemService(Context.RestrictionsService);
             var applicationRestrictions = restrictionsManager.ApplicationRestrictions;
             var restrictionEntries = restrictionsManager.GetManifestRestrictions(context.ApplicationContext.PackageName);

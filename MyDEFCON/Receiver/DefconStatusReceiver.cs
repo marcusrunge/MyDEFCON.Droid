@@ -14,7 +14,7 @@ namespace MyDEFCON.Receiver
 
         public DefconStatusReceiver()
         {
-            _eventService = ServiceLocator.Current.GetInstance<IEventService>();
+            _eventService = ServiceLocator.Current.GetInstance<EventService>();
         }
 
         public override void OnReceive(Context context, Intent intent)

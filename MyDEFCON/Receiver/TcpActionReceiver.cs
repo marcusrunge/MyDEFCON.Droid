@@ -26,14 +26,14 @@ namespace MyDEFCON.Receiver
         public TcpActionReceiver()
         {
             _sqLiteAsyncConnection = ServiceLocator.Current.GetInstance<ISQLiteDependencies>().AsyncConnection;
-            _eventService = ServiceLocator.Current.GetInstance<IEventService>();
+            _eventService = ServiceLocator.Current.GetInstance<EventService>();
             //_tcpClient = new TcpClient();
         }
 
         public async override void OnReceive(Context context, Intent intent)
         {
             //_context = context;
-            if (!_isAlreadyConnected) await Task<string>.Run(async () =>
+            if (!_isAlreadyConnected) await Task.Run(async () =>
               {
                   _isAlreadyConnected = true;
                   var remoteEndPointAddress = intent.GetStringExtra("RemoteEndPointAddress");

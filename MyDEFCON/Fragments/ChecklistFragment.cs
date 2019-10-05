@@ -39,12 +39,12 @@ namespace MyDEFCON.Fragments
 
         public override void OnCreate(Bundle savedInstanceState)
         {
+            base.OnCreate(savedInstanceState);
             try
-            {
-                base.OnCreate(savedInstanceState);
-                _settingsService = ServiceLocator.Current.GetInstance<ISettingsService>();
-                _counterService = ServiceLocator.Current.GetInstance<ICounterService>();
-                _eventService = ServiceLocator.Current.GetInstance<IEventService>();
+            {                
+                _settingsService = ServiceLocator.Current.GetInstance<SettingsService>();
+                _counterService = ServiceLocator.Current.GetInstance<CounterService>();
+                _eventService = ServiceLocator.Current.GetInstance<EventService>();
                 _sqLiteAsyncConnection = ServiceLocator.Current.GetInstance<ISQLiteDependencies>().AsyncConnection;
                 _checkList = new List<CheckListEntry>();
 

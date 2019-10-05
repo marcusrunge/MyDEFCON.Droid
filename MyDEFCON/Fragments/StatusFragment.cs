@@ -36,9 +36,9 @@ namespace MyDEFCON.Fragments
             base.OnCreate(savedInstanceState);
             try
             {
-                _counterService = ServiceLocator.Current.GetInstance<ICounterService>();
-                _eventService = ServiceLocator.Current.GetInstance<IEventService>();
-                _settingsService = ServiceLocator.Current.GetInstance<ISettingsService>();
+                _counterService = ServiceLocator.Current.GetInstance<CounterService>();
+                _eventService = ServiceLocator.Current.GetInstance<EventService>();
+                _settingsService = ServiceLocator.Current.GetInstance<SettingsService>();
             }
             catch { }
 
@@ -309,28 +309,28 @@ namespace MyDEFCON.Fragments
         public async override void OnResume()
         {
             base.OnResume();
-            if (_counterService == null) try
+            /*if (_counterService == null) try
                 {
-                    _counterService = ServiceLocator.Current.GetInstance<ICounterService>();
+                    _counterService = ServiceLocator.Current.GetInstance<CounterService>();
                 }
                 catch { }
 
             if (_settingsService == null) try
                 {
-                    _settingsService = ServiceLocator.Current.GetInstance<ISettingsService>();
+                    _settingsService = ServiceLocator.Current.GetInstance<SettingsService>();
                 }
                 catch { }
 
             if (_eventService == null) try
                 {
-                    _eventService = ServiceLocator.Current.GetInstance<IEventService>();
+                    _eventService = ServiceLocator.Current.GetInstance<EventService>();
                 }
-                catch { }
+                catch { }*/
             
             _applicationDefconStatus = GetApplicationDefconStatus();
             await InitButtonColors(_applicationDefconStatus);
-            _defconStatusReceiver = new DefconStatusReceiver();
-            if (_defconStatusReceiver != null && _settingsService.GetSetting<bool>("IsBroadcastEnabled")) LocalBroadcastManager.GetInstance(Context).RegisterReceiver(_defconStatusReceiver, new IntentFilter("com.marcusrunge.MyDEFCON.DEFCON_UPDATE"));
+            //_defconStatusReceiver = new DefconStatusReceiver();
+            //if (_defconStatusReceiver != null && _settingsService.GetSetting<bool>("IsBroadcastEnabled")) LocalBroadcastManager.GetInstance(Context).RegisterReceiver(_defconStatusReceiver, new IntentFilter("com.marcusrunge.MyDEFCON.DEFCON_UPDATE"));
         }
 
         private async Task BroadcastDefconStatus(int defconStatus)

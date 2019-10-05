@@ -17,7 +17,7 @@ namespace MyDEFCON.Services
         ISharedPreferences _sharedPreferences;
         public SettingsService()
         {
-            _sharedPreferences = Application.Context.GetSharedPreferences("737NGAppSettings", FileCreationMode.Private);
+            _sharedPreferences = Application.Context.GetSharedPreferences("MyDefconAppSettings", FileCreationMode.Private);
         }
 
         public static SettingsService Instance() => new SettingsService();
@@ -29,7 +29,7 @@ namespace MyDEFCON.Services
         /// <returns>File path with file name</returns>
         public string GetLocalFilePath(string filename)
         {
-            string personalFolder = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+            string personalFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
             return Path.Combine(personalFolder, filename);
         }
 

@@ -48,7 +48,7 @@ namespace MyDEFCON.Services
                 UnityServiceLocator unityServiceLocator = new UnityServiceLocator(unityContainer);
                 ServiceLocator.SetLocatorProvider(() => unityServiceLocator);
             }
-            _settingsService = ServiceLocator.Current.GetInstance<ISettingsService>();
+            _settingsService = ServiceLocator.Current.GetInstance<SettingsService>();
             _defconStatusReceiver = new ForegroundDefconStatusReceiver(new CallBack((x) =>
             {
                 var notificationManager = (NotificationManager)GetSystemService(NotificationService);

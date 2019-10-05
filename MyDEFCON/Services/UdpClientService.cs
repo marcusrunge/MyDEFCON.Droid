@@ -45,8 +45,8 @@ namespace MyDEFCON.Services
             _isServiceRunning = true;
             _isConnectionBlocked = false;
             _lastConnect = DateTimeOffset.MinValue;
-            _settingsService = ServiceLocator.Current.GetInstance<ISettingsService>();
-            _eventService = ServiceLocator.Current.GetInstance<IEventService>();
+            _settingsService = ServiceLocator.Current.GetInstance<SettingsService>();
+            _eventService = ServiceLocator.Current.GetInstance<EventService>();
             _eventService.BlockConnectionEvent += (s, e) => _isConnectionBlocked = (e as BlockConnectionEventArgs).Blocked;
             _udpClient = new UdpClient(4536);
             Task.Run(async () =>
