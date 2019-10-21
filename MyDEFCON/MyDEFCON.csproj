@@ -285,6 +285,7 @@
     <Compile Include="Services\UdpClientService.cs" />
     <Compile Include="Utilities\Notifier.cs" />
     <Compile Include="Utilities\Networker.cs" />
+    <Compile Include="Utilities\Restrictor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">

@@ -3,6 +3,7 @@ using Android.App;
 using Android.Content;
 using CommonServiceLocator;
 using MyDEFCON.Services;
+using MyDEFCON.Utilities;
 
 namespace MyDEFCON.Receiver
 {
@@ -10,25 +11,6 @@ namespace MyDEFCON.Receiver
     [IntentFilter(new string[] { Intent.ActionApplicationRestrictionsChanged })]
     public class AppRestrictionsReceiver : BroadcastReceiver
     {
-        IEventService _eventService;
-
-        public override void OnReceive(Context context, Intent intent)
-        {
-            _eventService = ServiceLocator.Current.GetInstance<EventService>();
-            var restrictionsManager = (RestrictionsManager)context.GetSystemService(Context.RestrictionsService);
-            var applicationRestrictions = restrictionsManager.ApplicationRestrictions;
-            var restrictionEntries = restrictionsManager.GetManifestRestrictions(context.ApplicationContext.PackageName);
-            foreach (var restrictionEntry in restrictionEntries)
-            {
-                switch (restrictionEntry.Key)
-                {
-                    case "defconStatus":
-                        _eventService.OnDefconStatusChangedEvent(new DefconStatusChangedEventArgs(applicationRestrictions.GetInt("defconStatus")));
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
+        public override void OnReceive(Context context, Intent intent) => Restrictor.ResolveRestrictions(context, ServiceLocator.Current.GetInstance<EventService>());
     }
 }

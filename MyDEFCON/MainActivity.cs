@@ -13,6 +13,7 @@ using MyDEFCON.Fragments;
 using MyDEFCON.Models;
 using MyDEFCON.Receiver;
 using MyDEFCON.Services;
+using MyDEFCON.Utilities;
 using SQLite;
 using System;
 using Unity;
@@ -209,16 +210,22 @@ namespace MyDEFCON
             else base.OnBackPressed();
         }
 
+        protected override void OnStart()
+        {
+            base.OnStart();
+            RegisterReceiver(_appRestrictiosReceiver, new IntentFilter(Intent.ActionApplicationRestrictionsChanged));
+        }
+
         protected override void OnResume()
         {
             base.OnResume();
+            Restrictor.ResolveRestrictions(ApplicationContext, _eventService);
             if (_settingsService.GetSetting<bool>("IsBroadcastEnabled") && !_settingsService.GetSetting<bool>("IsForegroundServiceEnabled"))
             {
                 var udpClientServiceIntent = new Intent(this, typeof(UdpClientService));
                 StopService(udpClientServiceIntent);
                 StartService(udpClientServiceIntent);
-            }
-            RegisterReceiver(_appRestrictiosReceiver, new IntentFilter(Intent.ActionApplicationRestrictionsChanged));
+            }           
         }
 
         protected override void OnPause()
