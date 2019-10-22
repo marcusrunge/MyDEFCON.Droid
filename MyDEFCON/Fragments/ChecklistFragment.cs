@@ -43,7 +43,7 @@ namespace MyDEFCON.Fragments
             try
             {
                 applicationDefconStatus = GetApplicationDefconStatus();
-                
+
             }
             catch (Exception) { applicationDefconStatus = 5; }
             fragmentDefconStatus = applicationDefconStatus;
@@ -166,6 +166,7 @@ namespace MyDEFCON.Fragments
 
                         udpClient.Close();
                     }
+                    Activity.RunOnUiThread(() => Toast.MakeText(Context, "Checklist sharing is in progress", ToastLength.Long).Show());
                 }
             };
         }
@@ -236,11 +237,11 @@ namespace MyDEFCON.Fragments
                     else
                     {
 
-                    }                    
-                    checklist1Button.SetTextColor(Color.ParseColor("#FF404040"));                    
-                    checklist2Button.SetTextColor(Color.ParseColor("#FFFF7100"));                    
-                    checklist3Button.SetTextColor(Color.ParseColor("#FFFFFF00"));                    
-                    checklist4Button.SetTextColor(Color.ParseColor("#FF00F200"));                    
+                    }
+                    checklist1Button.SetTextColor(Color.ParseColor("#FF404040"));
+                    checklist2Button.SetTextColor(Color.ParseColor("#FFFF7100"));
+                    checklist3Button.SetTextColor(Color.ParseColor("#FFFFFF00"));
+                    checklist4Button.SetTextColor(Color.ParseColor("#FF00F200"));
                     checklist5Button.SetTextColor(Color.ParseColor("#FF0066FF"));
                     break;
                 case 2:
@@ -259,11 +260,11 @@ namespace MyDEFCON.Fragments
                         checklist3Button.Background.SetColorFilter(Color.ParseColor("#FF404000"), PorterDuff.Mode.Multiply);
                         checklist4Button.Background.SetColorFilter(Color.ParseColor("#FF003500"), PorterDuff.Mode.Multiply);
                         checklist5Button.Background.SetColorFilter(Color.ParseColor("#FF002340"), PorterDuff.Mode.Multiply);
-                    }                    
-                    checklist1Button.SetTextColor(Color.ParseColor("#FFFFFFFF"));                    
-                    checklist2Button.SetTextColor(Color.ParseColor("#FF400C00"));                    
-                    checklist3Button.SetTextColor(Color.ParseColor("#FFFFFF00"));                    
-                    checklist4Button.SetTextColor(Color.ParseColor("#FF00F200"));                    
+                    }
+                    checklist1Button.SetTextColor(Color.ParseColor("#FFFFFFFF"));
+                    checklist2Button.SetTextColor(Color.ParseColor("#FF400C00"));
+                    checklist3Button.SetTextColor(Color.ParseColor("#FFFFFF00"));
+                    checklist4Button.SetTextColor(Color.ParseColor("#FF00F200"));
                     checklist5Button.SetTextColor(Color.ParseColor("#FF0066FF"));
                     break;
                 case 3:
@@ -282,11 +283,11 @@ namespace MyDEFCON.Fragments
                         checklist3Button.Background.SetColorFilter(Color.ParseColor("#FFFFFF00"), PorterDuff.Mode.Multiply);
                         checklist4Button.Background.SetColorFilter(Color.ParseColor("#FF003500"), PorterDuff.Mode.Multiply);
                         checklist5Button.Background.SetColorFilter(Color.ParseColor("#FF002340"), PorterDuff.Mode.Multiply);
-                    }                    
-                    checklist1Button.SetTextColor(Color.ParseColor("#FFFFFFFF"));                    
-                    checklist2Button.SetTextColor(Color.ParseColor("#FFFF7100"));                    
-                    checklist3Button.SetTextColor(Color.ParseColor("#FF404000"));                    
-                    checklist4Button.SetTextColor(Color.ParseColor("#FF00F200"));                    
+                    }
+                    checklist1Button.SetTextColor(Color.ParseColor("#FFFFFFFF"));
+                    checklist2Button.SetTextColor(Color.ParseColor("#FFFF7100"));
+                    checklist3Button.SetTextColor(Color.ParseColor("#FF404000"));
+                    checklist4Button.SetTextColor(Color.ParseColor("#FF00F200"));
                     checklist5Button.SetTextColor(Color.ParseColor("#FF0066FF"));
                     break;
                 case 4:
@@ -305,11 +306,11 @@ namespace MyDEFCON.Fragments
                         checklist3Button.Background.SetColorFilter(Color.ParseColor("#FF404000"), PorterDuff.Mode.Multiply);
                         checklist4Button.Background.SetColorFilter(Color.ParseColor("#FF00F200"), PorterDuff.Mode.Multiply);
                         checklist5Button.Background.SetColorFilter(Color.ParseColor("#FF002340"), PorterDuff.Mode.Multiply);
-                    }                    
-                    checklist1Button.SetTextColor(Color.ParseColor("#FFFFFFFF"));                    
-                    checklist2Button.SetTextColor(Color.ParseColor("#FFFF7100"));                    
-                    checklist3Button.SetTextColor(Color.ParseColor("#FFFFFF00"));                    
-                    checklist4Button.SetTextColor(Color.ParseColor("#FF003500"));                    
+                    }
+                    checklist1Button.SetTextColor(Color.ParseColor("#FFFFFFFF"));
+                    checklist2Button.SetTextColor(Color.ParseColor("#FFFF7100"));
+                    checklist3Button.SetTextColor(Color.ParseColor("#FFFFFF00"));
+                    checklist4Button.SetTextColor(Color.ParseColor("#FF003500"));
                     checklist5Button.SetTextColor(Color.ParseColor("#FF0066FF"));
                     break;
                 case 5:
@@ -328,11 +329,11 @@ namespace MyDEFCON.Fragments
                         checklist3Button.Background.SetColorFilter(Color.ParseColor("#FF404000"), PorterDuff.Mode.Multiply);
                         checklist4Button.Background.SetColorFilter(Color.ParseColor("#FF003500"), PorterDuff.Mode.Multiply);
                         checklist5Button.Background.SetColorFilter(Color.ParseColor("#FF0066FF"), PorterDuff.Mode.Multiply);
-                    }                    
-                    checklist1Button.SetTextColor(Color.ParseColor("#FFFFFFFF"));                    
-                    checklist2Button.SetTextColor(Color.ParseColor("#FFFF7100"));                    
-                    checklist3Button.SetTextColor(Color.ParseColor("#FFFFFF00"));                    
-                    checklist4Button.SetTextColor(Color.ParseColor("#FF00F200"));                    
+                    }
+                    checklist1Button.SetTextColor(Color.ParseColor("#FFFFFFFF"));
+                    checklist2Button.SetTextColor(Color.ParseColor("#FFFF7100"));
+                    checklist3Button.SetTextColor(Color.ParseColor("#FFFFFF00"));
+                    checklist4Button.SetTextColor(Color.ParseColor("#FF00F200"));
                     checklist5Button.SetTextColor(Color.ParseColor("#FF002340"));
                     break;
                 default:
@@ -351,11 +352,11 @@ namespace MyDEFCON.Fragments
                         checklist3Button.Background.SetColorFilter(Color.ParseColor("#FF404000"), PorterDuff.Mode.Multiply);
                         checklist4Button.Background.SetColorFilter(Color.ParseColor("#FF003500"), PorterDuff.Mode.Multiply);
                         checklist5Button.Background.SetColorFilter(Color.ParseColor("#FF002340"), PorterDuff.Mode.Multiply);
-                    }                    
-                    checklist1Button.SetTextColor(Color.ParseColor("#FFFFFFFF"));                    
-                    checklist2Button.SetTextColor(Color.ParseColor("#FFFF7100"));                    
-                    checklist3Button.SetTextColor(Color.ParseColor("#FFFFFF00"));                    
-                    checklist4Button.SetTextColor(Color.ParseColor("#FF00F200"));                    
+                    }
+                    checklist1Button.SetTextColor(Color.ParseColor("#FFFFFFFF"));
+                    checklist2Button.SetTextColor(Color.ParseColor("#FFFF7100"));
+                    checklist3Button.SetTextColor(Color.ParseColor("#FFFFFF00"));
+                    checklist4Button.SetTextColor(Color.ParseColor("#FF00F200"));
                     checklist5Button.SetTextColor(Color.ParseColor("#FF0066FF"));
                     break;
             }
