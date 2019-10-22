@@ -6,7 +6,6 @@ using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
-using CommonServiceLocator;
 using MyDEFCON.Adapter;
 using MyDEFCON.Models;
 using MyDEFCON.Services;
@@ -40,24 +39,28 @@ namespace MyDEFCON.Fragments
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+            _checkList = new List<CheckListEntry>();
             try
-            {                
-                _settingsService = ServiceLocator.Current.GetInstance<SettingsService>();
-                _counterService = ServiceLocator.Current.GetInstance<CounterService>();
-                _eventService = ServiceLocator.Current.GetInstance<EventService>();
-                _sqLiteAsyncConnection = ServiceLocator.Current.GetInstance<ISQLiteDependencies>().AsyncConnection;
-                _checkList = new List<CheckListEntry>();
-
+            {
                 applicationDefconStatus = GetApplicationDefconStatus();
-                fragmentDefconStatus = applicationDefconStatus;
+                
             }
-            catch (Exception) { }
+            catch (Exception) { applicationDefconStatus = 5; }
+            fragmentDefconStatus = applicationDefconStatus;
         }
 
-        public static ChecklistFragment GetInstance()
+        public static ChecklistFragment GetInstance(IEventService eventService, ISettingsService settingsService, ICounterService counterService, ISQLiteDependencies sQLiteDependencies)
         {
-            var checklistFragment = new ChecklistFragment { Arguments = new Bundle() };
+            var checklistFragment = new ChecklistFragment(eventService, settingsService, counterService, sQLiteDependencies) { Arguments = new Bundle() };
             return checklistFragment;
+        }
+
+        public ChecklistFragment(IEventService eventService, ISettingsService settingsService, ICounterService counterService, ISQLiteDependencies sQLiteDependencies)
+        {
+            _eventService = eventService;
+            _settingsService = settingsService;
+            _counterService = counterService;
+            _sqLiteAsyncConnection = sQLiteDependencies.AsyncConnection;
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)

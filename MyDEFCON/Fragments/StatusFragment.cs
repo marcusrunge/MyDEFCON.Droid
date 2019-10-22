@@ -5,7 +5,6 @@ using Android.OS;
 using Android.Support.V4.Content;
 using Android.Views;
 using Android.Widget;
-using CommonServiceLocator;
 using MyDEFCON.Receiver;
 using MyDEFCON.Services;
 using System;
@@ -25,7 +24,7 @@ namespace MyDEFCON.Fragments
         IEventService _eventService;
         ISettingsService _settingsService;
         int _applicationDefconStatus;
-        static Resources _resources;
+        Resources _resources;
         private DefconStatusReceiver _defconStatusReceiver;
         private bool _isButtonPressed = false;
         private bool _isInitializing = true;
@@ -33,14 +32,7 @@ namespace MyDEFCON.Fragments
 
         public override void OnCreate(Bundle savedInstanceState)
         {
-            base.OnCreate(savedInstanceState);
-            try
-            {
-                _counterService = ServiceLocator.Current.GetInstance<CounterService>();
-                _eventService = ServiceLocator.Current.GetInstance<EventService>();
-                _settingsService = ServiceLocator.Current.GetInstance<SettingsService>();
-            }
-            catch { }
+            base.OnCreate(savedInstanceState);            
 
             _applicationDefconStatus = GetApplicationDefconStatus();
             if (_settingsService.GetSetting<bool>("IsBroadcastEnabled"))
@@ -62,11 +54,18 @@ namespace MyDEFCON.Fragments
             return defconStatus;
         }
 
-        public static StatusFragment GetInstance(Resources resources)
+        public static StatusFragment GetInstance(Resources resources, IEventService eventService, ISettingsService settingsService, ICounterService counterService)
+        {            
+            var statusFragment = new StatusFragment(resources, eventService, settingsService, counterService) { Arguments = new Bundle() };
+            return statusFragment;
+        }
+
+        public StatusFragment(Resources resources, IEventService eventService, ISettingsService settingsService, ICounterService counterService)
         {
             _resources = resources;
-            var statusFragment = new StatusFragment() { Arguments = new Bundle() };
-            return statusFragment;
+            _eventService = eventService;
+            _settingsService = settingsService;
+            _counterService = counterService;
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -84,7 +83,7 @@ namespace MyDEFCON.Fragments
             defcon3Button.Click += async (s, e) => { _isButtonPressed = true; view.PerformHapticFeedback(FeedbackConstants.VirtualKey, FeedbackFlags.IgnoreGlobalSetting); await SetButtonColors(3); await BroadcastDefconStatus(3); SendDefconIntent(3); };
             defcon4Button.Click += async (s, e) => { _isButtonPressed = true; view.PerformHapticFeedback(FeedbackConstants.VirtualKey, FeedbackFlags.IgnoreGlobalSetting); await SetButtonColors(4); await BroadcastDefconStatus(4); SendDefconIntent(4); };
             defcon5Button.Click += async (s, e) => { _isButtonPressed = true; view.PerformHapticFeedback(FeedbackConstants.VirtualKey, FeedbackFlags.IgnoreGlobalSetting); await SetButtonColors(5); await BroadcastDefconStatus(5); SendDefconIntent(5); };
-
+                      
             _eventService.MenuItemPressedEvent += (s, e) =>
             {
                 //view.PerformHapticFeedback(FeedbackConstants.VirtualKey, FeedbackFlags.IgnoreGlobalSetting);
@@ -119,6 +118,7 @@ namespace MyDEFCON.Fragments
 
             return view;
         }
+
         public override async void OnViewCreated(View view, Bundle savedInstanceState)
         {
             base.OnViewCreated(view, savedInstanceState);
@@ -313,24 +313,6 @@ namespace MyDEFCON.Fragments
         public async override void OnResume()
         {
             base.OnResume();
-            /*if (_counterService == null) try
-                {
-                    _counterService = ServiceLocator.Current.GetInstance<CounterService>();
-                }
-                catch { }
-
-            if (_settingsService == null) try
-                {
-                    _settingsService = ServiceLocator.Current.GetInstance<SettingsService>();
-                }
-                catch { }
-
-            if (_eventService == null) try
-                {
-                    _eventService = ServiceLocator.Current.GetInstance<EventService>();
-                }
-                catch { }*/
-
             _applicationDefconStatus = GetApplicationDefconStatus();
             await InitButtonColors(_applicationDefconStatus);
             //_defconStatusReceiver = new DefconStatusReceiver();

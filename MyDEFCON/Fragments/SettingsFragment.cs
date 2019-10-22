@@ -3,7 +3,6 @@ using Android.Media;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
-using CommonServiceLocator;
 using MyDEFCON.Services;
 using MyDEFCON.Utilities;
 using System;
@@ -21,8 +20,6 @@ namespace MyDEFCON.Fragments
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            _settingsService = ServiceLocator.Current.GetInstance<SettingsService>();
-            _workerService = ServiceLocator.Current.GetInstance<WorkerService>();
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -141,10 +138,16 @@ namespace MyDEFCON.Fragments
             return view;
         }
 
-        public static SettingsFragment NewInstance()
+        public static SettingsFragment NewInstance(ISettingsService settingsService, IWorkerService workerService)
         {
-            var settingsFragment = new SettingsFragment { Arguments = new Bundle() };
+            var settingsFragment = new SettingsFragment(settingsService, workerService) { Arguments = new Bundle() };
             return settingsFragment;
+        }
+
+        public SettingsFragment(ISettingsService settingsService, IWorkerService workerService)
+        {
+            _settingsService = settingsService;
+            _workerService = workerService;
         }
     }
 }

@@ -124,7 +124,7 @@ namespace MyDEFCON
             if (id == Resource.Id.menu_status)
             {
                 _fragmentTag = "STS";
-                fragment = StatusFragment.GetInstance(Resources);
+                fragment = StatusFragment.GetInstance(Resources, _eventService, _settingsService, unityContainer.Resolve<ICounterService>());
                 fragment.EnterTransition = fade;
                 fragment.ExitTransition = fade;
                 SupportActionBar.SetTitle(Resource.String.statusTitle);
@@ -138,7 +138,7 @@ namespace MyDEFCON
             else if (id == Resource.Id.menu_checklist)
             {
                 _fragmentTag = "CHK";
-                fragment = ChecklistFragment.GetInstance();
+                fragment = ChecklistFragment.GetInstance(_eventService, _settingsService, unityContainer.Resolve<ICounterService>(), unityContainer.Resolve<ISQLiteDependencies>());
                 fragment.EnterTransition = fade;
                 fragment.ExitTransition = fade;
                 SupportActionBar.SetTitle(Resource.String.checklistTitle);
@@ -175,7 +175,7 @@ namespace MyDEFCON
             if (item.ItemId == Resource.Id.menu_settings)
             {
                 _fragmentTag = "SET";
-                fragment = SettingsFragment.NewInstance();
+                fragment = SettingsFragment.NewInstance(_settingsService, unityContainer.Resolve<IWorkerService>());
                 SupportActionBar.SetTitle(Resource.String.settingsTitle);
                 _navigation.Visibility = ViewStates.Gone;
                 _menu.FindItem(Resource.Id.menu_share).SetVisible(false);
@@ -183,7 +183,7 @@ namespace MyDEFCON
             }
 
             _eventService.OnMenuItemPressedEvent(new MenuItemPressedEventArgs(item.TitleFormatted.ToString(), _fragmentTag));
-
+            //_eventService.OnSpareEvent(new EventArgs());
             return base.OnOptionsItemSelected(item);
         }
 
