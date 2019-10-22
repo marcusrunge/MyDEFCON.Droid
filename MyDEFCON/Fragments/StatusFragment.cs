@@ -53,8 +53,12 @@ namespace MyDEFCON.Fragments
         private int GetApplicationDefconStatus()
         {
             int defconStatus = 5;
-            var returnedDefconStatus = _settingsService.GetSetting<string>("DefconStatus");
-            if (!String.IsNullOrEmpty(returnedDefconStatus)) return int.Parse(returnedDefconStatus);
+            try
+            {
+                var returnedDefconStatus = _settingsService.GetSetting<string>("DefconStatus");
+                if (!String.IsNullOrEmpty(returnedDefconStatus)) return int.Parse(returnedDefconStatus);
+            }
+            catch { }
             return defconStatus;
         }
 
@@ -162,7 +166,7 @@ namespace MyDEFCON.Fragments
             switch (defconStatus)
             {
                 case 1:
-                    if (Build.VERSION.SdkInt >= BuildVersionCodes.Q) 
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
                     {
                         defcon1Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FFFFFFFF"), BlendMode.SrcAtop));
                         defcon2Button.Background.SetColorFilter(new BlendModeColorFilter(Color.ParseColor("#FF400C00"), BlendMode.SrcAtop));
@@ -177,11 +181,11 @@ namespace MyDEFCON.Fragments
                         defcon3Button.Background.SetColorFilter(Color.ParseColor("#FF404000"), PorterDuff.Mode.Multiply);
                         defcon4Button.Background.SetColorFilter(Color.ParseColor("#FF003500"), PorterDuff.Mode.Multiply);
                         defcon5Button.Background.SetColorFilter(Color.ParseColor("#FF002340"), PorterDuff.Mode.Multiply);
-                    }                        
-                    defcon1Button.SetTextColor(Color.ParseColor("#FF404040"));                    
-                    defcon2Button.SetTextColor(Color.ParseColor("#FFFF7100"));                    
-                    defcon3Button.SetTextColor(Color.ParseColor("#FFFFFF00"));                    
-                    defcon4Button.SetTextColor(Color.ParseColor("#FF00F200"));                    
+                    }
+                    defcon1Button.SetTextColor(Color.ParseColor("#FF404040"));
+                    defcon2Button.SetTextColor(Color.ParseColor("#FFFF7100"));
+                    defcon3Button.SetTextColor(Color.ParseColor("#FFFFFF00"));
+                    defcon4Button.SetTextColor(Color.ParseColor("#FF00F200"));
                     defcon5Button.SetTextColor(Color.ParseColor("#FF0066FF"));
                     break;
                 case 2:
@@ -200,11 +204,11 @@ namespace MyDEFCON.Fragments
                         defcon3Button.Background.SetColorFilter(Color.ParseColor("#FF404000"), PorterDuff.Mode.Multiply);
                         defcon4Button.Background.SetColorFilter(Color.ParseColor("#FF003500"), PorterDuff.Mode.Multiply);
                         defcon5Button.Background.SetColorFilter(Color.ParseColor("#FF002340"), PorterDuff.Mode.Multiply);
-                    }                    
-                    defcon1Button.SetTextColor(Color.ParseColor("#FFFFFFFF"));                    
-                    defcon2Button.SetTextColor(Color.ParseColor("#FF400C00"));                    
-                    defcon3Button.SetTextColor(Color.ParseColor("#FFFFFF00"));                    
-                    defcon4Button.SetTextColor(Color.ParseColor("#FF00F200"));                    
+                    }
+                    defcon1Button.SetTextColor(Color.ParseColor("#FFFFFFFF"));
+                    defcon2Button.SetTextColor(Color.ParseColor("#FF400C00"));
+                    defcon3Button.SetTextColor(Color.ParseColor("#FFFFFF00"));
+                    defcon4Button.SetTextColor(Color.ParseColor("#FF00F200"));
                     defcon5Button.SetTextColor(Color.ParseColor("#FF0066FF"));
                     break;
                 case 3:
@@ -224,10 +228,10 @@ namespace MyDEFCON.Fragments
                         defcon4Button.Background.SetColorFilter(Color.ParseColor("#FF003500"), PorterDuff.Mode.Multiply);
                         defcon5Button.Background.SetColorFilter(Color.ParseColor("#FF002340"), PorterDuff.Mode.Multiply);
                     }
-                    defcon1Button.SetTextColor(Color.ParseColor("#FFFFFFFF"));                    
-                    defcon2Button.SetTextColor(Color.ParseColor("#FFFF7100"));                    
-                    defcon3Button.SetTextColor(Color.ParseColor("#FF404000"));                    
-                    defcon4Button.SetTextColor(Color.ParseColor("#FF00F200"));                    
+                    defcon1Button.SetTextColor(Color.ParseColor("#FFFFFFFF"));
+                    defcon2Button.SetTextColor(Color.ParseColor("#FFFF7100"));
+                    defcon3Button.SetTextColor(Color.ParseColor("#FF404000"));
+                    defcon4Button.SetTextColor(Color.ParseColor("#FF00F200"));
                     defcon5Button.SetTextColor(Color.ParseColor("#FF0066FF"));
                     break;
                 case 4:
@@ -246,11 +250,11 @@ namespace MyDEFCON.Fragments
                         defcon3Button.Background.SetColorFilter(Color.ParseColor("#FF404000"), PorterDuff.Mode.Multiply);
                         defcon4Button.Background.SetColorFilter(Color.ParseColor("#FF00F200"), PorterDuff.Mode.Multiply);
                         defcon5Button.Background.SetColorFilter(Color.ParseColor("#FF002340"), PorterDuff.Mode.Multiply);
-                    }                    
-                    defcon1Button.SetTextColor(Color.ParseColor("#FFFFFFFF"));                    
-                    defcon2Button.SetTextColor(Color.ParseColor("#FFFF7100"));                    
-                    defcon3Button.SetTextColor(Color.ParseColor("#FFFFFF00"));                    
-                    defcon4Button.SetTextColor(Color.ParseColor("#FF003500"));                    
+                    }
+                    defcon1Button.SetTextColor(Color.ParseColor("#FFFFFFFF"));
+                    defcon2Button.SetTextColor(Color.ParseColor("#FFFF7100"));
+                    defcon3Button.SetTextColor(Color.ParseColor("#FFFFFF00"));
+                    defcon4Button.SetTextColor(Color.ParseColor("#FF003500"));
                     defcon5Button.SetTextColor(Color.ParseColor("#FF0066FF"));
                     break;
                 case 5:
@@ -269,11 +273,11 @@ namespace MyDEFCON.Fragments
                         defcon3Button.Background.SetColorFilter(Color.ParseColor("#FF404000"), PorterDuff.Mode.Multiply);
                         defcon4Button.Background.SetColorFilter(Color.ParseColor("#FF003500"), PorterDuff.Mode.Multiply);
                         defcon5Button.Background.SetColorFilter(Color.ParseColor("#FF0066FF"), PorterDuff.Mode.Multiply);
-                    }                    
-                    defcon1Button.SetTextColor(Color.ParseColor("#FFFFFFFF"));                    
-                    defcon2Button.SetTextColor(Color.ParseColor("#FFFF7100"));                    
-                    defcon3Button.SetTextColor(Color.ParseColor("#FFFFFF00"));                    
-                    defcon4Button.SetTextColor(Color.ParseColor("#FF00F200"));                    
+                    }
+                    defcon1Button.SetTextColor(Color.ParseColor("#FFFFFFFF"));
+                    defcon2Button.SetTextColor(Color.ParseColor("#FFFF7100"));
+                    defcon3Button.SetTextColor(Color.ParseColor("#FFFFFF00"));
+                    defcon4Button.SetTextColor(Color.ParseColor("#FF00F200"));
                     defcon5Button.SetTextColor(Color.ParseColor("#FF002340"));
                     break;
                 default:
@@ -292,11 +296,11 @@ namespace MyDEFCON.Fragments
                         defcon3Button.Background.SetColorFilter(Color.ParseColor("#FF404000"), PorterDuff.Mode.Multiply);
                         defcon4Button.Background.SetColorFilter(Color.ParseColor("#FF003500"), PorterDuff.Mode.Multiply);
                         defcon5Button.Background.SetColorFilter(Color.ParseColor("#FF002340"), PorterDuff.Mode.Multiply);
-                    }                    
-                    defcon1Button.SetTextColor(Color.ParseColor("#FFFFFFFF"));                    
-                    defcon2Button.SetTextColor(Color.ParseColor("#FFFF7100"));                    
-                    defcon3Button.SetTextColor(Color.ParseColor("#FFFFFF00"));                    
-                    defcon4Button.SetTextColor(Color.ParseColor("#FF00F200"));                    
+                    }
+                    defcon1Button.SetTextColor(Color.ParseColor("#FFFFFFFF"));
+                    defcon2Button.SetTextColor(Color.ParseColor("#FFFF7100"));
+                    defcon3Button.SetTextColor(Color.ParseColor("#FFFFFF00"));
+                    defcon4Button.SetTextColor(Color.ParseColor("#FF00F200"));
                     defcon5Button.SetTextColor(Color.ParseColor("#FF0066FF"));
                     break;
             }
@@ -326,7 +330,7 @@ namespace MyDEFCON.Fragments
                     _eventService = ServiceLocator.Current.GetInstance<EventService>();
                 }
                 catch { }*/
-            
+
             _applicationDefconStatus = GetApplicationDefconStatus();
             await InitButtonColors(_applicationDefconStatus);
             //_defconStatusReceiver = new DefconStatusReceiver();

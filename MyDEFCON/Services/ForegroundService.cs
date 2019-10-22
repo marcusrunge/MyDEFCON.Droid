@@ -191,11 +191,29 @@ namespace MyDEFCON.Services
             var notificationManager = (NotificationManager)GetSystemService(NotificationService);
             notificationManager.Cancel(Constants.SERVICE_RUNNING_NOTIFICATION_ID);
             _isStarted = false;
-            _cancellationTokenSource.Cancel();
+            try
+            {
+                _cancellationTokenSource.Cancel();
+            }
+            catch { }
+
             LocalBroadcastManager.GetInstance(this).UnregisterReceiver(_defconStatusReceiver);
-            udpClient.Close();
-            udpClient.Dispose();
-            _udpClientTask.Dispose();
+            try
+            {
+                udpClient.Close();
+            }
+            catch { }
+            try
+            {
+                udpClient.Dispose();
+            }
+            catch { }
+            try
+            {
+                _udpClientTask.Dispose();
+            }
+            catch { }
+
             base.OnDestroy();
         }
 
