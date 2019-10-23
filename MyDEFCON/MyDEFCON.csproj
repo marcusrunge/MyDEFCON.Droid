@@ -36,6 +36,8 @@
     <AndroidSupportedAbis>
     </AndroidSupportedAbis>
     <AndroidUseAapt2>false</AndroidUseAapt2>
+    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
+    <MandroidI18n />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>

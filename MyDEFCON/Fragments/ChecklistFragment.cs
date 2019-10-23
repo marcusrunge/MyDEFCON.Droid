@@ -236,7 +236,11 @@ namespace MyDEFCON.Fragments
                     }
                     else
                     {
-
+                        checklist1Button.Background.SetColorFilter(Color.ParseColor("#FFFFFFFF"), PorterDuff.Mode.Multiply);
+                        checklist2Button.Background.SetColorFilter(Color.ParseColor("#FF400C00"), PorterDuff.Mode.Multiply);
+                        checklist3Button.Background.SetColorFilter(Color.ParseColor("#FF404000"), PorterDuff.Mode.Multiply);
+                        checklist4Button.Background.SetColorFilter(Color.ParseColor("#FF003500"), PorterDuff.Mode.Multiply);
+                        checklist5Button.Background.SetColorFilter(Color.ParseColor("#FF002340"), PorterDuff.Mode.Multiply);
                     }
                     checklist1Button.SetTextColor(Color.ParseColor("#FF404040"));
                     checklist2Button.SetTextColor(Color.ParseColor("#FFFF7100"));
