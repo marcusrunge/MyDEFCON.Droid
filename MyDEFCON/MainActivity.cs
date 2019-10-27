@@ -212,13 +212,19 @@ namespace MyDEFCON
 
         protected override void OnStart()
         {
-            base.OnStart();
-            RegisterReceiver(_appRestrictiosReceiver, new IntentFilter(Intent.ActionApplicationRestrictionsChanged));
+            base.OnStart();            
         }
 
         protected override void OnResume()
         {
             base.OnResume();
+            try
+            {
+                RegisterReceiver(_appRestrictiosReceiver, new IntentFilter(Intent.ActionApplicationRestrictionsChanged));
+            }
+            catch (Exception)
+            {
+            }
             Restrictor.ResolveRestrictions(ApplicationContext, _eventService);
             if (_settingsService.GetSetting<bool>("IsBroadcastEnabled") && !_settingsService.GetSetting<bool>("IsForegroundServiceEnabled"))
             {
@@ -230,7 +236,13 @@ namespace MyDEFCON
 
         protected override void OnPause()
         {
-            UnregisterReceiver(_appRestrictiosReceiver);
+            try
+            {
+                UnregisterReceiver(_appRestrictiosReceiver);
+            }
+            catch (Exception)
+            {
+            }            
             base.OnPause();
         }
 
