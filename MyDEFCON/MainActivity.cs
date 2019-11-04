@@ -72,8 +72,15 @@ namespace MyDEFCON
             //if first time you will want to go ahead and click first item.
             if (savedInstanceState == null)
             {
-                LoadFragment(Resource.Id.menu_status);
-                _navigation.SelectedItemId = Resource.Id.menu_status;
+                try
+                {
+                    LoadFragment(Resource.Id.menu_status);
+                    _navigation.SelectedItemId = Resource.Id.menu_status;
+                }
+                catch (Exception)
+                {
+
+                }
             }
 
             try
@@ -225,12 +232,20 @@ namespace MyDEFCON
                 var udpClientServiceIntent = new Intent(this, typeof(UdpClientService));
                 StopService(udpClientServiceIntent);
                 StartService(udpClientServiceIntent);
-            }           
+            }
         }
 
         protected override void OnPause()
         {
-            UnregisterReceiver(_appRestrictiosReceiver);
+            try
+            {
+                UnregisterReceiver(_appRestrictiosReceiver);
+            }
+            catch (Exception)
+            {
+
+            }
+
             base.OnPause();
         }
 
