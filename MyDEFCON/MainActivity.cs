@@ -72,15 +72,8 @@ namespace MyDEFCON
             //if first time you will want to go ahead and click first item.
             if (savedInstanceState == null)
             {
-                try
-                {
-                    LoadFragment(Resource.Id.menu_status);
-                    _navigation.SelectedItemId = Resource.Id.menu_status;
-                }
-                catch (Exception)
-                {
-
-                }
+                LoadFragment(Resource.Id.menu_status);
+                _navigation.SelectedItemId = Resource.Id.menu_status;
             }
 
             try
@@ -219,20 +212,26 @@ namespace MyDEFCON
 
         protected override void OnStart()
         {
-            base.OnStart();
-            RegisterReceiver(_appRestrictiosReceiver, new IntentFilter(Intent.ActionApplicationRestrictionsChanged));
+            base.OnStart();            
         }
 
         protected override void OnResume()
         {
             base.OnResume();
+            try
+            {
+                RegisterReceiver(_appRestrictiosReceiver, new IntentFilter(Intent.ActionApplicationRestrictionsChanged));
+            }
+            catch (Exception)
+            {
+            }
             Restrictor.ResolveRestrictions(ApplicationContext, _eventService);
             if (_settingsService.GetSetting<bool>("IsBroadcastEnabled") && !_settingsService.GetSetting<bool>("IsForegroundServiceEnabled"))
             {
                 var udpClientServiceIntent = new Intent(this, typeof(UdpClientService));
                 StopService(udpClientServiceIntent);
                 StartService(udpClientServiceIntent);
-            }
+            }           
         }
 
         protected override void OnPause()
@@ -243,9 +242,7 @@ namespace MyDEFCON
             }
             catch (Exception)
             {
-
-            }
-
+            }            
             base.OnPause();
         }
 
