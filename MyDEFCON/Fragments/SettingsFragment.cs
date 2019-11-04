@@ -30,7 +30,7 @@ namespace MyDEFCON.Fragments
             var isMulticastEnabledSwitch = view.FindViewById<Android.Support.V7.Widget.SwitchCompat>(Resource.Id.isMulticastEnabledSwitch);
             var isForegroundServiceEnabledSwitch = view.FindViewById<Android.Support.V7.Widget.SwitchCompat>(Resource.Id.isForegroundServiceEnabledSwitch);
             var isStatusUpdateAlertEnabledSwitch = view.FindViewById<Android.Support.V7.Widget.SwitchCompat>(Resource.Id.isStatusUpdateAlertEnabledSwitch);
-            var statusUpdateAlertSelectSpinner = view.FindViewById<Android.Widget.Spinner>(Resource.Id.statusUpdateAlertSelectSpinner);
+            var statusUpdateAlertSelectSpinner = view.FindViewById<Spinner>(Resource.Id.statusUpdateAlertSelectSpinner);
             isBroadcastEnabledSwitch.Checked = _settingsService.GetSetting<bool>("IsBroadcastEnabled");
             isBroadcastEnabledSwitch.CheckedChange += (s, e) =>
             {

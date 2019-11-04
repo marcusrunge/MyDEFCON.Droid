@@ -72,8 +72,14 @@ namespace MyDEFCON
             //if first time you will want to go ahead and click first item.
             if (savedInstanceState == null)
             {
-                LoadFragment(Resource.Id.menu_status);
-                _navigation.SelectedItemId = Resource.Id.menu_status;
+                try
+                {
+                    LoadFragment(Resource.Id.menu_status);
+                    _navigation.SelectedItemId = Resource.Id.menu_status;
+                }
+                catch (Exception)
+                {
+                }
             }
 
             try
@@ -81,7 +87,7 @@ namespace MyDEFCON
                 var connection = new SQLiteAsyncConnection(_settingsService.GetLocalFilePath("checklist.db"));
                 connection.CreateTableAsync<CheckListEntry>();
             }
-            catch (System.Exception) { }
+            catch (Exception) { }
 
             if (_settingsService.GetSetting<bool>("IsBroadcastEnabled"))
             {
@@ -212,7 +218,7 @@ namespace MyDEFCON
 
         protected override void OnStart()
         {
-            base.OnStart();            
+            base.OnStart();
         }
 
         protected override void OnResume()
@@ -231,7 +237,7 @@ namespace MyDEFCON
                 var udpClientServiceIntent = new Intent(this, typeof(UdpClientService));
                 StopService(udpClientServiceIntent);
                 StartService(udpClientServiceIntent);
-            }           
+            }
         }
 
         protected override void OnPause()
@@ -242,7 +248,7 @@ namespace MyDEFCON
             }
             catch (Exception)
             {
-            }            
+            }
             base.OnPause();
         }
 
