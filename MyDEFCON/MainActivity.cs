@@ -115,46 +115,53 @@ namespace MyDEFCON
 
         void LoadFragment(int id)
         {
-            Android.Support.V4.App.Fragment existingFragment;
-            existingFragment = SupportFragmentManager.FindFragmentByTag("CHK");
-            if (existingFragment != null) SupportFragmentManager.PopBackStackImmediate(existingFragment.Id, 0);
-            existingFragment = SupportFragmentManager.FindFragmentByTag("STS");
-            if (existingFragment != null) SupportFragmentManager.PopBackStackImmediate(existingFragment.Id, 0);
-            existingFragment = SupportFragmentManager.FindFragmentByTag("ABT");
-            if (existingFragment != null) SupportFragmentManager.PopBackStackImmediate(existingFragment.Id, 0);
-
-            //string fragmentTag;
-            Android.Support.V4.App.Fragment fragment = null;
-            Fade fade = new Fade();
-            fade.SetDuration(200);
-            if (id == Resource.Id.menu_status)
+            try
             {
-                _fragmentTag = "STS";
-                fragment = StatusFragment.GetInstance(Resources, _eventService, _settingsService, unityContainer.Resolve<ICounterService>());
-                fragment.EnterTransition = fade;
-                fragment.ExitTransition = fade;
-                SupportActionBar.SetTitle(Resource.String.statusTitle);
-                _lastFragmentId = id;
-                if (_menu != null)
+                Android.Support.V4.App.Fragment existingFragment;
+                existingFragment = SupportFragmentManager.FindFragmentByTag("CHK");
+                if (existingFragment != null) SupportFragmentManager.PopBackStackImmediate(existingFragment.Id, 0);
+                existingFragment = SupportFragmentManager.FindFragmentByTag("STS");
+                if (existingFragment != null) SupportFragmentManager.PopBackStackImmediate(existingFragment.Id, 0);
+                existingFragment = SupportFragmentManager.FindFragmentByTag("ABT");
+                if (existingFragment != null) SupportFragmentManager.PopBackStackImmediate(existingFragment.Id, 0);
+
+                //string fragmentTag;
+                Android.Support.V4.App.Fragment fragment = null;
+                Fade fade = new Fade();
+                fade.SetDuration(200);
+                if (id == Resource.Id.menu_status)
                 {
-                    _menu.FindItem(Resource.Id.menu_share).SetVisible(true);
+                    _fragmentTag = "STS";
+                    fragment = StatusFragment.GetInstance(Resources, _eventService, _settingsService, unityContainer.Resolve<ICounterService>());
+                    fragment.EnterTransition = fade;
+                    fragment.ExitTransition = fade;
+                    SupportActionBar.SetTitle(Resource.String.statusTitle);
+                    _lastFragmentId = id;
+                    if (_menu != null)
+                    {
+                        _menu.FindItem(Resource.Id.menu_share).SetVisible(true);
+                    }
+
                 }
+                else if (id == Resource.Id.menu_checklist)
+                {
+                    _fragmentTag = "CHK";
+                    fragment = ChecklistFragment.GetInstance(_eventService, _settingsService, unityContainer.Resolve<ICounterService>(), unityContainer.Resolve<ISQLiteDependencies>());
+                    fragment.EnterTransition = fade;
+                    fragment.ExitTransition = fade;
+                    SupportActionBar.SetTitle(Resource.String.checklistTitle);
+                    _lastFragmentId = id;
+                    if (_settingsService.GetSetting<bool>("IsMulticastEnabled")) _menu.FindItem(Resource.Id.menu_share).SetVisible(true);
+                    else _menu.FindItem(Resource.Id.menu_share).SetVisible(false);
+                }
+                else return;
 
+                SupportFragmentManager.BeginTransaction().Replace(Resource.Id.content_frame, fragment, _fragmentTag).Commit();
             }
-            else if (id == Resource.Id.menu_checklist)
+            catch (Exception)
             {
-                _fragmentTag = "CHK";
-                fragment = ChecklistFragment.GetInstance(_eventService, _settingsService, unityContainer.Resolve<ICounterService>(), unityContainer.Resolve<ISQLiteDependencies>());
-                fragment.EnterTransition = fade;
-                fragment.ExitTransition = fade;
-                SupportActionBar.SetTitle(Resource.String.checklistTitle);
-                _lastFragmentId = id;
-                if (_settingsService.GetSetting<bool>("IsMulticastEnabled")) _menu.FindItem(Resource.Id.menu_share).SetVisible(true);
-                else _menu.FindItem(Resource.Id.menu_share).SetVisible(false);
-            }
-            else return;
 
-            SupportFragmentManager.BeginTransaction().Replace(Resource.Id.content_frame, fragment, _fragmentTag).Commit();
+            }
         }
 
         public override bool OnOptionsItemSelected(IMenuItem item)
