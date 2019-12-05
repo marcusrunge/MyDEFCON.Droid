@@ -28,14 +28,14 @@
 		<provider android:name="android.support.v4.content.FileProvider" android:authorities="com.marcusrunge.MyDEFCON.provider" android:exported="false" android:grantUriPermissions="true">
 			<meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/provider_paths" />
 		</provider>
+    <receiver android:name="MyDefconWidget">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        <action android:name="android.appwidget.action.ACTION_APPWIDGET_OPTIONS_CHANGED" />
+        <action android:name="com.marcusrunge.MyDEFCON.DEFCON_UPDATE" />
+        <action android:name="android.intent.action.APPLICATION_RESTRICTIONS_CHANGED" />
+      </intent-filter>
+      <meta-data android:name="android.appwidget.provider" android:resource="@xml/mydefconwidgetprovider" />
+    </receiver>
 	</application>
-	<receiver android:name="MyDefconWidget">
-		<intent-filter>
-			<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-			<action android:name="android.appwidget.action.ACTION_APPWIDGET_OPTIONS_CHANGED" />
-			<action android:name="com.marcusrunge.MyDEFCON.DEFCON_UPDATE" />
-			<action android:name="android.intent.action.APPLICATION_RESTRICTIONS_CHANGED" />
-		</intent-filter>
-		<meta-data android:name="android.appwidget.provider" android:resource="@xml/mydefconwidgetprovider" />
-	</receiver>
 </manifest>
