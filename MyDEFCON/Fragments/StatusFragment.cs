@@ -29,6 +29,7 @@ namespace MyDEFCON.Fragments
         private bool _isButtonPressed = false;
         private bool _isInitializing = true;
         private bool _isReceiving = false;
+        public static StatusFragment Instance { get; set; }
 
         public override void OnCreate(Bundle savedInstanceState)
         {
@@ -55,9 +56,9 @@ namespace MyDEFCON.Fragments
         }
 
         public static StatusFragment GetInstance(Resources resources, IEventService eventService, ISettingsService settingsService, ICounterService counterService)
-        {            
-            var statusFragment = new StatusFragment(resources, eventService, settingsService, counterService) { Arguments = new Bundle() };
-            return statusFragment;
+        {
+            Instance = new StatusFragment(resources, eventService, settingsService, counterService) { Arguments = new Bundle() };
+            return Instance;
         }
 
         public StatusFragment(Resources resources, IEventService eventService, ISettingsService settingsService, ICounterService counterService)
@@ -106,15 +107,15 @@ namespace MyDEFCON.Fragments
                 }
             };
 
-            _eventService.DefconStatusChangedEvent += async (s, e) =>
-            {
-                if (!_isInitializing && !_isButtonPressed)
-                {
-                    _isReceiving = true;
-                    await SetButtonColors((e as DefconStatusChangedEventArgs).NewDefconStatus);
-                    _isReceiving = false;
-                }
-            };
+            //_eventService.DefconStatusChangedEvent += async (s, e) =>
+            //{
+            //    if (!_isInitializing && !_isButtonPressed)
+            //    {
+            //        _isReceiving = true;
+            //        await SetButtonColors((e as DefconStatusChangedEventArgs).NewDefconStatus);
+            //        _isReceiving = false;
+            //    }
+            //};
 
             return view;
         }
@@ -159,7 +160,7 @@ namespace MyDEFCON.Fragments
             _eventService.OnDefconStatusChangedEvent(new DefconStatusChangedEventArgs(defconStatus));
         }
 
-        private async Task SetButtonColors(int defconStatus)
+        public async Task SetButtonColors(int defconStatus)
         {
             _applicationDefconStatus = defconStatus;
 

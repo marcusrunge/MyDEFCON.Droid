@@ -1,6 +1,7 @@
 ﻿using Android.App;
 using Android.Content;
 using CommonServiceLocator;
+using MyDEFCON.Fragments;
 using MyDEFCON.Services;
 using System;
 
@@ -17,13 +18,17 @@ namespace MyDEFCON.Receiver
             _eventService = ServiceLocator.Current.GetInstance<EventService>();
         }
 
-        public override void OnReceive(Context context, Intent intent)
+        public override async void OnReceive(Context context, Intent intent)
         {
             try
             {
                 var defconStatus = intent.GetStringExtra("DefconStatus");
                 if (defconStatus.Equals("0")) { }
-                else _eventService.OnDefconStatusChangedEvent(new DefconStatusChangedEventArgs(int.Parse(defconStatus)));
+                else
+                {
+                    _eventService.OnDefconStatusChangedEvent(new DefconStatusChangedEventArgs(int.Parse(defconStatus)));
+                    if (StatusFragment.Instance != null) await StatusFragment.Instance.SetButtonColors(int.Parse(defconStatus));
+                }
 
                 //Toast.MakeText(context, "DEFCON " + defconStatus, ToastLength.Short).Show();
             }
