@@ -200,9 +200,13 @@ namespace MyDEFCON.Services
                 _counter4Value = 0;
                 _counter5Value = 0;
             }
-            _badgeCounterValue = _counter1Value + _counter2Value + _counter3Value + _counter4Value + _counter5Value;
-            if (_badgeCounterValue == 0) CrossBadge.Current.ClearBadge();
-            else CrossBadge.Current.SetBadge(_badgeCounterValue);
+            try
+            {
+                _badgeCounterValue = _counter1Value + _counter2Value + _counter3Value + _counter4Value + _counter5Value;
+                if (_badgeCounterValue == 0) CrossBadge.Current.ClearBadge();
+                else CrossBadge.Current.SetBadge(_badgeCounterValue);
+            }
+            catch { }
         }
     }
 }
