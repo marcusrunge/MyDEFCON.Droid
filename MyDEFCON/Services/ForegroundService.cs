@@ -24,7 +24,7 @@ namespace MyDEFCON.Services
     [Service]
     public class ForegroundService : Service
     {
-        bool _isStarted;
+        public static bool IsStarted { get; set; }        
         ISettingsService _settingsService;
         Task _udpClientTask/*, _tcpClientTask*/;
         static DateTimeOffset _lastConnect;
@@ -62,7 +62,7 @@ namespace MyDEFCON.Services
             try
             {
                 udpClient = new UdpClient(4536);
-                while (_isStarted)
+                while (IsStarted)
                 {
                     var udpReceiveResult = await udpClient.ReceiveAsync();
                     if (!udpReceiveResult.RemoteEndPoint.Address.ToString().Equals(Networker.GetLocalIp()))
@@ -115,7 +115,7 @@ namespace MyDEFCON.Services
         {
             TcpListener tcpListener = new TcpListener(IPAddress.Any, 4537);
             tcpListener.Start();
-            while (_isStarted)
+            while (IsStarted)
             {
                 try
                 {
@@ -144,13 +144,13 @@ namespace MyDEFCON.Services
                 {
                     if (intent.Action.Equals(Constants.ACTION_START_SERVICE))
                     {
-                        if (_isStarted)
+                        if (IsStarted)
                         {
                         }
                         else
                         {
                             RegisterForegroundService();
-                            _isStarted = true;
+                            IsStarted = true;
                             //_tcpClientTask = Task.Factory.StartNew(TcpClientAction, _cancellationToken);
                             _udpClientTask = Task.Factory.StartNew(UdpClientAction, _cancellationToken);
                         }
@@ -159,7 +159,7 @@ namespace MyDEFCON.Services
                     {
                         StopForeground(true);
                         StopSelf();
-                        _isStarted = false;
+                        IsStarted = false;
                     }
                 }
                 catch { }
@@ -190,7 +190,7 @@ namespace MyDEFCON.Services
         {
             var notificationManager = (NotificationManager)GetSystemService(NotificationService);
             notificationManager.Cancel(Constants.SERVICE_RUNNING_NOTIFICATION_ID);
-            _isStarted = false;
+            IsStarted = false;
             try
             {
                 _cancellationTokenSource.Cancel();

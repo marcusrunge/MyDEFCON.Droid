@@ -64,10 +64,10 @@ namespace MyDEFCON
                 SetSupportActionBar(toolbar);
             }
 
-            Bitmap bitmap;
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.NMr1) bitmap = BitmapFactory.DecodeResource(Resources, Resource.Mipmap.ic_launcher);
-            else bitmap = BitmapFactory.DecodeResource(Resources, Resource.Drawable.Icon);
-            TaskDescription taskDescription = new TaskDescription("MyDEFCON", bitmap, Color.ParseColor("#e8ff00"));
+            //Bitmap bitmap;
+            //if (Build.VERSION.SdkInt >= BuildVersionCodes.NMr1) bitmap = BitmapFactory.DecodeResource(Resources, Resource.Mipmap.ic_launcher);
+            //else bitmap = BitmapFactory.DecodeResource(Resources, Resource.Drawable.Icon);
+            TaskDescription taskDescription = new TaskDescription("MyDEFCON", Resource.Mipmap.ic_launcher, Color.ParseColor("#e8ff00"));
             SetTaskDescription(taskDescription);
             //if first time you will want to go ahead and click first item.
             if (savedInstanceState == null)

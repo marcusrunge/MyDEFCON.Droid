@@ -15,13 +15,13 @@ namespace MyDEFCON.Services
         }
         public override Result DoWork()
         {
-            ActivityManager activityManager = (ActivityManager)_context.GetSystemService(Context.ActivityService);
-            bool isForegroundServiceRunning = false;
-            foreach (var service in activityManager.GetRunningServices(int.MaxValue))
-            {
-                if (service.Process == _context.PackageName && service.Service.ClassName.EndsWith(typeof(ForegroundService).Name)) isForegroundServiceRunning = true;
-            }
-            if (!isForegroundServiceRunning)
+            //ActivityManager activityManager = (ActivityManager)_context.GetSystemService(Context.ActivityService);
+            //bool isForegroundServiceRunning = false;
+            //foreach (var service in activityManager.GetRunningServices(int.MaxValue))
+            //{
+            //    if (service.Process == _context.PackageName && service.Service.ClassName.EndsWith(typeof(ForegroundService).Name)) isForegroundServiceRunning = true;
+            //}
+            if (!ForegroundService.IsStarted)
             {
                 Intent startServiceIntent = new Intent(_context, typeof(ForegroundService));
                 startServiceIntent.SetAction(Constants.ACTION_START_SERVICE);
