@@ -24,7 +24,7 @@ namespace MyDEFCON.Services
     [Service]
     public class ForegroundService : Service
     {
-        public static bool IsStarted { get; set; }        
+        public static bool IsStarted { get; set; }
         ISettingsService _settingsService;
         Task _udpClientTask/*, _tcpClientTask*/;
         static DateTimeOffset _lastConnect;
@@ -221,23 +221,13 @@ namespace MyDEFCON.Services
         {
             try
             {
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-                {
-                    var notificationChannel = new NotificationChannel("DefconNotificationChannel", "DefconNotificationChannel", NotificationImportance.Low)
-                    {
-                        Description = "Foreground Service Notification Channel"
-                    };
-                    var notificationManager = (NotificationManager)GetSystemService(NotificationService);
-                    notificationManager.CreateNotificationChannel(notificationChannel);
-                }
-
                 StartForeground(Constants.SERVICE_RUNNING_NOTIFICATION_ID, BuildNotification());
             }
             catch { }
         }
 
         Notification BuildNotification()
-        {
+        {            
             var defconStatus = _settingsService.GetSetting<string>("DefconStatus");
             string contentText = "DEFCON " + defconStatus;
             int smallIconResourceId = Resource.Drawable.ic_stat_5;
@@ -258,13 +248,30 @@ namespace MyDEFCON.Services
                 default:
                     break;
             }
-
-            return new NotificationCompat.Builder(this, "DefconNotificationChannel")
-                .SetContentTitle(contentText)
-                .SetSmallIcon(smallIconResourceId)
-                .SetContentIntent(BuildIntentToShowMainActivity())
-                .SetOngoing(true)
-                .Build();
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+            {
+                var notificationChannel = new NotificationChannel("DefconNotificationChannel", "DefconNotificationChannel", NotificationImportance.Low)
+                {
+                    Description = "Foreground Service Notification Channel"
+                };
+                var notificationManager = (NotificationManager)GetSystemService(NotificationService);
+                notificationManager.CreateNotificationChannel(notificationChannel);
+                return new Notification.Builder(this, "DefconNotificationChannel")
+                    .SetContentTitle(contentText)
+                                .SetSmallIcon(smallIconResourceId)
+                                .SetContentIntent(BuildIntentToShowMainActivity())
+                                .SetOngoing(true)
+                                .Build();
+            }
+            else
+            {
+                return new NotificationCompat.Builder(this)
+                                .SetContentTitle(contentText)
+                                .SetSmallIcon(smallIconResourceId)
+                                .SetContentIntent(BuildIntentToShowMainActivity())
+                                .SetOngoing(true)
+                                .Build();
+            }
         }
 
         PendingIntent BuildIntentToShowMainActivity()
