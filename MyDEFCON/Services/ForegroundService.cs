@@ -3,8 +3,8 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
-using Android.Support.V4.App;
-using Android.Support.V4.Content;
+using AndroidX.Core.App;
+using AndroidX.LocalBroadcastManager.Content;
 using CommonServiceLocator;
 using MyDEFCON.Models;
 using MyDEFCON.Receiver;
@@ -227,7 +227,7 @@ namespace MyDEFCON.Services
         }
 
         Notification BuildNotification()
-        {            
+        {
             var defconStatus = _settingsService.GetSetting<string>("DefconStatus");
             string contentText = "DEFCON " + defconStatus;
             int smallIconResourceId = Resource.Drawable.ic_stat_5;

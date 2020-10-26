@@ -3,12 +3,12 @@ using Android.Content;
 using Android.Content.PM;
 using Android.Graphics;
 using Android.OS;
-using Android.Support.Design.Widget;
-using Android.Support.Transitions;
-using Android.Support.V7.App;
-using Android.Support.V7.Widget;
 using Android.Views;
+using AndroidX.AppCompat.App;
+using AndroidX.AppCompat.Widget;
+using AndroidX.Transitions;
 using CommonServiceLocator;
+using Google.Android.Material.BottomNavigation;
 using MyDEFCON.Fragments;
 using MyDEFCON.Models;
 using MyDEFCON.Receiver;
@@ -68,7 +68,7 @@ namespace MyDEFCON
             TaskDescription taskDescription;
             if (Build.VERSION.SdkInt >= BuildVersionCodes.NMr1) bitmap = BitmapFactory.DecodeResource(Resources, Resource.Mipmap.ic_launcher);
             else bitmap = BitmapFactory.DecodeResource(Resources, Resource.Drawable.Icon);
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.P) taskDescription = new TaskDescription("MyDEFCON", Resource.Mipmap.ic_launcher, Color.ParseColor("#e8ff00"));                
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.P) taskDescription = new TaskDescription("MyDEFCON", Resource.Mipmap.ic_launcher, Color.ParseColor("#e8ff00"));
             else taskDescription = new TaskDescription("MyDEFCON", bitmap, Color.ParseColor("#e8ff00"));
             SetTaskDescription(taskDescription);
 
@@ -120,7 +120,7 @@ namespace MyDEFCON
         {
             try
             {
-                Android.Support.V4.App.Fragment existingFragment;
+                AndroidX.Fragment.App.Fragment existingFragment;
                 existingFragment = SupportFragmentManager.FindFragmentByTag("CHK");
                 if (existingFragment != null) SupportFragmentManager.PopBackStackImmediate(existingFragment.Id, 0);
                 existingFragment = SupportFragmentManager.FindFragmentByTag("STS");
@@ -129,7 +129,7 @@ namespace MyDEFCON
                 if (existingFragment != null) SupportFragmentManager.PopBackStackImmediate(existingFragment.Id, 0);
 
                 //string fragmentTag;
-                Android.Support.V4.App.Fragment fragment = null;
+                AndroidX.Fragment.App.Fragment fragment = null;
                 Fade fade = new Fade();
                 fade.SetDuration(200);
                 if (id == Resource.Id.menu_status)
@@ -169,7 +169,7 @@ namespace MyDEFCON
 
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
-            Android.Support.V4.App.Fragment existingFragment;
+            AndroidX.Fragment.App.Fragment existingFragment;
             existingFragment = SupportFragmentManager.FindFragmentByTag("CHK");
             if (existingFragment != null) SupportFragmentManager.PopBackStackImmediate(existingFragment.Id, 0);
             existingFragment = SupportFragmentManager.FindFragmentByTag("STS");
@@ -177,7 +177,7 @@ namespace MyDEFCON
             existingFragment = SupportFragmentManager.FindFragmentByTag("ABT");
             if (existingFragment != null) SupportFragmentManager.PopBackStackImmediate(existingFragment.Id, 0);
 
-            Android.Support.V4.App.Fragment fragment = null;
+            AndroidX.Fragment.App.Fragment fragment = null;
             if (item.ItemId == Resource.Id.menu_about)
             {
                 _fragmentTag = "ABT";

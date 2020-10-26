@@ -1,7 +1,7 @@
 ﻿using Android.Graphics;
-using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
+using AndroidX.RecyclerView.Widget;
 using MyDEFCON.Models;
 using System;
 using System.Collections.Generic;

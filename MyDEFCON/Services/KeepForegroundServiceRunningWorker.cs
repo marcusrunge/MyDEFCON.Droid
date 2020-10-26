@@ -1,6 +1,4 @@
-﻿
-using Android.App;
-using Android.Content;
+﻿using Android.Content;
 using Android.OS;
 using AndroidX.Work;
 

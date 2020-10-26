@@ -93,11 +93,11 @@
                 android:textColor="@android:color/white" />
         </TableRow>
     </TableLayout>
-	<android.support.design.widget.CoordinatorLayout
+	<androidx.coordinatorlayout.widget.CoordinatorLayout
 		android:layout_width="fill_parent"
         android:layout_height="match_parent"
 		android:id="@+id/coordinatorLayout1">
-		<android.support.v7.widget.RecyclerView
+		<androidx.recyclerview.widget.RecyclerView
         android:layout_weight="1"
         android:id="@+id/checkListRecyclerView"
         android:layout_width="match_parent"
@@ -107,7 +107,7 @@
         android:layout_marginBottom="4.0dp"
         android:layout_marginLeft="4.0dp"
         android:layout_marginRight="4.0dp" />
-	<android.support.design.widget.FloatingActionButton
+	<com.google.android.material.floatingactionbutton.FloatingActionButton
 			android:layout_height="wrap_content"
 			android:src="@drawable/ic_action_add"
 			android:id="@+id/addFloatingActionButton"
@@ -116,6 +116,6 @@
 			android:layout_marginBottom="4.0dp"
 			android:layout_width="wrap_content"
 			android:layout_gravity="right|bottom" />
-		</android.support.design.widget.CoordinatorLayout>
+		</androidx.coordinatorlayout.widget.CoordinatorLayout>
     
 </LinearLayout>

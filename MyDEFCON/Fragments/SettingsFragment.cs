@@ -3,6 +3,7 @@ using Android.Media;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
+using AndroidX.Fragment.App;
 using MyDEFCON.Services;
 using MyDEFCON.Utilities;
 using System;
@@ -10,7 +11,7 @@ using System.Collections.Generic;
 
 namespace MyDEFCON.Fragments
 {
-    public class SettingsFragment : Android.Support.V4.App.Fragment
+    public class SettingsFragment : Fragment
     {
         ISettingsService _settingsService;
         IWorkerService _workerService;
@@ -26,10 +27,10 @@ namespace MyDEFCON.Fragments
         {
             _isOnCreateView = true;
             var view = inflater.Inflate(Resource.Layout.settings_fragment, null);
-            var isBroadcastEnabledSwitch = view.FindViewById<Android.Support.V7.Widget.SwitchCompat>(Resource.Id.isBroadcastEnabledSwitch);
-            var isMulticastEnabledSwitch = view.FindViewById<Android.Support.V7.Widget.SwitchCompat>(Resource.Id.isMulticastEnabledSwitch);
-            var isForegroundServiceEnabledSwitch = view.FindViewById<Android.Support.V7.Widget.SwitchCompat>(Resource.Id.isForegroundServiceEnabledSwitch);
-            var isStatusUpdateAlertEnabledSwitch = view.FindViewById<Android.Support.V7.Widget.SwitchCompat>(Resource.Id.isStatusUpdateAlertEnabledSwitch);
+            var isBroadcastEnabledSwitch = view.FindViewById<AndroidX.AppCompat.Widget.SwitchCompat>(Resource.Id.isBroadcastEnabledSwitch);
+            var isMulticastEnabledSwitch = view.FindViewById<AndroidX.AppCompat.Widget.SwitchCompat>(Resource.Id.isMulticastEnabledSwitch);
+            var isForegroundServiceEnabledSwitch = view.FindViewById<AndroidX.AppCompat.Widget.SwitchCompat>(Resource.Id.isForegroundServiceEnabledSwitch);
+            var isStatusUpdateAlertEnabledSwitch = view.FindViewById<AndroidX.AppCompat.Widget.SwitchCompat>(Resource.Id.isStatusUpdateAlertEnabledSwitch);
             var statusUpdateAlertSelectSpinner = view.FindViewById<Spinner>(Resource.Id.statusUpdateAlertSelectSpinner);
             isBroadcastEnabledSwitch.Checked = _settingsService.GetSetting<bool>("IsBroadcastEnabled");
             isBroadcastEnabledSwitch.CheckedChange += (s, e) =>

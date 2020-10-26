@@ -2,9 +2,11 @@ using Android.Content;
 using Android.Content.Res;
 using Android.Graphics;
 using Android.OS;
-using Android.Support.V4.Content;
 using Android.Views;
 using Android.Widget;
+using AndroidX.Core.Content;
+using AndroidX.Fragment.App;
+using AndroidX.LocalBroadcastManager.Content;
 using MyDEFCON.Receiver;
 using MyDEFCON.Services;
 using System;
@@ -17,7 +19,7 @@ using static MyDEFCON.Services.ForegroundService;
 
 namespace MyDEFCON.Fragments
 {
-    public class StatusFragment : Android.Support.V4.App.Fragment
+    public class StatusFragment : Fragment
     {
         Button defcon1Button, defcon2Button, defcon3Button, defcon4Button, defcon5Button;
         ICounterService _counterService;
@@ -33,7 +35,7 @@ namespace MyDEFCON.Fragments
 
         public override void OnCreate(Bundle savedInstanceState)
         {
-            base.OnCreate(savedInstanceState);            
+            base.OnCreate(savedInstanceState);
 
             _applicationDefconStatus = GetApplicationDefconStatus();
             if (_settingsService.GetSetting<bool>("IsBroadcastEnabled"))
@@ -84,7 +86,7 @@ namespace MyDEFCON.Fragments
             defcon3Button.Click += async (s, e) => { _isButtonPressed = true; view.PerformHapticFeedback(FeedbackConstants.VirtualKey, FeedbackFlags.IgnoreGlobalSetting); await SetButtonColors(3); await BroadcastDefconStatus(3); SendDefconIntent(3); };
             defcon4Button.Click += async (s, e) => { _isButtonPressed = true; view.PerformHapticFeedback(FeedbackConstants.VirtualKey, FeedbackFlags.IgnoreGlobalSetting); await SetButtonColors(4); await BroadcastDefconStatus(4); SendDefconIntent(4); };
             defcon5Button.Click += async (s, e) => { _isButtonPressed = true; view.PerformHapticFeedback(FeedbackConstants.VirtualKey, FeedbackFlags.IgnoreGlobalSetting); await SetButtonColors(5); await BroadcastDefconStatus(5); SendDefconIntent(5); };
-                      
+
             _eventService.MenuItemPressedEvent += (s, e) =>
             {
                 //view.PerformHapticFeedback(FeedbackConstants.VirtualKey, FeedbackFlags.IgnoreGlobalSetting);

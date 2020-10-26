@@ -1,11 +1,12 @@
 using Android.Graphics;
 using Android.OS;
-using Android.Support.Design.Widget;
-using Android.Support.V4.App;
-using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
+using AndroidX.AppCompat.Widget;
+using AndroidX.Fragment.App;
+using AndroidX.RecyclerView.Widget;
+using Google.Android.Material.FloatingActionButton;
 using MyDEFCON.Adapter;
 using MyDEFCON.Models;
 using MyDEFCON.Services;
