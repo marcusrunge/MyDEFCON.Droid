@@ -68,12 +68,12 @@
                             android:layout_height="wrap_content">
                             <TextView
                                 android:textColor="@android:color/white"
-                                android:text="Copyright (c) 2021"
+                                android:text="Copyright (c) 2022"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />
                             <TextView
                                 android:textColor="@android:color/white"
-                                android:text="MR Softwareengineering"
+                                android:text="MR Softwaretechnik"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />
                         </LinearLayout>

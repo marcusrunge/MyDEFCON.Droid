@@ -59,7 +59,7 @@ namespace MyDEFCON.Services
         private Color _counter5Color;
         public Color Counter5Color => _counter5Color;
 
-        private SQLiteAsyncConnection sqLiteAsyncConnection;
+        private readonly SQLiteAsyncConnection sqLiteAsyncConnection;
 
         public CounterService(ISQLiteDependencies sQLiteDependencies)
         {

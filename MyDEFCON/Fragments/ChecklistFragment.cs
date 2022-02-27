@@ -29,10 +29,10 @@ namespace MyDEFCON.Fragments
         private List<CheckListEntry> _checkList;
         private RecyclerView _recyclerView;
         private ChecklistRecyclerViewAdapter _checklistRecyclerViewAdapter;
-        private ISettingsService _settingsService;
-        private IEventService _eventService;
-        private ICounterService _counterService;
-        private SQLiteAsyncConnection _sqLiteAsyncConnection;
+        private readonly ISettingsService _settingsService;
+        private readonly IEventService _eventService;
+        private readonly ICounterService _counterService;
+        private readonly SQLiteAsyncConnection _sqLiteAsyncConnection;
         private View _onCreateView, _actionModeItemView;
         private ActionMode _actionMode;
 

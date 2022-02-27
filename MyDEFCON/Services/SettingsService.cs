@@ -17,7 +17,7 @@ namespace MyDEFCON.Services
 
     public class SettingsService : ISettingsService
     {
-        private ISharedPreferences _sharedPreferences;
+        private readonly ISharedPreferences _sharedPreferences;
 
         public SettingsService()
         {

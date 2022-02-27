@@ -11,7 +11,7 @@ namespace MyDEFCON.Receiver
     [IntentFilter(new string[] { "com.marcusrunge.MyDEFCON.STATUS_RECEIVER_ACTION" })]
     public class DefconStatusReceiver : BroadcastReceiver
     {
-        private IEventService _eventService;
+        private readonly IEventService _eventService;
 
         public DefconStatusReceiver()
         {

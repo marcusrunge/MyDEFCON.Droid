@@ -21,15 +21,15 @@ namespace MyDEFCON.Fragments
     public class StatusFragment : Fragment
     {
         private Button defcon1Button, defcon2Button, defcon3Button, defcon4Button, defcon5Button;
-        private ICounterService _counterService;
-        private IEventService _eventService;
-        private ISettingsService _settingsService;
+        private readonly ICounterService _counterService;
+        private readonly IEventService _eventService;
+        private readonly ISettingsService _settingsService;
         private int _applicationDefconStatus;
-        private Resources _resources;
+        private readonly Resources _resources;
         private DefconStatusReceiver _defconStatusReceiver;
         private bool _isButtonPressed = false;
         private bool _isInitializing = true;
-        private bool _isReceiving = false;
+        private readonly bool _isReceiving = false;
         public static StatusFragment Instance { get; set; }
 
         public override void OnCreate(Bundle savedInstanceState)

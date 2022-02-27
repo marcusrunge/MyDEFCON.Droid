@@ -13,8 +13,8 @@ namespace MyDEFCON.Fragments
 {
     public class SettingsFragment : Fragment
     {
-        private ISettingsService _settingsService;
-        private IWorkerService _workerService;
+        private readonly ISettingsService _settingsService;
+        private readonly IWorkerService _workerService;
         private bool _isOnCreateView;
         private ViewStates _statusUpdateAlertSelectSpinnerViewState;
 

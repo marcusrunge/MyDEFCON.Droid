@@ -6,7 +6,7 @@ namespace MyDEFCON.Services
 {
     public class KeepForegroundServiceRunningWorker : Worker
     {
-        private Context _context;
+        private readonly Context _context;
 
         public KeepForegroundServiceRunningWorker(Context context, WorkerParameters workerParams) : base(context, workerParams)
         {

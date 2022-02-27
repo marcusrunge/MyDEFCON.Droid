@@ -17,8 +17,8 @@ namespace MyDEFCON.Receiver
     [IntentFilter(new string[] { "com.marcusrunge.MyDEFCON.TCP_ACTION" })]
     public class TcpActionReceiver : BroadcastReceiver
     {
-        private SQLiteAsyncConnection _sqLiteAsyncConnection;
-        private IEventService _eventService;
+        private readonly SQLiteAsyncConnection _sqLiteAsyncConnection;
+        private readonly IEventService _eventService;
         private static bool _isAlreadyConnected = false;
         //TcpClient _tcpClient;
         //Context _context;
