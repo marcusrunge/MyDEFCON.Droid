@@ -27,26 +27,24 @@ namespace MyDEFCON.Utilities
             if (CanVibrate)
             {
                 var milliseconds = vibrateSpan.HasValue ? vibrateSpan.Value.TotalMilliseconds : 500;
-                using (var vibratorService = (Vibrator)Android.App.Application.Context.GetSystemService(Context.VibratorService))
+                using var vibratorManager = (VibratorManager)Android.App.Application.Context.GetSystemService(Context.VibratorManagerService);
+                if ((int)Build.VERSION.SdkInt >= 11)
                 {
-                    if ((int)Build.VERSION.SdkInt >= 11)
-                    {
 #if __ANDROID_11__
-                        if (!vibratorService.HasVibrator)
-                        {
-                            Console.WriteLine("Android device does not have vibrator.");
-                            return;
-                        }
-#endif
-                    }
-                    if (milliseconds < 0) milliseconds = 0;
-
-                    try
+                    if (!vibratorManager.DefaultVibrator.HasVibrator)
                     {
-                        vibratorService.Vibrate(VibrationEffect.CreateOneShot((int)milliseconds, VibrationEffect.DefaultAmplitude));
+                        Console.WriteLine("Android device does not have vibrator.");
+                        return;
                     }
-                    catch { }
+#endif
                 }
+                if (milliseconds < 0) milliseconds = 0;
+
+                try
+                {
+                    vibratorManager.DefaultVibrator.Vibrate(VibrationEffect.CreateOneShot((int)milliseconds, VibrationEffect.DefaultAmplitude));
+                }
+                catch { }
             }
         }
 
@@ -56,8 +54,8 @@ namespace MyDEFCON.Utilities
             {
                 if ((int)Build.VERSION.SdkInt >= 11)
                 {
-                    using (var v = (Vibrator)Android.App.Application.Context.GetSystemService(Context.VibratorService))
-                        return v.HasVibrator;
+                    using var vibratorManager = (VibratorManager)Android.App.Application.Context.GetSystemService(Context.VibratorManagerService);
+                    return vibratorManager.DefaultVibrator.HasVibrator;
                 }
                 return true;
             }

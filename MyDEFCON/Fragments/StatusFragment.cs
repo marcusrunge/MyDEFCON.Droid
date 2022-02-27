@@ -51,7 +51,7 @@ namespace MyDEFCON.Fragments
             try
             {
                 var returnedDefconStatus = _settingsService.GetSetting<string>("DefconStatus");
-                if (!String.IsNullOrEmpty(returnedDefconStatus)) return int.Parse(returnedDefconStatus);
+                if (!string.IsNullOrEmpty(returnedDefconStatus)) return int.Parse(returnedDefconStatus);
             }
             catch { }
             return defconStatus;
@@ -109,16 +109,6 @@ namespace MyDEFCON.Fragments
                 }
             };
 
-            //_eventService.DefconStatusChangedEvent += async (s, e) =>
-            //{
-            //    if (!_isInitializing && !_isButtonPressed)
-            //    {
-            //        _isReceiving = true;
-            //        await SetButtonColors((e as DefconStatusChangedEventArgs).NewDefconStatus);
-            //        _isReceiving = false;
-            //    }
-            //};
-
             return view;
         }
 
@@ -129,14 +119,14 @@ namespace MyDEFCON.Fragments
         }
         private int GetDefconFileResource()
         {
-            switch (_applicationDefconStatus)
+            return _applicationDefconStatus switch
             {
-                case 1: return Resource.Drawable.Defcon1;
-                case 2: return Resource.Drawable.Defcon2;
-                case 3: return Resource.Drawable.Defcon3;
-                case 4: return Resource.Drawable.Defcon4;
-                default: return Resource.Drawable.Defcon5;
-            }
+                1 => Resource.Drawable.Defcon1,
+                2 => Resource.Drawable.Defcon2,
+                3 => Resource.Drawable.Defcon3,
+                4 => Resource.Drawable.Defcon4,
+                _ => Resource.Drawable.Defcon5,
+            };
         }
 
         private async Task InitButtonColors(int defconStatus)
@@ -327,19 +317,17 @@ namespace MyDEFCON.Fragments
             if (_settingsService.GetSetting<bool>("IsBroadcastEnabled"))
             {
                 _eventService.OnBlockConnectionEvent(new BlockConnectionEventArgs(true));
-                using (var udpClient = new UdpClient())
+                using var udpClient = new UdpClient();
+                udpClient.EnableBroadcast = true;
+                var ipEndpoint = new IPEndPoint(IPAddress.Broadcast, 4536);
+                var datagram = Encoding.ASCII.GetBytes(defconStatus.ToString());
+                try
                 {
-                    udpClient.EnableBroadcast = true;
-                    var ipEndpoint = new IPEndPoint(IPAddress.Broadcast, 4536);
-                    var datagram = Encoding.ASCII.GetBytes(defconStatus.ToString());
-                    try
-                    {
-                        await udpClient.SendAsync(datagram, datagram.Length, ipEndpoint);
-                    }
-                    catch { }
-
-                    udpClient.Close();
+                    await udpClient.SendAsync(datagram, datagram.Length, ipEndpoint);
                 }
+                catch { }
+
+                udpClient.Close();
             }
         }
 

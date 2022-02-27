@@ -451,7 +451,7 @@ namespace MyDEFCON.Fragments
         {
             int defconStatus = 5;
             var returnedDefconStatus = _settingsService.GetSetting<string>("DefconStatus");
-            if (!String.IsNullOrEmpty(returnedDefconStatus)) return int.Parse(returnedDefconStatus);
+            if (!string.IsNullOrEmpty(returnedDefconStatus)) return int.Parse(returnedDefconStatus);
             return defconStatus;
         }
     }

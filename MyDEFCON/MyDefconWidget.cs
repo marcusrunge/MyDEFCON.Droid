@@ -51,26 +51,26 @@ namespace MyDEFCON
         }
         private Color GetLightColor(string defconStatus)
         {
-            switch (int.Parse(defconStatus))
+            return int.Parse(defconStatus) switch
             {
-                case 1: return Color.ParseColor("#FFFFFFFF");
-                case 2: return Color.ParseColor("#FFFF7100");
-                case 3: return Color.ParseColor("#FFFFFF00");
-                case 4: return Color.ParseColor("#FF00F200");
-                default: return Color.ParseColor("#FF0066FF");
-            }
+                1 => Color.ParseColor("#FFFFFFFF"),
+                2 => Color.ParseColor("#FFFF7100"),
+                3 => Color.ParseColor("#FFFFFF00"),
+                4 => Color.ParseColor("#FF00F200"),
+                _ => Color.ParseColor("#FF0066FF"),
+            };
         }
 
         private Color GetDarkColor(string defconStatus)
         {
-            switch (int.Parse(defconStatus))
+            return int.Parse(defconStatus) switch
             {
-                case 1: return Color.ParseColor("#FF404040");
-                case 2: return Color.ParseColor("#FF400C00");
-                case 3: return Color.ParseColor("#FF404000");
-                case 4: return Color.ParseColor("#FF003500");
-                default: return Color.ParseColor("#FF002340");
-            }
+                1 => Color.ParseColor("#FF404040"),
+                2 => Color.ParseColor("#FF400C00"),
+                3 => Color.ParseColor("#FF404000"),
+                4 => Color.ParseColor("#FF003500"),
+                _ => Color.ParseColor("#FF002340"),
+            };
         }
 
         public override void OnReceive(Context context, Intent intent)
@@ -119,7 +119,7 @@ namespace MyDEFCON
         {
             int defconStatus = 5;
             var returnedDefconStatus = new SettingsService().GetSetting<string>("DefconStatus");
-            if (!String.IsNullOrEmpty(returnedDefconStatus)) return int.Parse(returnedDefconStatus);
+            if (!string.IsNullOrEmpty(returnedDefconStatus)) return int.Parse(returnedDefconStatus);
             return defconStatus;
         }
     }

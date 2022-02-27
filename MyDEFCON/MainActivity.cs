@@ -24,7 +24,7 @@ using ForegroundService = MyDEFCON.Services.ForegroundService;
 namespace MyDEFCON
 {
     [Activity(Label = "@string/app_name", MainLauncher = true, Theme = "@style/splashscreen", LaunchMode = LaunchMode.SingleTop, Icon = "@drawable/Icon", RoundIcon = "@mipmap/ic_launcher")]
-    public class MainActivity : AppCompatActivity, BottomNavigationView.IOnNavigationItemSelectedListener
+    public class MainActivity : AppCompatActivity, Google.Android.Material.Navigation.NavigationBarView.IOnItemSelectedListener
     {
         BottomNavigationView _navigation;
         int _lastFragmentId;
@@ -56,7 +56,7 @@ namespace MyDEFCON
             }
             SetContentView(Resource.Layout.activity_main);
             _navigation = FindViewById<BottomNavigationView>(Resource.Id.bottomNavigationView);
-            _navigation.SetOnNavigationItemSelectedListener(this);
+            _navigation.SetOnItemSelectedListener(this);
 
             var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
             if (toolbar != null)
