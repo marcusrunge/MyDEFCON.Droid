@@ -6,6 +6,8 @@ using Android.Runtime;
 using AndroidX.Core.App;
 using AndroidX.LocalBroadcastManager.Content;
 using CommonServiceLocator;
+using DryIoc;
+using DryIoc.CommonServiceLocator;
 using MyDEFCON.Models;
 using MyDEFCON.Receiver;
 using MyDEFCON.Utilities;
@@ -16,8 +18,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Unity;
-using Unity.ServiceLocation;
 
 namespace MyDEFCON.Services
 {
@@ -32,6 +32,7 @@ namespace MyDEFCON.Services
         CancellationToken _cancellationToken;
         ForegroundDefconStatusReceiver _defconStatusReceiver;
         UdpClient udpClient;
+        IContainer _container;
 
         public delegate void CallBack(string defconStatus);
 
@@ -43,10 +44,10 @@ namespace MyDEFCON.Services
             _lastConnect = DateTimeOffset.MinValue;
             if (!ServiceLocator.IsLocationProviderSet)
             {
-                var unityContainer = new UnityContainer();
-                unityContainer.RegisterInstance<ISettingsService>(SettingsService.Instance());
-                UnityServiceLocator unityServiceLocator = new UnityServiceLocator(unityContainer);
-                ServiceLocator.SetLocatorProvider(() => unityServiceLocator);
+                _container = new Container();
+                _container.RegisterInstance<ISettingsService>(SettingsService.Instance());
+                var locator = new DryIocServiceLocator(_container);
+                ServiceLocator.SetLocatorProvider(() => locator);
             }
             _settingsService = ServiceLocator.Current.GetInstance<SettingsService>();
             _defconStatusReceiver = new ForegroundDefconStatusReceiver(new CallBack((x) =>

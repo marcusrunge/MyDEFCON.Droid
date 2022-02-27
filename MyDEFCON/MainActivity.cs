@@ -8,6 +8,8 @@ using AndroidX.AppCompat.App;
 using AndroidX.AppCompat.Widget;
 using AndroidX.Transitions;
 using CommonServiceLocator;
+using DryIoc;
+using DryIoc.CommonServiceLocator;
 using Google.Android.Material.BottomNavigation;
 using MyDEFCON.Fragments;
 using MyDEFCON.Models;
@@ -16,8 +18,6 @@ using MyDEFCON.Services;
 using MyDEFCON.Utilities;
 using SQLite;
 using System;
-using Unity;
-using Unity.ServiceLocation;
 using static Android.App.ActivityManager;
 using ForegroundService = MyDEFCON.Services.ForegroundService;
 
@@ -30,7 +30,7 @@ namespace MyDEFCON
         int _lastFragmentId;
         IEventService _eventService;
         IMenu _menu;
-        IUnityContainer unityContainer;
+        IContainer _container;
         ISettingsService _settingsService;
         string _fragmentTag;
         AppRestrictionsReceiver _appRestrictiosReceiver;
@@ -39,20 +39,20 @@ namespace MyDEFCON
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            unityContainer = new UnityContainer();
+            _container = new Container();
             //unityContainer.RegisterInstance<Context>(ApplicationContext);
-            unityContainer.RegisterSingleton<IEventService, EventService>();
-            unityContainer.RegisterInstance<ISettingsService>(SettingsService.Instance());
-            _eventService = unityContainer.Resolve<IEventService>();
-            _settingsService = unityContainer.Resolve<ISettingsService>();
-            unityContainer.RegisterInstance<ISQLiteDependencies>(SQLiteDependencies.GetInstance(_settingsService.GetLocalFilePath("checklist.db")));
-            unityContainer.RegisterType<ICounterService, CounterService>();
-            unityContainer.RegisterSingleton<IWorkerService, WorkerService>();
-            _workerService = unityContainer.Resolve<IWorkerService>();
+            _container.Register<IEventService, EventService>(Reuse.Singleton);
+            _container.RegisterInstance<ISettingsService>(SettingsService.Instance());
+            _eventService = _container.Resolve<IEventService>();
+            _settingsService = _container.Resolve<ISettingsService>();
+            _container.RegisterInstance<ISQLiteDependencies>(SQLiteDependencies.GetInstance(_settingsService.GetLocalFilePath("checklist.db")));
+            _container.Register<ICounterService, CounterService>();
+            _container.Register<IWorkerService, WorkerService>(Reuse.Singleton);
+            _workerService = _container.Resolve<IWorkerService>();
             if (!ServiceLocator.IsLocationProviderSet)
             {
-                UnityServiceLocator unityServiceLocator = new UnityServiceLocator(unityContainer);
-                ServiceLocator.SetLocatorProvider(() => unityServiceLocator);
+                var locator = new DryIocServiceLocator(_container);
+                ServiceLocator.SetLocatorProvider(() => locator);
             }
             SetContentView(Resource.Layout.activity_main);
             _navigation = FindViewById<BottomNavigationView>(Resource.Id.bottomNavigationView);
@@ -135,7 +135,7 @@ namespace MyDEFCON
                 if (id == Resource.Id.menu_status)
                 {
                     _fragmentTag = "STS";
-                    fragment = StatusFragment.GetInstance(Resources, _eventService, _settingsService, unityContainer.Resolve<ICounterService>());
+                    fragment = StatusFragment.GetInstance(Resources, _eventService, _settingsService, _container.Resolve<ICounterService>());
                     fragment.EnterTransition = fade;
                     fragment.ExitTransition = fade;
                     SupportActionBar.SetTitle(Resource.String.statusTitle);
@@ -149,7 +149,7 @@ namespace MyDEFCON
                 else if (id == Resource.Id.menu_checklist)
                 {
                     _fragmentTag = "CHK";
-                    fragment = ChecklistFragment.GetInstance(_eventService, _settingsService, unityContainer.Resolve<ICounterService>(), unityContainer.Resolve<ISQLiteDependencies>());
+                    fragment = ChecklistFragment.GetInstance(_eventService, _settingsService, _container.Resolve<ICounterService>(), _container.Resolve<ISQLiteDependencies>());
                     fragment.EnterTransition = fade;
                     fragment.ExitTransition = fade;
                     SupportActionBar.SetTitle(Resource.String.checklistTitle);
@@ -191,7 +191,7 @@ namespace MyDEFCON
             if (item.ItemId == Resource.Id.menu_settings)
             {
                 _fragmentTag = "SET";
-                fragment = SettingsFragment.NewInstance(_settingsService, unityContainer.Resolve<IWorkerService>());
+                fragment = SettingsFragment.NewInstance(_settingsService, _container.Resolve<IWorkerService>());
                 SupportActionBar.SetTitle(Resource.String.settingsTitle);
                 _navigation.Visibility = ViewStates.Gone;
                 _menu.FindItem(Resource.Id.menu_share).SetVisible(false);

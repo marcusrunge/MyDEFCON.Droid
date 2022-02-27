@@ -9,7 +9,6 @@ using AndroidX.Fragment.App;
 using AndroidX.LocalBroadcastManager.Content;
 using MyDEFCON.Receiver;
 using MyDEFCON.Services;
-using System;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
