@@ -6,6 +6,7 @@ namespace MyDEFCON.Models
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
+
         public long UnixTimeStampCreated { get; set; }
         public long UnixTimeStampUpdated { get; set; }
         public int DefconStatus { get; set; }

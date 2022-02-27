@@ -1,5 +1,4 @@
-﻿
-using Android.App;
+﻿using Android.App;
 using Android.Content;
 using CommonServiceLocator;
 using MyDEFCON.Services;

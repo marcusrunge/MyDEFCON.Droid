@@ -6,11 +6,13 @@ namespace MyDEFCON.Services
 {
     public class KeepForegroundServiceRunningWorker : Worker
     {
-        Context _context;
+        private Context _context;
+
         public KeepForegroundServiceRunningWorker(Context context, WorkerParameters workerParams) : base(context, workerParams)
         {
             _context = context;
         }
+
         public override Result DoWork()
         {
             //ActivityManager activityManager = (ActivityManager)_context.GetSystemService(Context.ActivityService);

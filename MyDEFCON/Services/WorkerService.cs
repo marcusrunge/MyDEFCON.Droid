@@ -7,10 +7,14 @@ namespace MyDEFCON.Services
     public interface IWorkerService
     {
         void CreateUniquePeriodicWorker<T>(TimeSpan repeatInterval) where T : Worker;
+
         void CreateUniqueWorker<T>() where T : Worker;
+
         void CancelWorker<T>() where T : Worker;
+
         void CancelAllWorker();
     }
+
     public class WorkerService : IWorkerService
     {
         public void CancelAllWorker()

@@ -17,12 +17,12 @@ namespace MyDEFCON.Services
     public class UdpClientService : Service
     {
         private UdpClient _udpClient = null;
-        ISettingsService _settingsService;
-        IEventService _eventService;
+        private ISettingsService _settingsService;
+        private IEventService _eventService;
         private static DateTimeOffset _lastConnect;
         private bool _isConnectionBlocked, _isServiceRunning;
-        CancellationTokenSource _cancellationTokenSource;
-        CancellationToken _cancellationToken;
+        private CancellationTokenSource _cancellationTokenSource;
+        private CancellationToken _cancellationToken;
 
         public override void OnCreate()
         {
@@ -92,7 +92,6 @@ namespace MyDEFCON.Services
                                 }
                                 else if (parsedDefconStatus == 0 && _settingsService.GetSetting<bool>("IsMulticastEnabled") && DateTimeOffset.Now > _lastConnect.AddSeconds(5))
                                 {
-
                                     Intent tcpActionIntent = new Intent(this, typeof(TcpActionReceiver));
                                     tcpActionIntent.SetAction("com.marcusrunge.MyDEFCON.TCP_ACTION");
                                     tcpActionIntent.PutExtra("RemoteEndPointAddress", udpReceiveResult.RemoteEndPoint.Address.ToString());
@@ -110,6 +109,7 @@ namespace MyDEFCON.Services
             //return base.OnStartCommand(intent, flags, startId);
             return StartCommandResult.Sticky;
         }
+
         public override IBinder OnBind(Intent intent)
         {
             return null;

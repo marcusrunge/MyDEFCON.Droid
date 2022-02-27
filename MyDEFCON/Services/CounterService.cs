@@ -10,6 +10,7 @@ namespace MyDEFCON.Services
     public interface ICounterService
     {
         Task CalculateCounter(int actualDefconStatus);
+
         Color Counter1Color { get; }
         int Counter1Value { get; }
         Color Counter2Color { get; }
@@ -22,42 +23,43 @@ namespace MyDEFCON.Services
         int Counter5Value { get; }
         int BadgeCounterValue { get; }
     }
+
     public class CounterService : ICounterService
     {
-        int _counter1Value;
+        private int _counter1Value;
         public int Counter1Value => _counter1Value;
 
-        int _counter2Value;
+        private int _counter2Value;
         public int Counter2Value => _counter2Value;
 
-        int _counter3Value;
+        private int _counter3Value;
         public int Counter3Value => _counter3Value;
 
-        int _counter4Value;
+        private int _counter4Value;
         public int Counter4Value => _counter4Value;
 
-        int _counter5Value;
+        private int _counter5Value;
         public int Counter5Value => _counter5Value;
 
-        int _badgeCounterValue;
+        private int _badgeCounterValue;
         public int BadgeCounterValue => _badgeCounterValue;
 
-        Color _counter1Color;
+        private Color _counter1Color;
         public Color Counter1Color => _counter1Color;
 
-        Color _counter2Color;
+        private Color _counter2Color;
         public Color Counter2Color => _counter2Color;
 
-        Color _counter3Color;
+        private Color _counter3Color;
         public Color Counter3Color => _counter3Color;
 
-        Color _counter4Color;
+        private Color _counter4Color;
         public Color Counter4Color => _counter4Color;
 
-        Color _counter5Color;
+        private Color _counter5Color;
         public Color Counter5Color => _counter5Color;
 
-        SQLiteAsyncConnection sqLiteAsyncConnection;
+        private SQLiteAsyncConnection sqLiteAsyncConnection;
 
         public CounterService(ISQLiteDependencies sQLiteDependencies)
         {
@@ -71,7 +73,6 @@ namespace MyDEFCON.Services
                             {
                                 return await sqLiteAsyncConnection.Table<CheckListEntry>().Where(x => !x.Deleted).ToListAsync();
                             }).Result;
-
 
             if (checkList != null && checkList.Count > 0)
             {
@@ -104,6 +105,7 @@ namespace MyDEFCON.Services
                         else if (checkList.Where((x) => x.DefconStatus == 5).Where((x) => x.Checked == true).Count() == checkList.Where((x) => x.DefconStatus == 5).Count()) _counter5Color = Color.ParseColor("#00FF00");
                         else _counter5Color = Color.ParseColor("#FFB300");
                         break;
+
                     case 2:
                         _counter1Value = 0;
                         _counter1Color = Color.ParseColor("#00FF00");
@@ -128,6 +130,7 @@ namespace MyDEFCON.Services
                         else if (checkList.Where((x) => x.DefconStatus == 5).Where((x) => x.Checked == true).Count() == checkList.Where((x) => x.DefconStatus == 5).Count()) _counter5Color = Color.ParseColor("#00FF00");
                         else _counter5Color = Color.ParseColor("#FFB300");
                         break;
+
                     case 3:
                         _counter1Value = 0;
                         _counter2Value = 0;
@@ -149,6 +152,7 @@ namespace MyDEFCON.Services
                         else if (checkList.Where((x) => x.DefconStatus == 5).Where((x) => x.Checked == true).Count() == checkList.Where((x) => x.DefconStatus == 5).Count()) _counter5Color = Color.ParseColor("#00FF00");
                         else _counter5Color = Color.ParseColor("#FFB300");
                         break;
+
                     case 4:
                         _counter1Value = 0;
                         _counter2Value = 0;
@@ -167,6 +171,7 @@ namespace MyDEFCON.Services
                         else if (checkList.Where((x) => x.DefconStatus == 5).Where((x) => x.Checked == true).Count() == checkList.Where((x) => x.DefconStatus == 5).Count()) _counter5Color = Color.ParseColor("#00FF00");
                         else _counter5Color = Color.ParseColor("#FFB300");
                         break;
+
                     case 5:
                         _counter1Value = 0;
                         _counter2Value = 0;
@@ -182,6 +187,7 @@ namespace MyDEFCON.Services
                         else if (checkList.Where((x) => x.DefconStatus == 5).Where((x) => x.Checked == true).Count() == checkList.Where((x) => x.DefconStatus == 5).Count()) _counter5Color = Color.ParseColor("#00FF00");
                         else _counter5Color = Color.ParseColor("#FFB300");
                         break;
+
                     default:
                         break;
                 }

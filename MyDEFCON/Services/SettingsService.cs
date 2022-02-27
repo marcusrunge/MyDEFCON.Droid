@@ -9,12 +9,16 @@ namespace MyDEFCON.Services
     public interface ISettingsService
     {
         T GetSetting<T>(string key);
+
         string GetLocalFilePath(string filename);
+
         void SaveSetting(string key, object value);
     }
+
     public class SettingsService : ISettingsService
     {
-        ISharedPreferences _sharedPreferences;
+        private ISharedPreferences _sharedPreferences;
+
         public SettingsService()
         {
             _sharedPreferences = Application.Context.GetSharedPreferences("MyDefconAppSettings", FileCreationMode.Private);
@@ -22,10 +26,10 @@ namespace MyDEFCON.Services
 
         public static SettingsService Instance() => new SettingsService();
 
-        /// <summary>    
+        /// <summary>
         /// Retrieves local file path
-        /// </summary>   
-        /// <param name="filename">File Name</param>  
+        /// </summary>
+        /// <param name="filename">File Name</param>
         /// <returns>File path with file name</returns>
         public string GetLocalFilePath(string filename)
         {
@@ -33,11 +37,11 @@ namespace MyDEFCON.Services
             return Path.Combine(personalFolder, filename);
         }
 
-        /// <summary>    
+        /// <summary>
         /// Retrieves application settings of types bool, float, int, long, ICollection<string> and string
-        /// </summary>   
-        /// <param name="key">Settings Key</param>  
-        /// <returns>Application Settings of types bool, float, int, long, ICollection<string> or string</returns> 
+        /// </summary>
+        /// <param name="key">Settings Key</param>
+        /// <returns>Application Settings of types bool, float, int, long, ICollection<string> or string</returns>
         public T GetSetting<T>(string key)
         {
             if (typeof(T) == typeof(bool)) return (T)(object)_sharedPreferences.GetBoolean(key, false);
@@ -48,12 +52,12 @@ namespace MyDEFCON.Services
             else return (T)(object)_sharedPreferences.GetString(key, string.Empty);
         }
 
-        /// <summary>    
-        /// Saves application settings of types bool, float, int, long, ICollection<string> and string 
-        /// </summary>   
-        /// <param name="key">Settings Key</param>  
-        /// <param name="value">Settings Value</param> 
-        /// <returns></returns>  
+        /// <summary>
+        /// Saves application settings of types bool, float, int, long, ICollection<string> and string
+        /// </summary>
+        /// <param name="key">Settings Key</param>
+        /// <param name="value">Settings Value</param>
+        /// <returns></returns>
         public void SaveSetting(string key, object value)
         {
             var editor = _sharedPreferences.Edit();

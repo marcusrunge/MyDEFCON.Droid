@@ -18,6 +18,7 @@ namespace MyDEFCON.Utilities
                         int resolvedDefconStatus = applicationRestrictions.GetInt("defconStatus", -1);
                         if (resolvedDefconStatus > 0) eventService.OnDefconStatusChangedEvent(new DefconStatusChangedEventArgs(resolvedDefconStatus));
                         break;
+
                     default:
                         break;
                 }

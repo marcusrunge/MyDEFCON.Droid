@@ -6,4 +6,4 @@
     android:minHeight="40dip"
     android:updatePeriodMillis="1800000"
     android:resizeMode="horizontal|vertical"
-    android:initialLayout="@layout/mydefcon_widget"/>
+    android:initialLayout="@layout/mydefcon_widget" />

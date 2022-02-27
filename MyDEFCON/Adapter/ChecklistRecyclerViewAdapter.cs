@@ -8,13 +8,16 @@ using System.Collections.Generic;
 
 namespace MyDEFCON.Adapter
 {
-    enum ActionType { LongClick, CheckedChange, AfterTextChanged }
-    class ChecklistRecyclerViewAdapter : RecyclerView.Adapter
+    internal enum ActionType
+    { LongClick, CheckedChange, AfterTextChanged }
+
+    internal class ChecklistRecyclerViewAdapter : RecyclerView.Adapter
     {
         public event EventHandler<Tuple<object, int, ActionType>> ViewHolderAction;
+
         public List<CheckListEntry> _checkListEntryList;
         public int ClickedItem { get; set; }
-        View _previousView;
+        private View _previousView;
 
         public ChecklistRecyclerViewAdapter(List<CheckListEntry> checkListEntryList)
         {
@@ -30,6 +33,7 @@ namespace MyDEFCON.Adapter
                 };
             };
         }
+
         public override int ItemCount => _checkListEntryList.Count;
 
         public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
@@ -48,10 +52,11 @@ namespace MyDEFCON.Adapter
 
         public void OnViewHolderAction(Tuple<object, int, ActionType> e) => ViewHolderAction?.Invoke(this, e);
 
-        class ChecklistItemViewHolder : RecyclerView.ViewHolder
+        private class ChecklistItemViewHolder : RecyclerView.ViewHolder
         {
             public CheckBox CheckListEntryChecked { get; set; }
             public EditText CheckListEntry { get; set; }
+
             public ChecklistItemViewHolder(View view, Action<Tuple<object, int, ActionType>> action) : base(view)
             {
                 CheckListEntryChecked = view.FindViewById<CheckBox>(Resource.Id.CheckListEntryChecked);

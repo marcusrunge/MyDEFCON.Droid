@@ -17,9 +17,9 @@ namespace MyDEFCON.Receiver
     [IntentFilter(new string[] { "com.marcusrunge.MyDEFCON.TCP_ACTION" })]
     public class TcpActionReceiver : BroadcastReceiver
     {
-        SQLiteAsyncConnection _sqLiteAsyncConnection;
-        IEventService _eventService;
-        static bool _isAlreadyConnected = false;
+        private SQLiteAsyncConnection _sqLiteAsyncConnection;
+        private IEventService _eventService;
+        private static bool _isAlreadyConnected = false;
         //TcpClient _tcpClient;
         //Context _context;
 
@@ -30,7 +30,7 @@ namespace MyDEFCON.Receiver
             //_tcpClient = new TcpClient();
         }
 
-        public async override void OnReceive(Context context, Intent intent)
+        public override async void OnReceive(Context context, Intent intent)
         {
             //_context = context;
             if (!_isAlreadyConnected) await Task.Run(async () =>

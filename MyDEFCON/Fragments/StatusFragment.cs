@@ -20,12 +20,12 @@ namespace MyDEFCON.Fragments
 {
     public class StatusFragment : Fragment
     {
-        Button defcon1Button, defcon2Button, defcon3Button, defcon4Button, defcon5Button;
-        ICounterService _counterService;
-        IEventService _eventService;
-        ISettingsService _settingsService;
-        int _applicationDefconStatus;
-        Resources _resources;
+        private Button defcon1Button, defcon2Button, defcon3Button, defcon4Button, defcon5Button;
+        private ICounterService _counterService;
+        private IEventService _eventService;
+        private ISettingsService _settingsService;
+        private int _applicationDefconStatus;
+        private Resources _resources;
         private DefconStatusReceiver _defconStatusReceiver;
         private bool _isButtonPressed = false;
         private bool _isInitializing = true;
@@ -116,6 +116,7 @@ namespace MyDEFCON.Fragments
             base.OnViewCreated(view, savedInstanceState);
             await InitButtonColors(_applicationDefconStatus);
         }
+
         private int GetDefconFileResource()
         {
             return _applicationDefconStatus switch
@@ -180,6 +181,7 @@ namespace MyDEFCON.Fragments
                     defcon4Button.SetTextColor(Color.ParseColor("#FF00F200"));
                     defcon5Button.SetTextColor(Color.ParseColor("#FF0066FF"));
                     break;
+
                 case 2:
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
                     {
@@ -203,6 +205,7 @@ namespace MyDEFCON.Fragments
                     defcon4Button.SetTextColor(Color.ParseColor("#FF00F200"));
                     defcon5Button.SetTextColor(Color.ParseColor("#FF0066FF"));
                     break;
+
                 case 3:
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
                     {
@@ -226,6 +229,7 @@ namespace MyDEFCON.Fragments
                     defcon4Button.SetTextColor(Color.ParseColor("#FF00F200"));
                     defcon5Button.SetTextColor(Color.ParseColor("#FF0066FF"));
                     break;
+
                 case 4:
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
                     {
@@ -249,6 +253,7 @@ namespace MyDEFCON.Fragments
                     defcon4Button.SetTextColor(Color.ParseColor("#FF003500"));
                     defcon5Button.SetTextColor(Color.ParseColor("#FF0066FF"));
                     break;
+
                 case 5:
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
                     {
@@ -272,6 +277,7 @@ namespace MyDEFCON.Fragments
                     defcon4Button.SetTextColor(Color.ParseColor("#FF00F200"));
                     defcon5Button.SetTextColor(Color.ParseColor("#FF002340"));
                     break;
+
                 default:
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
                     {
@@ -302,7 +308,7 @@ namespace MyDEFCON.Fragments
             _isButtonPressed = false;
         }
 
-        public async override void OnResume()
+        public override async void OnResume()
         {
             base.OnResume();
             _applicationDefconStatus = GetApplicationDefconStatus();

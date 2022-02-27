@@ -13,10 +13,10 @@ namespace MyDEFCON.Fragments
 {
     public class SettingsFragment : Fragment
     {
-        ISettingsService _settingsService;
-        IWorkerService _workerService;
-        bool _isOnCreateView;
-        ViewStates _statusUpdateAlertSelectSpinnerViewState;
+        private ISettingsService _settingsService;
+        private IWorkerService _workerService;
+        private bool _isOnCreateView;
+        private ViewStates _statusUpdateAlertSelectSpinnerViewState;
 
         public override void OnCreate(Bundle savedInstanceState)
         {

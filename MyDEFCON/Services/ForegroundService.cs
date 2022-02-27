@@ -1,5 +1,4 @@
-﻿
-using Android.App;
+﻿using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
@@ -25,14 +24,14 @@ namespace MyDEFCON.Services
     public class ForegroundService : Service
     {
         public static bool IsStarted { get; set; }
-        ISettingsService _settingsService;
-        Task _udpClientTask/*, _tcpClientTask*/;
-        static DateTimeOffset _lastConnect;
-        CancellationTokenSource _cancellationTokenSource;
-        CancellationToken _cancellationToken;
-        ForegroundDefconStatusReceiver _defconStatusReceiver;
-        UdpClient udpClient;
-        IContainer _container;
+        private ISettingsService _settingsService;
+        private Task _udpClientTask/*, _tcpClientTask*/;
+        private static DateTimeOffset _lastConnect;
+        private CancellationTokenSource _cancellationTokenSource;
+        private CancellationToken _cancellationToken;
+        private ForegroundDefconStatusReceiver _defconStatusReceiver;
+        private UdpClient udpClient;
+        private IContainer _container;
 
         public delegate void CallBack(string defconStatus);
 
@@ -218,7 +217,7 @@ namespace MyDEFCON.Services
             base.OnDestroy();
         }
 
-        void RegisterForegroundService()
+        private void RegisterForegroundService()
         {
             try
             {
@@ -227,7 +226,7 @@ namespace MyDEFCON.Services
             catch { }
         }
 
-        Notification BuildNotification()
+        private Notification BuildNotification()
         {
             var defconStatus = _settingsService.GetSetting<string>("DefconStatus");
             string contentText = "DEFCON " + defconStatus;
@@ -237,15 +236,19 @@ namespace MyDEFCON.Services
                 case "1":
                     smallIconResourceId = Resource.Drawable.ic_stat_1;
                     break;
+
                 case "2":
                     smallIconResourceId = Resource.Drawable.ic_stat_2;
                     break;
+
                 case "3":
                     smallIconResourceId = Resource.Drawable.ic_stat_3;
                     break;
+
                 case "4":
                     smallIconResourceId = Resource.Drawable.ic_stat_4;
                     break;
+
                 default:
                     break;
             }
@@ -275,7 +278,7 @@ namespace MyDEFCON.Services
             }
         }
 
-        PendingIntent BuildIntentToShowMainActivity()
+        private PendingIntent BuildIntentToShowMainActivity()
         {
             var notificationIntent = new Intent(this, typeof(MainActivity));
             notificationIntent.SetAction(Constants.ACTION_MAIN_ACTIVITY);
@@ -293,7 +296,6 @@ namespace MyDEFCON.Services
 
             public ForegroundDefconStatusReceiver()
             {
-
             }
 
             public ForegroundDefconStatusReceiver(CallBack callBack)

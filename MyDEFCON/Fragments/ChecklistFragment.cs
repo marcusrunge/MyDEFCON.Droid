@@ -20,22 +20,21 @@ using System.Threading.Tasks;
 
 namespace MyDEFCON.Fragments
 {
-
     public class ChecklistFragment : Fragment, ActionMode.ICallback
     {
-        Button checklist1Button, checklist2Button, checklist3Button, checklist4Button, checklist5Button;
-        FloatingActionButton addFloatingActionButton;
-        TextView itemsCounter1, itemsCounter2, itemsCounter3, itemsCounter4, itemsCounter5;
-        int fragmentDefconStatus, applicationDefconStatus, _actionModeItemId;
-        List<CheckListEntry> _checkList;
-        RecyclerView _recyclerView;
-        ChecklistRecyclerViewAdapter _checklistRecyclerViewAdapter;
-        ISettingsService _settingsService;
-        IEventService _eventService;
-        ICounterService _counterService;
-        SQLiteAsyncConnection _sqLiteAsyncConnection;
-        View _onCreateView, _actionModeItemView;
-        ActionMode _actionMode;
+        private Button checklist1Button, checklist2Button, checklist3Button, checklist4Button, checklist5Button;
+        private FloatingActionButton addFloatingActionButton;
+        private TextView itemsCounter1, itemsCounter2, itemsCounter3, itemsCounter4, itemsCounter5;
+        private int fragmentDefconStatus, applicationDefconStatus, _actionModeItemId;
+        private List<CheckListEntry> _checkList;
+        private RecyclerView _recyclerView;
+        private ChecklistRecyclerViewAdapter _checklistRecyclerViewAdapter;
+        private ISettingsService _settingsService;
+        private IEventService _eventService;
+        private ICounterService _counterService;
+        private SQLiteAsyncConnection _sqLiteAsyncConnection;
+        private View _onCreateView, _actionModeItemView;
+        private ActionMode _actionMode;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
@@ -44,7 +43,6 @@ namespace MyDEFCON.Fragments
             try
             {
                 applicationDefconStatus = GetApplicationDefconStatus();
-
             }
             catch (Exception) { applicationDefconStatus = 5; }
             fragmentDefconStatus = applicationDefconStatus;
@@ -125,17 +123,20 @@ namespace MyDEFCON.Fragments
                             if (_actionMode != null) break;
                             _actionMode = _onCreateView.StartActionMode(this);
                             break;
+
                         case ActionType.CheckedChange:
                             _checkList[e.Item2].Checked = (e.Item1 as CheckBox).Checked;
                             _checkList[e.Item2].UnixTimeStampUpdated = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                             await _sqLiteAsyncConnection.UpdateAsync(_checkList[e.Item2]);
                             await SetCounter();
                             break;
+
                         case ActionType.AfterTextChanged:
                             _checkList[e.Item2].Item = (e.Item1 as AppCompatEditText).EditableText.ToString();
                             _checkList[e.Item2].UnixTimeStampUpdated = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                             await _sqLiteAsyncConnection.UpdateAsync(_checkList[e.Item2]);
                             break;
+
                         default:
                             break;
                     }
@@ -249,6 +250,7 @@ namespace MyDEFCON.Fragments
                     checklist4Button.SetTextColor(Color.ParseColor("#FF00F200"));
                     checklist5Button.SetTextColor(Color.ParseColor("#FF0066FF"));
                     break;
+
                 case 2:
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
                     {
@@ -272,6 +274,7 @@ namespace MyDEFCON.Fragments
                     checklist4Button.SetTextColor(Color.ParseColor("#FF00F200"));
                     checklist5Button.SetTextColor(Color.ParseColor("#FF0066FF"));
                     break;
+
                 case 3:
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
                     {
@@ -295,6 +298,7 @@ namespace MyDEFCON.Fragments
                     checklist4Button.SetTextColor(Color.ParseColor("#FF00F200"));
                     checklist5Button.SetTextColor(Color.ParseColor("#FF0066FF"));
                     break;
+
                 case 4:
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
                     {
@@ -318,6 +322,7 @@ namespace MyDEFCON.Fragments
                     checklist4Button.SetTextColor(Color.ParseColor("#FF003500"));
                     checklist5Button.SetTextColor(Color.ParseColor("#FF0066FF"));
                     break;
+
                 case 5:
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
                     {
@@ -341,6 +346,7 @@ namespace MyDEFCON.Fragments
                     checklist4Button.SetTextColor(Color.ParseColor("#FF00F200"));
                     checklist5Button.SetTextColor(Color.ParseColor("#FF002340"));
                     break;
+
                 default:
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
                     {

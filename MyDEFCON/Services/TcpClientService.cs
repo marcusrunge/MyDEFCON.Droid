@@ -17,9 +17,9 @@ namespace MyDEFCON.Services
     public class TcpClientService : Service
     {
         private TcpListener _tcpListener = null;
-        CancellationTokenSource _cancellationTokenSource;
-        CancellationToken _cancellationToken;
-        bool _isServiceRunning;
+        private CancellationTokenSource _cancellationTokenSource;
+        private CancellationToken _cancellationToken;
+        private bool _isServiceRunning;
 
         public override IBinder OnBind(Intent intent)
         {

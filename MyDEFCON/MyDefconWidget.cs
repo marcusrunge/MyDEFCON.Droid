@@ -5,14 +5,12 @@ using Android.Graphics;
 using Android.OS;
 using Android.Widget;
 using MyDEFCON.Services;
-using System;
 
 namespace MyDEFCON
 {
     [BroadcastReceiver/*(Enabled = true, Label = "MyDEFCON")*/]
     [IntentFilter(new string[] { "android.appwidget.action.APPWIDGET_UPDATE", "android.appwidget.action.ACTION_APPWIDGET_OPTIONS_CHANGED", "com.marcusrunge.MyDEFCON.DEFCON_UPDATE", "android.intent.action.APPLICATION_RESTRICTIONS_CHANGED" })]
     [MetaData("android.appwidget.provider", Resource = "@xml/mydefconwidgetprovider")]
-
     public class MyDefconWidget : AppWidgetProvider
     {
         public override void OnUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
@@ -33,6 +31,7 @@ namespace MyDEFCON
                 appWidgetManager.UpdateAppWidget(appWidgetId, remoteViews);
             }
         }
+
         public override void OnAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions)
         {
             var defconStatus = GetApplicationDefconStatus().ToString();
@@ -49,6 +48,7 @@ namespace MyDEFCON
             remoteViews.SetOnClickPendingIntent(Resource.Id.mydefconWidgetLinearLayout, pendingIntent);
             appWidgetManager.UpdateAppWidget(componentName, remoteViews);
         }
+
         private Color GetLightColor(string defconStatus)
         {
             return int.Parse(defconStatus) switch
@@ -94,6 +94,7 @@ namespace MyDEFCON
                         case "defconStatus":
                             defconStatus = applicationRestrictions.GetInt("defconStatus").ToString();
                             break;
+
                         default:
                             break;
                     }

@@ -26,15 +26,15 @@ namespace MyDEFCON
     [Activity(Label = "@string/app_name", MainLauncher = true, Theme = "@style/splashscreen", LaunchMode = LaunchMode.SingleTop, Icon = "@drawable/Icon", RoundIcon = "@mipmap/ic_launcher")]
     public class MainActivity : AppCompatActivity, Google.Android.Material.Navigation.NavigationBarView.IOnItemSelectedListener
     {
-        BottomNavigationView _navigation;
-        int _lastFragmentId;
-        IEventService _eventService;
-        IMenu _menu;
-        IContainer _container;
-        ISettingsService _settingsService;
-        string _fragmentTag;
-        AppRestrictionsReceiver _appRestrictiosReceiver;
-        IWorkerService _workerService;
+        private BottomNavigationView _navigation;
+        private int _lastFragmentId;
+        private IEventService _eventService;
+        private IMenu _menu;
+        private IContainer _container;
+        private ISettingsService _settingsService;
+        private string _fragmentTag;
+        private AppRestrictionsReceiver _appRestrictiosReceiver;
+        private IWorkerService _workerService;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -116,7 +116,7 @@ namespace MyDEFCON
             _appRestrictiosReceiver = new AppRestrictionsReceiver();
         }
 
-        void LoadFragment(int id)
+        private void LoadFragment(int id)
         {
             try
             {
@@ -144,7 +144,6 @@ namespace MyDEFCON
                     {
                         _menu.FindItem(Resource.Id.menu_share).SetVisible(true);
                     }
-
                 }
                 else if (id == Resource.Id.menu_checklist)
                 {
@@ -163,7 +162,6 @@ namespace MyDEFCON
             }
             catch (Exception)
             {
-
             }
         }
 
