@@ -10,8 +10,8 @@ android {
         applicationId "com.marcusrunge.mydefcon"
         minSdk 27
         targetSdk 32
-        versionCode 1
-        versionName "1.0"
+        versionCode 281
+        versionName "2.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
