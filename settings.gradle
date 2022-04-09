@@ -16,3 +16,4 @@ rootProject.name = "MyDEFCON"
 include ':app'
 include ':data'
 include ':communication'
+include ':core'
