@@ -3,6 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/mru/AndroidStudioProjects/MyDEFCON.Droid/app/src/main/res/drawable/ic_home_black_24dp.xml" value="0.2265" />
+        <entry key="..\:/Users/mru/AndroidStudioProjects/MyDEFCON.Droid/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2265" />
+        <entry key="..\:/Users/mru/AndroidStudioProjects/MyDEFCON.Droid/app/src/main/res/drawable/ic_notifications_black_24dp.xml" value="0.2265" />
+        <entry key="..\:/Users/mru/AndroidStudioProjects/MyDEFCON.Droid/app/src/main/res/drawable/ic_texture_black_24dp.xml" value="0.2265" />
+        <entry key="..\:/Users/mru/AndroidStudioProjects/MyDEFCON.Droid/app/src/main/res/drawable/ic_unbenannt_1.xml" value="0.2265" />
+        <entry key="..\:/Users/mru/AndroidStudioProjects/MyDEFCON.Droid/app/src/main/res/drawable/ic_warning.xml" value="0.2265" />
+        <entry key="..\:/Users/mru/AndroidStudioProjects/MyDEFCON.Droid/app/src/main/res/drawable/ic_warning_pattern.xml" value="0.2265" />
+        <entry key="..\:/Users/mru/AndroidStudioProjects/MyDEFCON.Droid/app/src/main/res/drawable/ic_warning_pattern_clip_art_hight.xml" value="0.2265" />
         <entry key="..\:/Users/mru/AndroidStudioProjects/MyDEFCON.Droid/app/src/main/res/layout/activity_main.xml" value="0.22826086956521738" />
       </map>
     </option>
