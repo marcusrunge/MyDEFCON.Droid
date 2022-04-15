@@ -37,6 +37,9 @@ android {
     dataBinding {
         enabled = true
     }
+    android.sourceSets.all {
+        java.srcDir("src/$name/kotlin")
+    }
 }
 
 dependencies {
