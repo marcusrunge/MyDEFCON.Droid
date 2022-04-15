@@ -10,6 +10,7 @@ interface CoreFactory {
      */
     fun create(): Core
 }
+
 class CoreFactoryImpl {
     companion object : CoreFactory {
         private var core: Core? = null

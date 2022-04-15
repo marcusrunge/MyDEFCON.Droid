@@ -23,7 +23,10 @@ class BindingUtils {
                     R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications
                 )
             )
-            (view.context as AppCompatActivity).setupActionBarWithNavController(navController, appBarConfiguration)
+            (view.context as AppCompatActivity).setupActionBarWithNavController(
+                navController,
+                appBarConfiguration
+            )
             (view as BottomNavigationView).setupWithNavController(navController)
         }
     }

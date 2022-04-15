@@ -13,5 +13,6 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 object CommunicationModule {
     @Provides
-    fun provideData(@ApplicationContext context: Context?):Communication=CommunicationFactoryImpl.create(context)
+    fun provideData(@ApplicationContext context: Context?): Communication =
+        CommunicationFactoryImpl.create(context)
 }

@@ -17,5 +17,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         binding.viewmodel = viewModel
         binding.lifecycleOwner = this
-        setContentView(binding.root)    }
+        setContentView(binding.root)
+    }
 }
