@@ -1,7 +1,10 @@
 package com.marcusrunge.mydefcon.utils
 
+import android.graphics.Shader
+import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -28,6 +31,14 @@ class BindingUtils {
                 appBarConfiguration
             )
             (view as BottomNavigationView).setupWithNavController(navController)
+        }
+    }
+
+    object SetBackgroundBindingsAdapter {
+        @BindingAdapter("setBackground")
+        @JvmStatic
+        fun bindSetBackground(layout: ConstraintLayout, drawable: Drawable) {
+            layout.background = TileUtil(drawable, Shader.TileMode.REPEAT)
         }
     }
 }
