@@ -63,6 +63,7 @@
     <color name="red_A200">#ff5252</color>
     <color name="red_A400">#ff1744</color>
     <color name="red_A700">#d50000</color>
+    <color name="red_A700_O35">#59d50000</color>
 
     <color name="green_50">#e8f5e9</color>
     <color name="green_100">#c8e6c9</color>

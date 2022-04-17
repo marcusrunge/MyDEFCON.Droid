@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">MyDEFCON</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_checklist">Checklist</string>
+    <string name="title_status">Status</string>
 </resources>
