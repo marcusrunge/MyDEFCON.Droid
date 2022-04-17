@@ -3,7 +3,7 @@
     <style name="Theme.MyDEFCON" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/yellow_A200</item>
-        <item name="colorPrimaryVariant">@color/yellow_A100</item>
+        <item name="colorPrimaryVariant">@color/green_700</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/red_A700</item>
@@ -12,5 +12,6 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="android:windowBackground">@color/yellow_A200</item>
     </style>
 </resources>
