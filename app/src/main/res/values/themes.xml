@@ -3,7 +3,7 @@
     <style name="Theme.MyDEFCON" parent="Theme.MaterialComponents.DayNight">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/yellow_A200</item>
-        <item name="colorPrimaryVariant">@color/yellow_A200V</item>
+        <item name="colorPrimaryVariant">@color/yellow_A200V1</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/red_A700</item>
@@ -19,5 +19,30 @@
 
     <style name="Theme.MyDEFCON.ActionBar" parent="">
         <item name="android:textColorPrimary">@color/red_A700</item>
+    </style>
+
+    <style name="Theme.MyDEFCON.One">
+        <item name="DefconDark">@color/grey_700</item>
+        <item name="DefconLight">@color/grey_50</item>
+    </style>
+
+    <style name="Theme.MyDEFCON.Two">
+        <item name="DefconDark">@color/red_900</item>
+        <item name="DefconLight">@color/red_A400</item>
+    </style>
+
+    <style name="Theme.MyDEFCON.Three">
+        <item name="DefconDark">@color/yellow_A200V4</item>
+        <item name="DefconLight">@color/yellow_A200</item>
+    </style>
+
+    <style name="Theme.MyDEFCON.Four">
+        <item name="DefconDark">@color/green_800</item>
+        <item name="DefconLight">@color/green_A400</item>
+    </style>
+
+    <style name="Theme.MyDEFCON.Five">
+        <item name="DefconDark">@color/blue_800</item>
+        <item name="DefconLight">@color/blue_500</item>
     </style>
 </resources>

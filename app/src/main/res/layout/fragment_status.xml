@@ -26,27 +26,62 @@
             <RadioButton
                 android:id="@+id/radio_defcon1"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:autoSizeTextType="uniform"
+                android:background="@drawable/radio_defcon_flat_selector"
+                android:button="@android:color/transparent"
+                android:gravity="center"
+                android:text="@string/defcon_1"
+                android:textColor="@drawable/radio_defcon_flat_text_selector"
+                android:theme="@style/Theme.MyDEFCON.One" />
 
             <RadioButton
                 android:id="@+id/radio_defcon2"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:autoSizeTextType="uniform"
+                android:background="@drawable/radio_defcon_flat_selector"
+                android:button="@android:color/transparent"
+                android:gravity="center"
+                android:textColor="@drawable/radio_defcon_flat_text_selector"
+                android:text="@string/defcon_2"
+                android:theme="@style/Theme.MyDEFCON.Two" />
 
             <RadioButton
                 android:id="@+id/radio_defcon3"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:autoSizeTextType="uniform"
+                android:background="@drawable/radio_defcon_flat_selector"
+                android:button="@android:color/transparent"
+                android:gravity="center"
+                android:textColor="@drawable/radio_defcon_flat_text_selector"
+                android:text="@string/defcon_3"
+                android:theme="@style/Theme.MyDEFCON.Three"/>
 
             <RadioButton
                 android:id="@+id/radio_defcon4"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:autoSizeTextType="uniform"
+                android:background="@drawable/radio_defcon_flat_selector"
+                android:button="@android:color/transparent"
+                android:gravity="center"
+                android:textColor="@drawable/radio_defcon_flat_text_selector"
+                android:text="@string/defcon_4"
+                android:theme="@style/Theme.MyDEFCON.Four" />
 
             <RadioButton
                 android:id="@+id/radio_defcon5"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:autoSizeTextType="uniform"
+                android:background="@drawable/radio_defcon_flat_selector"
+                android:button="@android:color/transparent"
+                android:gravity="center"
+                android:textColor="@drawable/radio_defcon_flat_text_selector"
+                android:text="@string/defcon_5"
+                android:theme="@style/Theme.MyDEFCON.Five"/>
         </RadioGroup>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

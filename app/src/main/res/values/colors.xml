@@ -20,7 +20,8 @@
     <color name="yellow_900">#f57f17</color>
     <color name="yellow_A100">#ffff8d</color>
     <color name="yellow_A200">#ffff00</color>
-    <color name="yellow_A200V">#e5e500</color>
+    <color name="yellow_A200V1">#e5e500</color>
+    <color name="yellow_A200V4">#999900</color>
     <color name="yellow_A400">#ffea00</color>
     <color name="yellow_A700">#ffd600</color>
 
