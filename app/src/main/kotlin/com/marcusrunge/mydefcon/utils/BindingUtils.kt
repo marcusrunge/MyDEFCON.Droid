@@ -23,7 +23,7 @@ class BindingUtils {
                 (view.context as AppCompatActivity).findNavController(R.id.nav_host_fragment_activity_main)
             val appBarConfiguration = AppBarConfiguration(
                 setOf(
-                    R.id.navigation_status,R.id.navigation_checklist
+                    R.id.navigation_status, R.id.navigation_checklist
                 )
             )
             (view.context as AppCompatActivity).setupActionBarWithNavController(
