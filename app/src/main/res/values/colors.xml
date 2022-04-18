@@ -20,6 +20,7 @@
     <color name="yellow_900">#f57f17</color>
     <color name="yellow_A100">#ffff8d</color>
     <color name="yellow_A200">#ffff00</color>
+    <color name="yellow_A200V">#e5e500</color>
     <color name="yellow_A400">#ffea00</color>
     <color name="yellow_A700">#ffd600</color>
 
@@ -63,6 +64,7 @@
     <color name="red_A200">#ff5252</color>
     <color name="red_A400">#ff1744</color>
     <color name="red_A700">#d50000</color>
+    <color name="red_A700V">#bf0000</color>
     <color name="red_A700_O35">#59d50000</color>
 
     <color name="green_50">#e8f5e9</color>
