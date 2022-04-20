@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.marcusrunge.mydefcon.databinding.FragmentStatusBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class StatusFragment : Fragment() {
 
     private var _binding: FragmentStatusBinding? = null

@@ -1,10 +1,10 @@
 package com.marcusrunge.mydefcon.implementations
 
-import android.app.Application
+import android.content.Context
 import com.marcusrunge.mydefcon.core.interfaces.PreferencesOperations
 import javax.inject.Inject
 
-class PreferencesOperationsImpl @Inject constructor(private val application: Application) :
+class PreferencesOperationsImpl @Inject constructor(private val context: Context?) :
     PreferencesOperations {
     override fun setInt(key: String, value: Int) {
         TODO("Not yet implemented")

@@ -6,12 +6,14 @@ import com.marcusrunge.mydefcon.core.interfaces.PreferencesOperations
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
-@InstallIn(ViewModelComponent::class)
+@InstallIn(SingletonComponent::class)
 object CoreModule {
     @Provides
+    @Singleton
     fun provideCore(preferencesOperations: PreferencesOperations): Core =
         CoreFactoryImpl.create(preferencesOperations)
 }

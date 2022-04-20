@@ -1,18 +1,20 @@
 package com.marcusrunge.mydefcon.di
 
-import android.app.Application
+import android.content.Context
 import com.marcusrunge.mydefcon.core.interfaces.PreferencesOperations
 import com.marcusrunge.mydefcon.implementations.PreferencesOperationsImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object AnalyticsModule {
+object PreferencesOperationsModule {
     @Provides
-    fun providePreferencesOperations(
-        application: Application
-    ): PreferencesOperations = PreferencesOperationsImpl(application)
+    @Singleton
+    fun providePreferencesOperations(@ApplicationContext context: Context?): PreferencesOperations =
+        PreferencesOperationsImpl(context)
 }

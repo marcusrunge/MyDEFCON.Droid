@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item
-        android:drawable="@drawable/radio_defcon_unselected_shape"
-        android:state_checked="true"
-        android:state_pressed="true" />
-    <item
-        android:drawable="@drawable/radio_defcon_selected_shape"
-        android:state_pressed="true" />
-    <item
-        android:drawable="@drawable/radio_defcon_selected_shape"
-        android:state_checked="true" />
-    <item
-        android:drawable="@drawable/radio_defcon_unselected_shape" />
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/radio_defcon_unselected_shape" android:state_checked="true" android:state_pressed="true" />
+    <item android:drawable="@drawable/radio_defcon_selected_shape" android:state_pressed="true" />
+    <item android:drawable="@drawable/radio_defcon_selected_shape" android:state_checked="true" />
+    <item android:drawable="@drawable/radio_defcon_unselected_shape" />
 </selector>
