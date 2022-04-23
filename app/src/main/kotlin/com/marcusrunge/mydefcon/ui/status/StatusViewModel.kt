@@ -11,6 +11,11 @@ import javax.inject.Inject
 class StatusViewModel @Inject constructor(
     application: Application, private val core: Core
 ) : ObservableViewModel(application) {
+
+    fun onCheckedChanged(){
+
+    }
+
     override fun updateView(inputMessage: Message) {
         TODO("Not yet implemented")
     }

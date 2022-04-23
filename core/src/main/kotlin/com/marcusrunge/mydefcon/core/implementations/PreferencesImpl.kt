@@ -5,7 +5,7 @@ import com.marcusrunge.mydefcon.core.bases.CoreBase
 
 internal class PreferencesImpl(private val coreBase: CoreBase) : Preferences {
 
-    override var Status: Int
+    override var status: Int
         get() = coreBase.preferencesOperations.getInt("status")
         set(value) {
             coreBase.preferencesOperations.setInt("status", value)
