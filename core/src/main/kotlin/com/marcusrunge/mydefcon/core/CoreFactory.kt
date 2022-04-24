@@ -1,8 +1,8 @@
 package com.marcusrunge.mydefcon.core
 
+import com.marcusrunge.mydefcon.core.implementations.CoreImpl
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.core.interfaces.PreferencesOperations
-import com.marcusrunge.mydefcon.core.implementations.CoreImpl
 
 interface CoreFactory {
     /**

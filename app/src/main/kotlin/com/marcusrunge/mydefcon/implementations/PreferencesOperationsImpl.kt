@@ -1,17 +1,23 @@
 package com.marcusrunge.mydefcon.implementations
 
 import android.content.Context
+import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.core.interfaces.PreferencesOperations
 import javax.inject.Inject
 
 class PreferencesOperationsImpl @Inject constructor(private val context: Context?) :
     PreferencesOperations {
+    private val sharedPref = context?.getSharedPreferences(
+        context.getString(R.string.sharedpreferences_name),
+        Context.MODE_PRIVATE
+    )
+
     override fun setInt(key: String, value: Int) {
-        TODO("Not yet implemented")
+        sharedPref?.edit()?.putInt(key, value)?.apply()
     }
 
     override fun getInt(key: String): Int {
-        TODO("Not yet implemented")
+        return sharedPref?.getInt(key, 0)!!
     }
 
     override fun setBoolean(key: String, value: Boolean) {

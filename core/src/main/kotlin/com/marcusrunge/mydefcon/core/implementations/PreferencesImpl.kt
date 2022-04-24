@@ -1,7 +1,7 @@
 package com.marcusrunge.mydefcon.core.implementations
 
-import com.marcusrunge.mydefcon.core.interfaces.Preferences
 import com.marcusrunge.mydefcon.core.bases.CoreBase
+import com.marcusrunge.mydefcon.core.interfaces.Preferences
 
 internal class PreferencesImpl(private val coreBase: CoreBase) : Preferences {
 

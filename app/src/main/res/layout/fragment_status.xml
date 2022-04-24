@@ -18,9 +18,11 @@
         android:layout_height="match_parent">
 
         <RadioGroup
+            android:id="@+id/defconGroup"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="@dimen/activity_horizontal_margin"
+            android:checkedButton="@{viewmodel.checkedRadioButtonId}"
             android:onCheckedChanged="@{()->viewmodel.onCheckedChanged()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent">

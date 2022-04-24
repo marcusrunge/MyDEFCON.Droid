@@ -7,4 +7,5 @@
     <string name="defcon_3">DEFCON 3</string>
     <string name="defcon_4">DEFCON 4</string>
     <string name="defcon_5">DEFCON 5</string>
+    <string name="sharedpreferences_name">MyDefconPreferences</string>
 </resources>
