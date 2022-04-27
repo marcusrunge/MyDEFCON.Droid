@@ -1,0 +1,25 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_statusshare"
+        android:icon="@drawable/ic_share_black_24dp"
+        android:title="@string/action_statusshare"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/action_listsync"
+        android:icon="@drawable/ic_sync_black_24dp"
+        android:title="@string/action_listsync"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/navigation_settings"
+        android:title="@string/title_settings" />
+    <item
+        android:id="@+id/navigation_terms"
+        android:title="@string/title_terms" />
+    <item
+        android:id="@+id/navigation_licenses"
+        android:title="@string/title_licenses" />
+    <item
+        android:id="@+id/navigation_privacy"
+        android:title="@string/title_privacy" />
+</menu>
