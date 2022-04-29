@@ -7,5 +7,6 @@ internal class CoreImpl(preferencesOperations: PreferencesOperations) :
     CoreBase(preferencesOperations) {
     init {
         _preferences = PreferencesImpl.create(this)
+        _remote = RemoteImpl.create(this)
     }
 }

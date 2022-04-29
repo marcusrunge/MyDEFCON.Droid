@@ -14,4 +14,5 @@
     <string name="title_privacy">Privacy</string>
     <string name="action_listsync">Sync List</string>
     <string name="action_statusshare">Share Status</string>
+    <string name="license_title">Licenses</string>
 </resources>
