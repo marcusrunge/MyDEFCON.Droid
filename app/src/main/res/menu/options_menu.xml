@@ -9,7 +9,8 @@
         android:id="@+id/action_listsync"
         android:icon="@drawable/ic_sync_black_24dp"
         android:title="@string/action_listsync"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom"
+        android:visible="false"/>
     <item
         android:id="@+id/navigation_settings"
         android:title="@string/title_settings" />
