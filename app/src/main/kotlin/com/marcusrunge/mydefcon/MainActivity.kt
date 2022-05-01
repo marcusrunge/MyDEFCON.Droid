@@ -21,9 +21,9 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedListener {
     @Inject
     lateinit var core: Core
-
+    private lateinit var navController: NavController
     private lateinit var binding: ActivityMainBinding
-    private var optionsMenu:Menu? = null
+    private var optionsMenu: Menu? = null
     private val viewModel by viewModels<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,14 +33,14 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         binding.lifecycleOwner = this
         setContentView(binding.root)
         OssLicensesMenuActivity.setActivityTitle(getString(R.string.license_title))
-        val navController = findNavController(R.id.nav_host_fragment_activity_main)
+        navController = findNavController(R.id.nav_host_fragment_activity_main)
         navController.addOnDestinationChangedListener(this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater: MenuInflater = menuInflater
         inflater.inflate(R.menu.options_menu, menu)
-        optionsMenu=menu
+        optionsMenu = menu
         return true
     }
 
@@ -56,9 +56,11 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
                     true
                 }
                 R.id.navigation_settings -> {
+                    navController.navigate(R.id.navigation_settings)
                     true
                 }
                 R.id.navigation_privacy -> {
+                    navController.navigate(R.id.navigation_privacy)
                     true
                 }
                 R.id.navigation_licenses -> {
@@ -66,6 +68,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
                     true
                 }
                 R.id.navigation_terms -> {
+                    navController.navigate(R.id.navigation_terms)
                     true
                 }
                 android.R.id.home -> {
@@ -81,18 +84,18 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         destination: NavDestination,
         arguments: Bundle?
     ) {
-        when(destination.id){
-            R.id.navigation_checklist->{
-                optionsMenu?.findItem(R.id.action_listsync)?.isVisible=true
-                optionsMenu?.findItem(R.id.action_statusshare)?.isVisible=false
+        when (destination.id) {
+            R.id.navigation_checklist -> {
+                optionsMenu?.findItem(R.id.action_listsync)?.isVisible = true
+                optionsMenu?.findItem(R.id.action_statusshare)?.isVisible = false
             }
-                R.id.navigation_status->{
-                    optionsMenu?.findItem(R.id.action_listsync)?.isVisible=false
-                    optionsMenu?.findItem(R.id.action_statusshare)?.isVisible=true
-                }
-            else ->{
-                optionsMenu?.findItem(R.id.action_listsync)?.isVisible=false
-                optionsMenu?.findItem(R.id.action_statusshare)?.isVisible=false
+            R.id.navigation_status -> {
+                optionsMenu?.findItem(R.id.action_listsync)?.isVisible = false
+                optionsMenu?.findItem(R.id.action_statusshare)?.isVisible = true
+            }
+            else -> {
+                optionsMenu?.findItem(R.id.action_listsync)?.isVisible = false
+                optionsMenu?.findItem(R.id.action_statusshare)?.isVisible = false
             }
         }
     }

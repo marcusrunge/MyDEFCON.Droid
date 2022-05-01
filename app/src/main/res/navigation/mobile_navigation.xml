@@ -16,5 +16,18 @@
         android:name="com.marcusrunge.mydefcon.ui.status.StatusFragment"
         android:label="@string/title_status"
         tools:layout="@layout/fragment_status" />
-
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="com.marcusrunge.mydefcon.ui.settings.SettingsFragment"
+        android:label="@string/title_settings" />
+    <fragment
+        android:id="@+id/navigation_terms"
+        android:name="com.marcusrunge.mydefcon.ui.terms.TermsFragment"
+        android:label="@string/title_terms"
+        tools:layout="@layout/terms_fragment" />
+    <fragment
+        android:id="@+id/navigation_privacy"
+        android:name="com.marcusrunge.mydefcon.ui.privacy.PrivacyFragment"
+        android:label="@string/title_privacy"
+        tools:layout="@layout/privacy_fragment" />
 </navigation>
