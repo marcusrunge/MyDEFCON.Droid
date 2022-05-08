@@ -8,9 +8,9 @@ import java.util.*
 @Entity
 data class CheckItem(
     @PrimaryKey val id: Int,
-    @ColumnInfo(name = "text") val text: String?,
-    @ColumnInfo(name = "is_checked") val isChecked: Boolean?,
-    @ColumnInfo(name = "is_deleted") val isDeleted: Boolean?,
+    @ColumnInfo(name = "text") var text: String?,
+    @ColumnInfo(name = "is_checked") var isChecked: Boolean?,
+    @ColumnInfo(name = "is_deleted") var isDeleted: Boolean?,
     @ColumnInfo(name = "created") val created: Date?,
-    @ColumnInfo(name = "updated") val updated: Date?
+    @ColumnInfo(name = "updated") var updated: Date?
 )
