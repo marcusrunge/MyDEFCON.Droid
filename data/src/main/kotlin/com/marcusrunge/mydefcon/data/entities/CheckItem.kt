@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 import java.util.*
 
 @Entity
-data class CheckItem (
+data class CheckItem(
     @PrimaryKey val id: Int,
     @ColumnInfo(name = "text") val text: String?,
     @ColumnInfo(name = "is_checked") val isChecked: Boolean?,
