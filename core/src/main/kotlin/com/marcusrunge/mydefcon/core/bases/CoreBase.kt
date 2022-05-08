@@ -1,13 +1,11 @@
 package com.marcusrunge.mydefcon.core.bases
 
-import com.marcusrunge.mydefcon.core.interfaces.Core
-import com.marcusrunge.mydefcon.core.interfaces.Preferences
-import com.marcusrunge.mydefcon.core.interfaces.PreferencesOperations
-import com.marcusrunge.mydefcon.core.interfaces.Remote
+import com.marcusrunge.mydefcon.core.interfaces.*
 
 internal abstract class CoreBase(private val _preferencesOperations: PreferencesOperations) : Core {
     protected lateinit var _preferences: Preferences
     protected lateinit var _remote: Remote
+    protected lateinit var _checklist: Checklist
     override val preferences: Preferences
         get() = _preferences
     override val remote: Remote
