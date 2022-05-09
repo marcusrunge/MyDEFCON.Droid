@@ -14,7 +14,4 @@ internal class ChecklistImpl(private val coreBase: CoreBase): Checklist {
             }
         }
     }
-
-    override val checkItems: MutableList<CheckItem>
-        get() = TODO("Not yet implemented")
 }

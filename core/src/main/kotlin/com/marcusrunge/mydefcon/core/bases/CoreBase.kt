@@ -10,6 +10,8 @@ internal abstract class CoreBase(private val _preferencesOperations: Preferences
         get() = _preferences
     override val remote: Remote
         get() = _remote
+    override val checklist: Checklist
+        get() = _checklist
 
     internal val preferencesOperations: PreferencesOperations get() = _preferencesOperations
 }

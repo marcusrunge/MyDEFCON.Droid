@@ -6,10 +6,4 @@ interface Data {
      * @see Repository
      */
     val repository: Repository
-
-    /**
-     * Gets the settings instance.
-     * @see Settings
-     */
-    val settings: Settings
 }
