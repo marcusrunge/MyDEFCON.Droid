@@ -3,12 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <data>
+    <!--<data>
 
         <variable
             name="checkitem"
-            type="com.marcusrunge.mydefcon.data.entities.CheckItem" />
-    </data>
+            type="com.marcusrunge.mydefcon.core.models.CheckItem" />
+    </data>-->
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/editText"
@@ -28,7 +28,6 @@
         android:layout_marginStart="4dp"
         android:autofillHints=""
         android:inputType="textMultiLine"
-        android:text="@={checkitem.text}"
         android:textAppearance="?android:attr/textAppearanceLarge"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/checkBox"

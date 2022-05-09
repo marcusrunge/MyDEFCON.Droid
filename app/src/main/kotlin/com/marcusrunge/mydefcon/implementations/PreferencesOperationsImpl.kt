@@ -5,7 +5,7 @@ import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.core.interfaces.PreferencesOperations
 import javax.inject.Inject
 
-class PreferencesOperationsImpl @Inject constructor(private val context: Context?) :
+internal class PreferencesOperationsImpl @Inject constructor(context: Context?) :
     PreferencesOperations {
     private val sharedPref = context?.getSharedPreferences(
         context.getString(R.string.sharedpreferences_name),

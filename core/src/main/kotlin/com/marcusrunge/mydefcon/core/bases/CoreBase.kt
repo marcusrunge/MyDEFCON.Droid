@@ -2,7 +2,7 @@ package com.marcusrunge.mydefcon.core.bases
 
 import com.marcusrunge.mydefcon.core.interfaces.*
 
-internal abstract class CoreBase(private val _preferencesOperations: PreferencesOperations) : Core {
+internal abstract class CoreBase(private val _preferencesOperations: PreferencesOperations,private val _databaseOperations: DatabaseOperations) : Core {
     protected lateinit var _preferences: Preferences
     protected lateinit var _remote: Remote
     protected lateinit var _checklist: Checklist
@@ -14,4 +14,5 @@ internal abstract class CoreBase(private val _preferencesOperations: Preferences
         get() = _checklist
 
     internal val preferencesOperations: PreferencesOperations get() = _preferencesOperations
+    internal val databaseOperations: DatabaseOperations get() = _databaseOperations
 }
