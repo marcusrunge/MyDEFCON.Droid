@@ -7,9 +7,10 @@ import androidx.databinding.ViewDataBinding
 import androidx.databinding.library.baseAdapters.BR
 import androidx.recyclerview.widget.RecyclerView
 import com.marcusrunge.mydefcon.R
+import com.marcusrunge.mydefcon.models.CheckItem
 
 class CheckItemsRecyclerViewAdapter(
-    private val checkItems: MutableList<Any>,
+    private val checkItems: MutableList<CheckItem>,
     private val onChanged: (id: Long) -> Unit,
     private val onDeleted: (position: Int, id: Long) -> Unit
 ) :
@@ -34,13 +35,13 @@ class CheckItemsRecyclerViewAdapter(
     override fun getItemCount(): Int = checkItems.size
 
     fun deleteItem(position: Int) {
-        //onDeleted.invoke(position, checkItems[position].id.toLong())
+        onDeleted.invoke(position, checkItems[position].id.toLong())
     }
 
     class ViewHolder internal constructor(private val viewDataBinding: ViewDataBinding) :
         RecyclerView.ViewHolder(viewDataBinding.root) {
         fun bind(`object`: Any?) {
-            //viewDataBinding.setVariable(BR.checkitem, `object`)
+            viewDataBinding.setVariable(BR.checkitem, `object`)
             viewDataBinding.executePendingBindings()
         }
     }
