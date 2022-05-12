@@ -7,7 +7,7 @@
 
         <variable
             name="checkitem"
-            type="com.marcusrunge.mydefcon.models.CheckItem" />
+            type="com.marcusrunge.mydefcon.data.entities.CheckItem" />
     </data>
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"

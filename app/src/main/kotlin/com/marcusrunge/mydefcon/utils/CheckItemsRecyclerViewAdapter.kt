@@ -7,7 +7,7 @@ import androidx.databinding.ViewDataBinding
 import androidx.databinding.library.baseAdapters.BR
 import androidx.recyclerview.widget.RecyclerView
 import com.marcusrunge.mydefcon.R
-import com.marcusrunge.mydefcon.models.CheckItem
+import com.marcusrunge.mydefcon.data.entities.CheckItem
 
 class CheckItemsRecyclerViewAdapter(
     private val checkItems: MutableList<CheckItem>,

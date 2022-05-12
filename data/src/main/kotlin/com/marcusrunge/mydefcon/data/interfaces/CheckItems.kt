@@ -1,5 +1,6 @@
 package com.marcusrunge.mydefcon.data.interfaces
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.marcusrunge.mydefcon.data.entities.CheckItem
 
@@ -12,7 +13,7 @@ interface CheckItems {
      * @return A list of check items.
      */
     @Query("SELECT * FROM checkitem")
-    fun getAll(): List<CheckItem>
+    fun getAll(): LiveData<List<CheckItem>>
 
     /**
      * Updates a check item.
