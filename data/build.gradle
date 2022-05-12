@@ -35,6 +35,7 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    namespace 'com.marcusrunge.mydefcon.data'
     android.sourceSets.all {
         java.srcDir("src/$name/kotlin")
     }

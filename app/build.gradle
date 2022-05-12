@@ -38,6 +38,7 @@ android {
     dataBinding {
         enabled = true
     }
+    namespace 'com.marcusrunge.mydefcon'
     android.sourceSets.all {
         java.srcDir("src/$name/kotlin")
     }
