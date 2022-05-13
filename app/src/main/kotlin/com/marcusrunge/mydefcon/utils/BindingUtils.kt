@@ -11,6 +11,8 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.ui.main.MainViewModel
@@ -43,5 +45,12 @@ object BindingUtils {
     @JvmStatic
     fun setEndpointUrl(view: WebView, endpointUrl: String) {
         view.loadUrl(endpointUrl)
+    }
+
+    @BindingAdapter("setAdapter")
+    @JvmStatic
+    fun bindAdapter(recyclerView: RecyclerView, adapter: RecyclerView.Adapter<*>?) {
+        recyclerView.layoutManager = LinearLayoutManager(recyclerView.context)
+        recyclerView.adapter = adapter
     }
 }

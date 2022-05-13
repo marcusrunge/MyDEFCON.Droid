@@ -5,16 +5,17 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.databinding.library.baseAdapters.BR
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.data.entities.CheckItem
 
 class CheckItemsRecyclerViewAdapter(
-    private val checkItems: MutableList<CheckItem>,
+    private val checkItems: MutableLiveData<List<CheckItem>>,
     private val onChanged: (id: Long) -> Unit,
     private val onDeleted: (position: Int, id: Long) -> Unit
 ) :
-    RecyclerView.Adapter<CheckItemsRecyclerViewAdapter.ViewHolder>(){
+    RecyclerView.Adapter<CheckItemsRecyclerViewAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -28,14 +29,16 @@ class CheckItemsRecyclerViewAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val checkItem = checkItems[position]
+        val checkItem = checkItems.value?.get(position)
         holder.bind(checkItem)
     }
 
-    override fun getItemCount(): Int = checkItems.size
+    override fun getItemCount(): Int =
+        if (checkItems.value?.size == null) 0
+        else checkItems.value!!.size
 
     fun deleteItem(position: Int) {
-        onDeleted.invoke(position, checkItems[position].id.toLong())
+        onDeleted.invoke(position, checkItems.value!![position].id.toLong())
     }
 
     class ViewHolder internal constructor(private val viewDataBinding: ViewDataBinding) :
