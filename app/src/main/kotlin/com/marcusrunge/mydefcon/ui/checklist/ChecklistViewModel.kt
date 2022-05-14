@@ -2,6 +2,7 @@ package com.marcusrunge.mydefcon.ui.checklist
 
 import android.app.Application
 import android.os.Message
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.marcusrunge.mydefcon.data.entities.CheckItem
@@ -13,19 +14,20 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChecklistViewModel @Inject constructor(
-    application: Application, private val data: Data
+    application: Application, data: Data
 ) : ObservableViewModel(application) {
-    private val _checkItems = MutableLiveData<List<CheckItem>>(emptyList())
-
-    val checkItemsRecyclerViewAdapter: CheckItemsRecyclerViewAdapter =
-        CheckItemsRecyclerViewAdapter(_checkItems, { }, { position, id -> })
+    private var checkItems: LiveData<List<CheckItem>> = data.repository.checkItems.getAll()
+    private var _checkItemsRecyclerViewAdapter = MutableLiveData<CheckItemsRecyclerViewAdapter>()
+    val checkItemsRecyclerViewAdapter: LiveData<CheckItemsRecyclerViewAdapter> =
+        _checkItemsRecyclerViewAdapter
 
     private val observer = Observer<List<CheckItem>> {
-
+        _checkItemsRecyclerViewAdapter.value =
+            CheckItemsRecyclerViewAdapter(it, { }, { position, id -> })
     }
 
     init {
-        data.repository.checkItems.getAll().observeForever(observer)
+        checkItems.observeForever(observer)
     }
 
     override fun updateView(inputMessage: Message) {
@@ -33,7 +35,7 @@ class ChecklistViewModel @Inject constructor(
     }
 
     override fun onCleared() {
-        data.repository.checkItems.getAll().removeObserver(observer)
+        checkItems.removeObserver(observer)
         super.onCleared()
     }
 }

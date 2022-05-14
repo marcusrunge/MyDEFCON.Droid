@@ -11,7 +11,7 @@ import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.data.entities.CheckItem
 
 class CheckItemsRecyclerViewAdapter(
-    private val checkItems: MutableLiveData<List<CheckItem>>,
+    private val checkItems: List<CheckItem>,
     private val onChanged: (id: Long) -> Unit,
     private val onDeleted: (position: Int, id: Long) -> Unit
 ) :
@@ -29,16 +29,15 @@ class CheckItemsRecyclerViewAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val checkItem = checkItems.value?.get(position)
+        val checkItem = checkItems[position]
         holder.bind(checkItem)
     }
 
     override fun getItemCount(): Int =
-        if (checkItems.value?.size == null) 0
-        else checkItems.value!!.size
+        checkItems.size
 
     fun deleteItem(position: Int) {
-        onDeleted.invoke(position, checkItems.value!![position].id.toLong())
+        onDeleted.invoke(position, checkItems[position].id.toLong())
     }
 
     class ViewHolder internal constructor(private val viewDataBinding: ViewDataBinding) :
