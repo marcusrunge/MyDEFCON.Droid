@@ -10,13 +10,17 @@ import com.marcusrunge.mydefcon.data.interfaces.Data
 import com.marcusrunge.mydefcon.ui.ObservableViewModel
 import com.marcusrunge.mydefcon.utils.CheckItemsRecyclerViewAdapter
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
 class ChecklistViewModel @Inject constructor(
-    application: Application, data: Data
+    application: Application, private val data: Data
 ) : ObservableViewModel(application) {
-    private var checkItems: LiveData<List<CheckItem>> = data.repository.checkItems.getAll()
+    private var checkItems: LiveData<MutableList<CheckItem>> = data.repository.checkItems.getAll()
     private var _checkItemsRecyclerViewAdapter = MutableLiveData<CheckItemsRecyclerViewAdapter>()
     val checkItemsRecyclerViewAdapter: LiveData<CheckItemsRecyclerViewAdapter> =
         _checkItemsRecyclerViewAdapter
@@ -28,6 +32,20 @@ class ChecklistViewModel @Inject constructor(
 
     init {
         checkItems.observeForever(observer)
+    }
+
+    fun onAdd(){
+        val now = OffsetDateTime.now(ZoneOffset.UTC)
+        val checkItem =CheckItem(
+            id=0, text=null,
+            isChecked = false,
+            isDeleted = false,
+            created = now.toEpochSecond(),
+            updated = now.toEpochSecond()
+        )
+        val id = data.repository.checkItems.insert(checkItem)
+        checkItem.id=id
+        checkItems.value?.add(checkItem)
     }
 
     override fun updateView(inputMessage: Message) {

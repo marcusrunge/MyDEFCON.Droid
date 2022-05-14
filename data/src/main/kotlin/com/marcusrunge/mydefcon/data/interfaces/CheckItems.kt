@@ -13,7 +13,7 @@ interface CheckItems {
      * @return A list of check items.
      */
     @Query("SELECT * FROM checkitem")
-    fun getAll(): LiveData<List<CheckItem>>
+    fun getAll(): LiveData<MutableList<CheckItem>>
 
     /**
      * Updates a check item.
