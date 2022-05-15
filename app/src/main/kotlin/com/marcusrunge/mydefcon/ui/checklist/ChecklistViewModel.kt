@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.marcusrunge.mydefcon.R
+import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.data.entities.CheckItem
 import com.marcusrunge.mydefcon.data.interfaces.Data
 import com.marcusrunge.mydefcon.ui.ObservableViewModel
@@ -20,7 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChecklistViewModel @Inject constructor(
-    application: Application, private val data: Data
+    application: Application, core: Core, private val data: Data
 ) : ObservableViewModel(application) {
     private var checkItemsStatus: Int = 5
     private var checkItems: LiveData<MutableList<CheckItem>> = data.repository.checkItems.getAll(checkItemsStatus)
@@ -30,9 +31,10 @@ class ChecklistViewModel @Inject constructor(
     val checkItemsRecyclerViewAdapter: LiveData<CheckItemsRecyclerViewAdapter> =
         _checkItemsRecyclerViewAdapter
 
-    private val observer = Observer<List<CheckItem>> {
+    private val observer = Observer<MutableList<CheckItem>> {
         _checkItemsRecyclerViewAdapter.value =
-            CheckItemsRecyclerViewAdapter(it, { }, { position, id -> })
+            CheckItemsRecyclerViewAdapter({ }, { position, id -> })
+        _checkItemsRecyclerViewAdapter.value?.setData(it)
     }
 
     private val statusObserver = Observer<Int> { status ->
@@ -44,13 +46,20 @@ class ChecklistViewModel @Inject constructor(
             R.id.radio_defcon5 -> checkItemsStatus = 5
         }
         checkItems.value?.clear()
-
-        val updateViewMessage = Message()
-        updateViewMessage.what = UPDATE_VIEW
-        handler.sendMessage(updateViewMessage)
+        data.repository.checkItems.getAll(checkItemsStatus).observeForever {
+            _checkItemsRecyclerViewAdapter.value?.setData(it)
+            checkItems.value!=it
+        }
     }
 
     init {
+        when (core.preferences.status) {
+            1 -> _checkedRadioButtonId.value = R.id.radio_defcon1
+            2 -> _checkedRadioButtonId.value = R.id.radio_defcon2
+            3 -> _checkedRadioButtonId.value = R.id.radio_defcon3
+            4 -> _checkedRadioButtonId.value = R.id.radio_defcon4
+            else -> _checkedRadioButtonId.value = R.id.radio_defcon5
+        }
         checkItems.observeForever(observer)
         checkedRadioButtonId.observeForever(statusObserver)
     }
@@ -73,7 +82,7 @@ class ChecklistViewModel @Inject constructor(
     }
 
     override fun updateView(inputMessage: Message) {
-        checkItemsRecyclerViewAdapter.value?.notifyDataSetChanged()
+        TODO("Not yet implemented")
     }
 
     override fun onCleared() {
