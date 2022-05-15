@@ -24,7 +24,8 @@ class ChecklistViewModel @Inject constructor(
     application: Application, core: Core, private val data: Data
 ) : ObservableViewModel(application) {
     private var checkItemsStatus: Int = 5
-    private var checkItems: LiveData<MutableList<CheckItem>> = data.repository.checkItems.getAll(checkItemsStatus)
+    private var checkItems: LiveData<MutableList<CheckItem>> =
+        data.repository.checkItems.getAll(checkItemsStatus)
     private var _checkItemsRecyclerViewAdapter = MutableLiveData<CheckItemsRecyclerViewAdapter>()
     private val _checkedRadioButtonId = MutableLiveData<Int>()
     val checkedRadioButtonId: MutableLiveData<Int> = _checkedRadioButtonId
@@ -33,7 +34,11 @@ class ChecklistViewModel @Inject constructor(
 
     private val observer = Observer<MutableList<CheckItem>> {
         _checkItemsRecyclerViewAdapter.value =
-            CheckItemsRecyclerViewAdapter({ }, { position, id -> })
+            CheckItemsRecyclerViewAdapter({
+                CoroutineScope(Dispatchers.IO).launch {
+                    data.repository.checkItems.update(it)
+                }
+            }, { position, id -> })
         _checkItemsRecyclerViewAdapter.value?.setData(it)
     }
 
@@ -48,7 +53,7 @@ class ChecklistViewModel @Inject constructor(
         checkItems.value?.clear()
         data.repository.checkItems.getAll(checkItemsStatus).observeForever {
             _checkItemsRecyclerViewAdapter.value?.setData(it)
-            checkItems.value!=it
+            checkItems.value != it
         }
     }
 
@@ -64,14 +69,14 @@ class ChecklistViewModel @Inject constructor(
         checkedRadioButtonId.observeForever(statusObserver)
     }
 
-    fun onAdd(){
+    fun onAdd() {
         CoroutineScope(Dispatchers.IO).launch {
             val now = OffsetDateTime.now(ZoneOffset.UTC)
             val checkItem = CheckItem(
                 id = 0, text = null,
                 isChecked = false,
                 isDeleted = false,
-                defcon= checkItemsStatus,
+                defcon = checkItemsStatus,
                 created = now.toEpochSecond(),
                 updated = now.toEpochSecond()
             )

@@ -4,8 +4,11 @@ import android.graphics.Shader
 import android.graphics.drawable.Drawable
 import android.view.View
 import android.webkit.WebView
+import android.widget.CheckBox
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.widget.addTextChangedListener
 import androidx.databinding.BindingAdapter
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -52,5 +55,21 @@ object BindingUtils {
     fun bindAdapter(recyclerView: RecyclerView, adapter: RecyclerView.Adapter<*>?) {
         recyclerView.layoutManager = LinearLayoutManager(recyclerView.context)
         recyclerView.adapter = adapter
+    }
+
+    @BindingAdapter("setOnChangeCallback")
+    @JvmStatic
+    fun bindOnChangeCallback(checkBox: CheckBox, onChangeCallback: (() -> Unit)?) {
+        checkBox.setOnCheckedChangeListener { _, _ ->
+            onChangeCallback?.invoke()
+        }
+    }
+
+    @BindingAdapter("setOnChangeCallback")
+    @JvmStatic
+    fun bindOnChangeCallback(editText: EditText, onChangeCallback: (() -> Unit)?) {
+        editText.addTextChangedListener {
+            onChangeCallback?.invoke()
+        }
     }
 }

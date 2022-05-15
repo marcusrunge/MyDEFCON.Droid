@@ -3,10 +3,6 @@ package com.marcusrunge.mydefcon.utils
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.RadioGroup
-import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.databinding.library.baseAdapters.BR
@@ -15,7 +11,7 @@ import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.data.entities.CheckItem
 
 class CheckItemsRecyclerViewAdapter(
-    private val onChanged: (id: Long) -> Unit,
+    private val onChanged: (checkItem: CheckItem) -> Unit,
     private val onDeleted: (position: Int, id: Long) -> Unit
 ) :
     RecyclerView.Adapter<CheckItemsRecyclerViewAdapter.ViewHolder>() {
@@ -35,6 +31,9 @@ class CheckItemsRecyclerViewAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val checkItem = checkItems[position]
         holder.bind(checkItem)
+        checkItem.onChangeCallback = {
+            onChanged.invoke(checkItem)
+        }
     }
 
     override fun getItemCount(): Int =
@@ -46,7 +45,7 @@ class CheckItemsRecyclerViewAdapter(
 
     @SuppressLint("NotifyDataSetChanged")
     fun setData(checkItems: MutableList<CheckItem>) {
-        this.checkItems=checkItems
+        this.checkItems = checkItems
         notifyDataSetChanged()
     }
 

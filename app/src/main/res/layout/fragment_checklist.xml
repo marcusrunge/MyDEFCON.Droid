@@ -23,8 +23,8 @@
             android:id="@+id/defconGroup"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:checkedButton="@={viewmodel.checkedRadioButtonId}"
+            android:orientation="horizontal"
             app:layout_constraintBottom_toTopOf="@+id/checkListRecyclerView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -169,11 +169,11 @@
             android:layout_weight="1"
             android:background="#B2000000"
             android:descendantFocusability="afterDescendants"
-            app:setAdapter="@{viewmodel.checkItemsRecyclerViewAdapter}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/counterFife" />
+            app:layout_constraintTop_toBottomOf="@+id/counterFife"
+            app:setAdapter="@{viewmodel.checkItemsRecyclerViewAdapter}" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/addFloatingActionButton"
@@ -182,8 +182,8 @@
             android:layout_gravity="end|bottom"
             android:layout_marginEnd="4.0dp"
             android:layout_marginBottom="4.0dp"
-            android:src="@drawable/ic_add_black_24dp"
             android:onClick="@{() -> viewmodel.onAdd()}"
+            android:src="@drawable/ic_add_black_24dp"
             app:backgroundTint="@color/yellow_A200"
             app:layout_constraintBottom_toBottomOf="@id/checkListRecyclerView"
             app:layout_constraintEnd_toEndOf="parent"

@@ -1,9 +1,12 @@
 package com.marcusrunge.mydefcon.data.entities
 
+import android.widget.ImageView
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import java.util.*
+import kotlin.properties.Delegates
 
 @Entity
 data class CheckItem(
@@ -14,4 +17,7 @@ data class CheckItem(
     @ColumnInfo(name = "defcon") var defcon: Int,
     @ColumnInfo(name = "created") val created: Long?,
     @ColumnInfo(name = "updated") var updated: Long
-)
+){
+    @Ignore
+    var onChangeCallback: (() -> Unit)? = null
+}
