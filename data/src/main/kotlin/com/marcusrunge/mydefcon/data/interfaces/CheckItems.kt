@@ -16,6 +16,15 @@ interface CheckItems {
     fun getAll(): LiveData<MutableList<CheckItem>>
 
     /**
+     * Gets all check items.
+     * @see CheckItem
+     * @param defcon The Defcon status
+     * @return A list of check items.
+     */
+    @Query("SELECT * FROM checkitem WHERE defcon =:defcon")
+    fun getAll(defcon:Int): LiveData<MutableList<CheckItem>>
+
+    /**
      * Updates a check item.
      * @see CheckItem
      * @param checkItem The check item.

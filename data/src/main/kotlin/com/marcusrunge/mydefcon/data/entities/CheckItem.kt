@@ -9,8 +9,9 @@ import java.util.*
 data class CheckItem(
     @PrimaryKey var id: Long,
     @ColumnInfo(name = "text") var text: String?,
-    @ColumnInfo(name = "is_checked") var isChecked: Boolean?,
-    @ColumnInfo(name = "is_deleted") var isDeleted: Boolean?,
+    @ColumnInfo(name = "is_checked") var isChecked: Boolean,
+    @ColumnInfo(name = "is_deleted") var isDeleted: Boolean,
+    @ColumnInfo(name = "defcon") var defcon: Int,
     @ColumnInfo(name = "created") val created: Long?,
-    @ColumnInfo(name = "updated") var updated: Long?
+    @ColumnInfo(name = "updated") var updated: Long
 )
