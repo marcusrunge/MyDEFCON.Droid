@@ -24,8 +24,8 @@ class ChecklistViewModel @Inject constructor(
     application: Application, core: Core, private val data: Data
 ) : ObservableViewModel(application) {
     private var checkItemsStatus: Int = 5
-    private var checkItems: LiveData<MutableList<CheckItem>> =
-        data.repository.checkItems.getAll(checkItemsStatus)
+    private lateinit var checkItems: LiveData<MutableList<CheckItem>>
+
     private var _checkItemsRecyclerViewAdapter = MutableLiveData<CheckItemsRecyclerViewAdapter>()
     private val _checkedRadioButtonId = MutableLiveData<Int>()
     val checkedRadioButtonId: MutableLiveData<Int> = _checkedRadioButtonId
@@ -33,6 +33,7 @@ class ChecklistViewModel @Inject constructor(
         _checkItemsRecyclerViewAdapter
 
     private val observer = Observer<MutableList<CheckItem>> {
+        if( _checkItemsRecyclerViewAdapter.value==null)
         _checkItemsRecyclerViewAdapter.value =
             CheckItemsRecyclerViewAdapter({
                 CoroutineScope(Dispatchers.IO).launch {
@@ -50,11 +51,9 @@ class ChecklistViewModel @Inject constructor(
             R.id.radio_defcon4 -> checkItemsStatus = 4
             R.id.radio_defcon5 -> checkItemsStatus = 5
         }
-        checkItems.value?.clear()
-        data.repository.checkItems.getAll(checkItemsStatus).observeForever {
-            _checkItemsRecyclerViewAdapter.value?.setData(it)
-            checkItems.value != it
-        }
+        if(::checkItems.isInitialized) checkItems.value?.clear()
+        checkItems = data.repository.checkItems.getAll(checkItemsStatus)
+        checkItems.observeForever (observer)
     }
 
     init {
@@ -65,7 +64,6 @@ class ChecklistViewModel @Inject constructor(
             4 -> _checkedRadioButtonId.value = R.id.radio_defcon4
             else -> _checkedRadioButtonId.value = R.id.radio_defcon5
         }
-        checkItems.observeForever(observer)
         checkedRadioButtonId.observeForever(statusObserver)
     }
 
