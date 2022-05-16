@@ -8,13 +8,15 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.text.TextPaint
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.marcusrunge.mydefcon.R
 
 
 class SwipeToDeleteCallback(
     val context: Context?,
-    val checkItemsRecyclerViewAdapter: CheckItemsRecyclerViewAdapter?
+    private val checkItemsRecyclerViewAdapter: CheckItemsRecyclerViewAdapter?
 ) :
     ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT /*or ItemTouchHelper.RIGHT*/) {
     private var icon: Drawable? = null
@@ -29,9 +31,9 @@ class SwipeToDeleteCallback(
     }
 
     init {
-        /*icon = context?.let { ContextCompat.getDrawable(it, R.drawable.ic_delete_outline) }
+        icon = context?.let { ContextCompat.getDrawable(it, R.drawable.ic_delete_outline) }
         delete = context?.getString(R.string.delete)
-        background = ColorDrawable(context!!.getColor(R.color.delete))*/
+        background = ColorDrawable(context!!.getColor(R.color.red_900))
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {

@@ -173,7 +173,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/counterFife"
-            app:setAdapter="@{viewmodel.checkItemsRecyclerViewAdapter}" />
+            app:setAdapter="@{viewmodel.checkItemsRecyclerViewAdapter}"
+            app:setItemTouchHelper="@{viewmodel.itemTouchHelper}" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/addFloatingActionButton"
