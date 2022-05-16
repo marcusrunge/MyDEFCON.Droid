@@ -17,7 +17,4 @@ data class CheckItem(
     @ColumnInfo(name = "defcon") var defcon: Int,
     @ColumnInfo(name = "created") val created: Long?,
     @ColumnInfo(name = "updated") var updated: Long
-){
-    @Ignore
-    var onChangeCallback: (() -> Unit)? = null
-}
+)

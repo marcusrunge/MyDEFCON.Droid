@@ -31,9 +31,6 @@ class CheckItemsRecyclerViewAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val checkItem = checkItems[position]
         holder.bind(checkItem)
-        checkItem.onChangeCallback = {
-            onChanged.invoke(checkItem)
-        }
     }
 
     override fun getItemCount(): Int =

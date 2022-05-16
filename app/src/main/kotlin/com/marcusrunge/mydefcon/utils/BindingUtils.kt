@@ -56,20 +56,4 @@ object BindingUtils {
         recyclerView.layoutManager = LinearLayoutManager(recyclerView.context)
         recyclerView.adapter = adapter
     }
-
-    @BindingAdapter("setOnChangeCallback")
-    @JvmStatic
-    fun bindOnChangeCallback(checkBox: CheckBox, onChangeCallback: (() -> Unit)?) {
-        checkBox.setOnCheckedChangeListener { _, _ ->
-            onChangeCallback?.invoke()
-        }
-    }
-
-    @BindingAdapter("setOnChangeCallback")
-    @JvmStatic
-    fun bindOnChangeCallback(editText: EditText, onChangeCallback: (() -> Unit)?) {
-        editText.addTextChangedListener {
-            onChangeCallback?.invoke()
-        }
-    }
 }
