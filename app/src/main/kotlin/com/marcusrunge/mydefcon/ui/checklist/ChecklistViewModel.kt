@@ -3,6 +3,7 @@ package com.marcusrunge.mydefcon.ui.checklist
 import android.app.Application
 import android.os.Message
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.marcusrunge.mydefcon.R
@@ -33,7 +34,6 @@ class ChecklistViewModel @Inject constructor(
         _checkItemsRecyclerViewAdapter
 
     private val observer = Observer<MutableList<CheckItem>> {
-        if( _checkItemsRecyclerViewAdapter.value==null)
         _checkItemsRecyclerViewAdapter.value =
             CheckItemsRecyclerViewAdapter({
                 CoroutineScope(Dispatchers.IO).launch {
@@ -51,9 +51,10 @@ class ChecklistViewModel @Inject constructor(
             R.id.radio_defcon4 -> checkItemsStatus = 4
             R.id.radio_defcon5 -> checkItemsStatus = 5
         }
-        if(::checkItems.isInitialized) checkItems.value?.clear()
-        checkItems = data.repository.checkItems.getAll(checkItemsStatus)
-        checkItems.observeForever (observer)
+        if (::checkItems.isInitialized) checkItems.removeObserver(observer)
+
+        checkItems = data.repository.checkItems.getAll(checkItemsStatus).getDistinct()
+        checkItems.observeForever(observer)
     }
 
     init {
@@ -92,5 +93,26 @@ class ChecklistViewModel @Inject constructor(
         checkItems.removeObserver(observer)
         checkedRadioButtonId.removeObserver(statusObserver)
         super.onCleared()
+    }
+
+    private fun <T> LiveData<T>.getDistinct(): LiveData<T> {
+        val distinctLiveData = MediatorLiveData<T>()
+        distinctLiveData.addSource(this, object : Observer<T> {
+            private var initialized = false
+            private var lastObj: T? = null
+            override fun onChanged(obj: T?) {
+                if (!initialized) {
+                    initialized = true
+                    lastObj = obj
+                    distinctLiveData.postValue(lastObj!!)
+                } else if ((obj == null && lastObj != null)
+                    || obj != lastObj
+                ) {
+                    lastObj = obj
+                    distinctLiveData.postValue(lastObj!!)
+                }
+            }
+        })
+        return distinctLiveData
     }
 }

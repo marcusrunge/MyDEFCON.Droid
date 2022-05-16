@@ -3,6 +3,9 @@ package com.marcusrunge.mydefcon.utils
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.CheckBox
+import android.widget.EditText
+import androidx.core.widget.doAfterTextChanged
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.databinding.library.baseAdapters.BR
@@ -25,7 +28,7 @@ class CheckItemsRecyclerViewAdapter(
             parent,
             false
         )
-        return ViewHolder(viewDataBinding)
+        return ViewHolder(viewDataBinding, onChanged)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -46,11 +49,21 @@ class CheckItemsRecyclerViewAdapter(
         notifyDataSetChanged()
     }
 
-    class ViewHolder internal constructor(private val viewDataBinding: ViewDataBinding) :
+    class ViewHolder internal constructor(
+        private val viewDataBinding: ViewDataBinding,
+        private val onChanged: (checkItem: CheckItem) -> Unit
+    ) :
         RecyclerView.ViewHolder(viewDataBinding.root) {
         fun bind(`object`: Any?) {
             viewDataBinding.setVariable(BR.checkitem, `object`)
             viewDataBinding.executePendingBindings()
+            viewDataBinding.root.findViewById<EditText>(R.id.editText).doAfterTextChanged {
+                onChanged.invoke(`object` as CheckItem)
+            }
+            viewDataBinding.root.findViewById<CheckBox>(R.id.checkBox)
+                .setOnCheckedChangeListener { _, _ ->
+                    onChanged.invoke(`object` as CheckItem)
+                }
         }
     }
 }
