@@ -40,7 +40,8 @@ class CheckItemsRecyclerViewAdapter(
         checkItems.size
 
     fun deleteItem(position: Int) {
-        onDeleted.invoke(position, checkItems[position].id.toLong())
+        if (checkItems.size - 1 >= position)
+            onDeleted.invoke(position, checkItems[position].id)
     }
 
     @SuppressLint("NotifyDataSetChanged")

@@ -31,9 +31,9 @@ class SwipeToDeleteCallback(
     }
 
     init {
-        icon = context?.let { ContextCompat.getDrawable(it, R.drawable.ic_delete_outline) }
-        delete = context?.getString(R.string.delete)
-        background = ColorDrawable(context!!.getColor(R.color.red_900))
+        /*icon = context?.let { ContextCompat.getDrawable(it, R.drawable.ic_delete_outline) }
+        delete = context?.getString(R.string.delete)*/
+        background = ColorDrawable(context!!.getColor(R.color.red_A700_O35))
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
@@ -93,6 +93,7 @@ class SwipeToDeleteCallback(
         }
 
         background!!.draw(c)
+        icon!!.draw(c)
         icon!!.draw(c)
         delete?.let {
             c.drawText(
