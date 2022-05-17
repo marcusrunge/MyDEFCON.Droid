@@ -1,5 +1,6 @@
 package com.marcusrunge.mydefcon.ui.checklist
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.os.Message
 import androidx.lifecycle.LiveData
@@ -96,11 +97,17 @@ class ChecklistViewModel @Inject constructor(
             val id = data.repository.checkItems.insert(checkItem)
             checkItem.id = id
             checkItems.value?.add(checkItem)
+            val updateViewMessage = Message()
+            updateViewMessage.what = UPDATE_VIEW
+            updateViewMessage.obj = checkItems.value?.size?.minus(1)
+            handler.sendMessage(updateViewMessage)
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun updateView(inputMessage: Message) {
-        TODO("Not yet implemented")
+        if (inputMessage.obj is Int) _checkItemsRecyclerViewAdapter.value?.notifyItemInserted(inputMessage.obj as Int)
+        else _checkItemsRecyclerViewAdapter.value?.notifyDataSetChanged()
     }
 
     override fun onCleared() {
