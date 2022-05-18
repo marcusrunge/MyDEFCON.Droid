@@ -34,6 +34,8 @@
             android:text="@={checkitem.text}"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@android:color/white"
+            android:backgroundTint="@color/white"
+            android:textCursorDrawable="@null"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/checkBox"
             app:layout_constraintTop_toTopOf="@id/checkBox"

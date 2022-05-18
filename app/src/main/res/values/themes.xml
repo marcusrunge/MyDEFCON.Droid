@@ -10,15 +10,18 @@
         <item name="colorSecondaryVariant">@color/red_A700V</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor" >?attr/colorPrimaryVariant</item>
         <item name="android:windowLightStatusBar">true</item>
         <!-- Customize your theme here. -->
         <item name="android:windowBackground">@color/yellow_A200</item>
         <item name="actionBarTheme">@style/Theme.MyDEFCON.ActionBar</item>
+        <item name="android:textColor">@color/red_A700</item>
+        <item name="android:tint">@color/red_A700</item>
     </style>
 
     <style name="Theme.MyDEFCON.ActionBar" parent="">
         <item name="android:textColorPrimary">@color/red_A700</item>
+        <item name="colorControlNormal">@color/red_A700</item>
     </style>
 
     <style name="Theme.MyDEFCON.One">
