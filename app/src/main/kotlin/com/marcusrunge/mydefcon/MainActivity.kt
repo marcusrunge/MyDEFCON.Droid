@@ -74,6 +74,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
                     true
                 }
                 android.R.id.home -> {
+                    navController.popBackStack()
                     true
                 }
                 else -> super.onOptionsItemSelected(item)
