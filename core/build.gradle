@@ -8,6 +8,10 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
+dependencies {
+    implementation 'androidx.lifecycle:lifecycle-livedata-core-ktx:2.4.1'
+}
+
 sourceSets.all {
     java.srcDir("src/$name/kotlin")
 }

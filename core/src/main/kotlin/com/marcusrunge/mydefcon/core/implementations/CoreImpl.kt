@@ -8,5 +8,6 @@ internal class CoreImpl(preferencesOperations: PreferencesOperations) :
     init {
         _preferences = PreferencesImpl.create(this)
         _remote = RemoteImpl.create(this)
+        _checklist=ChecklistImpl.create(this)
     }
 }
