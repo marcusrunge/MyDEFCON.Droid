@@ -25,6 +25,7 @@
             android:layout_height="wrap_content"
             android:checkedButton="@={viewmodel.checkedRadioButtonId}"
             android:orientation="horizontal"
+            android:layout_marginBottom="2dp"
             app:layout_constraintBottom_toTopOf="@+id/checkListRecyclerView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -114,6 +115,8 @@
             android:gravity="center"
             android:textColor="@android:color/white"
             android:background="@drawable/counter_text_shape"
+            android:text="@{viewmodel.defcon1ItemsCount}"
+            android:layout_marginVertical="2dp"
             app:layout_constraintEnd_toStartOf="@+id/counterTwo"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
@@ -126,10 +129,13 @@
             android:gravity="center"
             android:textColor="@android:color/white"
             android:background="@drawable/counter_text_shape"
+            android:text="@{viewmodel.defcon2ItemsCount}"
+            android:layout_marginVertical="2dp"
             app:layout_constraintEnd_toStartOf="@+id/counterThree"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/counterOne"
-            app:layout_constraintTop_toTopOf="@id/counterOne" />
+            app:layout_constraintTop_toTopOf="@id/counterOne"
+            app:layout_constraintBottom_toBottomOf="@id/counterOne"/>
 
         <TextView
             android:id="@+id/counterThree"
@@ -138,10 +144,12 @@
             android:gravity="center"
             android:textColor="@android:color/white"
             android:background="@drawable/counter_text_shape"
+            android:text="@{viewmodel.defcon3ItemsCount}"
             app:layout_constraintEnd_toStartOf="@+id/counterFour"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/counterTwo"
-            app:layout_constraintTop_toTopOf="@id/counterTwo" />
+            app:layout_constraintTop_toTopOf="@id/counterTwo"
+            app:layout_constraintBottom_toBottomOf="@id/counterTwo"/>
 
         <TextView
             android:id="@+id/counterFour"
@@ -150,10 +158,12 @@
             android:gravity="center"
             android:textColor="@android:color/white"
             android:background="@drawable/counter_text_shape"
+            android:text="@{viewmodel.defcon4ItemsCount}"
             app:layout_constraintEnd_toStartOf="@+id/counterFife"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/counterThree"
-            app:layout_constraintTop_toTopOf="@id/counterThree" />
+            app:layout_constraintTop_toTopOf="@id/counterThree"
+            app:layout_constraintBottom_toBottomOf="@id/counterThree"/>
 
         <TextView
             android:id="@+id/counterFife"
@@ -162,10 +172,12 @@
             android:gravity="center"
             android:textColor="@android:color/white"
             android:background="@drawable/counter_text_shape"
+            android:text="@{viewmodel.defcon5ItemsCount}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/counterFour"
-            app:layout_constraintTop_toTopOf="@id/counterFour" />
+            app:layout_constraintTop_toTopOf="@id/counterFour"
+            app:layout_constraintBottom_toBottomOf="@id/counterFour"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/checkListRecyclerView"
@@ -174,6 +186,7 @@
             android:layout_weight="1"
             android:background="#B2000000"
             android:descendantFocusability="afterDescendants"
+            android:layout_marginTop="2dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

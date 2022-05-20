@@ -15,7 +15,7 @@ import com.marcusrunge.mydefcon.data.entities.CheckItem
 
 class CheckItemsRecyclerViewAdapter(
     private val onChanged: (checkItem: CheckItem) -> Unit,
-    private val onDeleted: (position: Int, id: Long) -> Unit
+    private val onDeleted: (checkItem: CheckItem) -> Unit
 ) :
     RecyclerView.Adapter<CheckItemsRecyclerViewAdapter.ViewHolder>() {
     private var checkItems: MutableList<CheckItem> = mutableListOf()
@@ -40,8 +40,10 @@ class CheckItemsRecyclerViewAdapter(
         checkItems.size
 
     fun deleteItem(position: Int) {
-        if (checkItems.size - 1 >= position)
-            onDeleted.invoke(position, checkItems[position].id)
+        if (checkItems.size - 1 >= position) {
+            onDeleted.invoke(checkItems[position])
+            checkItems.remove(checkItems[position])
+        }
     }
 
     @SuppressLint("NotifyDataSetChanged")

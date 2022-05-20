@@ -9,7 +9,6 @@ java {
 }
 
 dependencies {
-    implementation 'androidx.lifecycle:lifecycle-livedata-core-ktx:2.4.1'
 }
 
 sourceSets.all {
