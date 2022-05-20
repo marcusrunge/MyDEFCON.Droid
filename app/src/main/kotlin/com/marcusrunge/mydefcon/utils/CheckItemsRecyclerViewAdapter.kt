@@ -42,7 +42,6 @@ class CheckItemsRecyclerViewAdapter(
     fun deleteItem(position: Int) {
         if (checkItems.size - 1 >= position) {
             onDeleted.invoke(checkItems[position])
-            checkItems.remove(checkItems[position])
         }
     }
 

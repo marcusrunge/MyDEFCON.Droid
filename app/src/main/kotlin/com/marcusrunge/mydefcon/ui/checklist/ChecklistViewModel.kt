@@ -3,10 +3,7 @@ package com.marcusrunge.mydefcon.ui.checklist
 import android.annotation.SuppressLint
 import android.app.Application
 import android.os.Message
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
+import androidx.lifecycle.*
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.core.interfaces.Core
@@ -28,24 +25,26 @@ class ChecklistViewModel @Inject constructor(
     application: Application, core: Core, private val data: Data
 ) : ObservableViewModel(application) {
     private val _checkedRadioButtonId = MutableLiveData<Int>()
-    private val _defcon1ItemsCount= MutableLiveData("0")
-    private val _defcon2ItemsCount= MutableLiveData("0")
-    private val _defcon3ItemsCount= MutableLiveData("0")
-    private val _defcon4ItemsCount= MutableLiveData("0")
-    private val _defcon5ItemsCount= MutableLiveData("0")
+    private val _defcon1ItemsCount = MutableLiveData("0")
+    private val _defcon2ItemsCount = MutableLiveData("0")
+    private val _defcon3ItemsCount = MutableLiveData("0")
+    private val _defcon4ItemsCount = MutableLiveData("0")
+    private val _defcon5ItemsCount = MutableLiveData("0")
 
     private val checkItemsObserver = Observer<MutableList<CheckItem>> {
         _checkItemsRecyclerViewAdapter.value =
             CheckItemsRecyclerViewAdapter({
                 CoroutineScope(Dispatchers.IO).launch {
-                   it.updated = OffsetDateTime.now(ZoneOffset.UTC).toEpochSecond()
+                    it.updated = OffsetDateTime.now(ZoneOffset.UTC).toEpochSecond()
                     data.repository.checkItems.update(it)
+                    allCheckItems = data.repository.checkItems.getAll().getDistinct()
                 }
             }, {
                 CoroutineScope(Dispatchers.IO).launch {
                     it.updated = OffsetDateTime.now(ZoneOffset.UTC).toEpochSecond()
-                    it.isDeleted=true
+                    it.isDeleted = true
                     data.repository.checkItems.update(it)
+                    allCheckItems = data.repository.checkItems.getAll().getDistinct()
                 }
             })
         _checkItemsRecyclerViewAdapter.value?.setData(it)
@@ -66,16 +65,61 @@ class ChecklistViewModel @Inject constructor(
             R.id.radio_defcon5 -> checkItemsStatus = 5
         }
         if (::checkItems.isInitialized) checkItems.removeObserver(checkItemsObserver)
-        if (::allCheckItems.isInitialized) allCheckItems.removeObserver(checkItemsObserver)
         checkItems = data.repository.checkItems.getAll(checkItemsStatus).getDistinct()
-        allCheckItems =data.repository.checkItems.getAll().getDistinct()
         checkItems.observeForever(checkItemsObserver)
     }
+
+    private val allCheckItemsObserver = Observer<MutableList<CheckItem>> {
+        val defcon1CheckedItemsCount = it.getCount(1, true).size
+        val defcon2CheckedItemsCount = it.getCount(2, true).size
+        val defcon3CheckedItemsCount = it.getCount(3, true).size
+        val defcon4CheckedItemsCount = it.getCount(4, true).size
+        val defcon5CheckedItemsCount = it.getCount(5, true).size
+        val defcon1UncheckedItemsCount = it.getCount(1, false).size
+        val defcon2UncheckedItemsCount = it.getCount(2, false).size
+        val defcon3UncheckedItemsCount = it.getCount(3, false).size
+        val defcon4UncheckedItemsCount = it.getCount(4, false).size
+        val defcon5UncheckedItemsCount = it.getCount(5, false).size
+        when (core.preferences.status) {
+            1 -> {
+                _defcon1ItemsCount.value = defcon1UncheckedItemsCount.toString()
+                _defcon2ItemsCount.value = defcon2UncheckedItemsCount.toString()
+                _defcon3ItemsCount.value = defcon3UncheckedItemsCount.toString()
+                _defcon4ItemsCount.value = defcon4UncheckedItemsCount.toString()
+            }
+            2 -> {
+                _defcon1ItemsCount.value = "0"
+                _defcon2ItemsCount.value = defcon2UncheckedItemsCount.toString()
+                _defcon3ItemsCount.value = defcon3UncheckedItemsCount.toString()
+                _defcon4ItemsCount.value = defcon4UncheckedItemsCount.toString()
+            }
+            3 -> {
+                _defcon1ItemsCount.value = "0"
+                _defcon2ItemsCount.value = "0"
+                _defcon3ItemsCount.value = defcon3UncheckedItemsCount.toString()
+                _defcon4ItemsCount.value = defcon4UncheckedItemsCount.toString()
+            }
+            4 -> {
+                _defcon1ItemsCount.value = "0"
+                _defcon2ItemsCount.value = "0"
+                _defcon3ItemsCount.value = "0"
+                _defcon4ItemsCount.value = defcon4UncheckedItemsCount.toString()
+            }
+            5 -> {
+                _defcon1ItemsCount.value = "0"
+                _defcon2ItemsCount.value = "0"
+                _defcon3ItemsCount.value = "0"
+                _defcon4ItemsCount.value = "0"
+            }
+        }
+        _defcon5ItemsCount.value = defcon5UncheckedItemsCount.toString()
+    }
+
     private var checkItemsStatus: Int = 5
     private var _itemTouchHelper = MutableLiveData<ItemTouchHelper>()
     private var _checkItemsRecyclerViewAdapter = MutableLiveData<CheckItemsRecyclerViewAdapter>()
     private lateinit var checkItems: LiveData<MutableList<CheckItem>>
-    private lateinit var allCheckItems: LiveData<MutableList<CheckItem>>
+    private var allCheckItems: LiveData<MutableList<CheckItem>>
 
     val checkedRadioButtonId: MutableLiveData<Int> = _checkedRadioButtonId
     val checkItemsRecyclerViewAdapter: LiveData<CheckItemsRecyclerViewAdapter> =
@@ -103,6 +147,8 @@ class ChecklistViewModel @Inject constructor(
             else -> _checkedRadioButtonId.value = R.id.radio_defcon5
         }
         checkedRadioButtonId.observeForever(statusObserver)
+        allCheckItems = data.repository.checkItems.getAll().getDistinct()
+        allCheckItems.observeForever(allCheckItemsObserver)
     }
 
     fun onAdd() {
@@ -128,7 +174,9 @@ class ChecklistViewModel @Inject constructor(
 
     @SuppressLint("NotifyDataSetChanged")
     override fun updateView(inputMessage: Message) {
-        if (inputMessage.obj is Int) _checkItemsRecyclerViewAdapter.value?.notifyItemInserted(inputMessage.obj as Int)
+        if (inputMessage.obj is Int) _checkItemsRecyclerViewAdapter.value?.notifyItemInserted(
+            inputMessage.obj as Int
+        )
         else _checkItemsRecyclerViewAdapter.value?.notifyDataSetChanged()
     }
 
@@ -161,6 +209,6 @@ class ChecklistViewModel @Inject constructor(
     }
 
     private fun MutableList<CheckItem>.getCount(i: Int, b: Boolean): List<CheckItem> {
-        return filter { checkItem -> checkItem.defcon==i && checkItem.isChecked==b }
+        return filter { checkItem -> checkItem.defcon == i && checkItem.isChecked == b }
     }
 }

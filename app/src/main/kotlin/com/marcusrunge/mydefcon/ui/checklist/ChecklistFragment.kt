@@ -11,9 +11,8 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ChecklistFragment : Fragment() {
-
     private var _binding: FragmentChecklistBinding? = null
-
+    private lateinit var viewModel: ChecklistViewModel
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -21,17 +20,19 @@ class ChecklistFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val viewModel =
+        viewModel =
             ViewModelProvider(this)[ChecklistViewModel::class.java]
 
         _binding = FragmentChecklistBinding.inflate(inflater, container, false)
         binding.viewmodel = viewModel
         binding.lifecycleOwner = this
+        //lifecycle.addObserver(viewModel)
         return binding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        //lifecycle.removeObserver(viewModel)
         _binding = null
     }
 }
