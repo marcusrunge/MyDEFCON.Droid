@@ -30,6 +30,11 @@ class ChecklistViewModel @Inject constructor(
     private val _defcon3ItemsCount = MutableLiveData("0")
     private val _defcon4ItemsCount = MutableLiveData("0")
     private val _defcon5ItemsCount = MutableLiveData("0")
+    private val _defcon1ItemsCountBackgroundColorResource = MutableLiveData<Int>()
+    private val _defcon2ItemsCountBackgroundColorResource = MutableLiveData<Int>()
+    private val _defcon3ItemsCountBackgroundColorResource = MutableLiveData<Int>()
+    private val _defcon4ItemsCountBackgroundColorResource = MutableLiveData<Int>()
+    private val _defcon5ItemsCountBackgroundColorResource = MutableLiveData<Int>()
 
     private val checkItemsObserver = Observer<MutableList<CheckItem>> {
         _checkItemsRecyclerViewAdapter.value =
@@ -137,6 +142,17 @@ class ChecklistViewModel @Inject constructor(
         get() = _defcon4ItemsCount
     val defcon5ItemsCount: LiveData<String>
         get() = _defcon5ItemsCount
+
+    val defcon1ItemsCountBackgroundColorResource: LiveData<Int>
+        get() = _defcon1ItemsCountBackgroundColorResource
+    val defcon2ItemsCountBackgroundColorResource: LiveData<Int>
+        get() = _defcon2ItemsCountBackgroundColorResource
+    val defcon3ItemsCountBackgroundColorResource: LiveData<Int>
+        get() = _defcon3ItemsCountBackgroundColorResource
+    val defcon4ItemsCountBackgroundColorResource: LiveData<Int>
+        get() = _defcon4ItemsCountBackgroundColorResource
+    val defcon5ItemsCountBackgroundColorResource: LiveData<Int>
+        get() = _defcon5ItemsCountBackgroundColorResource
 
     init {
         when (core.preferences.status) {
