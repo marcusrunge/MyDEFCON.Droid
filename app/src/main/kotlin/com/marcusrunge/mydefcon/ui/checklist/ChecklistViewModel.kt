@@ -3,10 +3,7 @@ package com.marcusrunge.mydefcon.ui.checklist
 import android.annotation.SuppressLint
 import android.app.Application
 import android.os.Message
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
+import androidx.lifecycle.*
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.core.interfaces.Core
@@ -25,8 +22,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChecklistViewModel @Inject constructor(
-    application: Application, core: Core, private val data: Data
-) : ObservableViewModel(application) {
+    application: Application, private val core: Core, private val data: Data
+) : ObservableViewModel(application), DefaultLifecycleObserver {
     private val _checkedRadioButtonId = MutableLiveData<Int>()
     private val _defcon1ItemsCount = MutableLiveData("0")
     private val _defcon2ItemsCount = MutableLiveData("0")
@@ -192,7 +189,7 @@ class ChecklistViewModel @Inject constructor(
     private var _itemTouchHelper = MutableLiveData<ItemTouchHelper>()
     private var _checkItemsRecyclerViewAdapter = MutableLiveData<CheckItemsRecyclerViewAdapter>()
     private lateinit var checkItems: LiveData<MutableList<CheckItem>>
-    private var allCheckItems: LiveData<MutableList<CheckItem>>
+    private lateinit var allCheckItems: LiveData<MutableList<CheckItem>>
 
     val checkedRadioButtonId: MutableLiveData<Int> = _checkedRadioButtonId
     val checkItemsRecyclerViewAdapter: LiveData<CheckItemsRecyclerViewAdapter> =
@@ -222,19 +219,6 @@ class ChecklistViewModel @Inject constructor(
     val defcon5ItemsCountBackgroundColorResource: LiveData<Int>
         get() = _defcon5ItemsCountBackgroundColorResource
 
-    init {
-        when (core.preferences.status) {
-            1 -> _checkedRadioButtonId.value = R.id.radio_defcon1
-            2 -> _checkedRadioButtonId.value = R.id.radio_defcon2
-            3 -> _checkedRadioButtonId.value = R.id.radio_defcon3
-            4 -> _checkedRadioButtonId.value = R.id.radio_defcon4
-            else -> _checkedRadioButtonId.value = R.id.radio_defcon5
-        }
-        checkedRadioButtonId.observeForever(statusObserver)
-        allCheckItems = data.repository.checkItems.getAll().getDistinct()
-        allCheckItems.observeForever(allCheckItemsObserver)
-    }
-
     fun onAdd() {
         CoroutineScope(Dispatchers.IO).launch {
             val now = OffsetDateTime.now(ZoneOffset.UTC)
@@ -262,6 +246,20 @@ class ChecklistViewModel @Inject constructor(
             inputMessage.obj as Int
         )
         else _checkItemsRecyclerViewAdapter.value?.notifyDataSetChanged()
+    }
+
+    override fun onResume(owner: LifecycleOwner) {
+        super.onResume(owner)
+        when (core.preferences.status) {
+            1 -> _checkedRadioButtonId.value = R.id.radio_defcon1
+            2 -> _checkedRadioButtonId.value = R.id.radio_defcon2
+            3 -> _checkedRadioButtonId.value = R.id.radio_defcon3
+            4 -> _checkedRadioButtonId.value = R.id.radio_defcon4
+            else -> _checkedRadioButtonId.value = R.id.radio_defcon5
+        }
+        checkedRadioButtonId.observeForever(statusObserver)
+        allCheckItems = data.repository.checkItems.getAll().getDistinct()
+        allCheckItems.observeForever(allCheckItemsObserver)
     }
 
     override fun onCleared() {

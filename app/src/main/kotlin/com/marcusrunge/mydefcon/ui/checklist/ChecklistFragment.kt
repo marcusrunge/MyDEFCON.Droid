@@ -26,13 +26,13 @@ class ChecklistFragment : Fragment() {
         _binding = FragmentChecklistBinding.inflate(inflater, container, false)
         binding.viewmodel = viewModel
         binding.lifecycleOwner = this
-        //lifecycle.addObserver(viewModel)
+        lifecycle.addObserver(viewModel)
         return binding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        //lifecycle.removeObserver(viewModel)
+        lifecycle.removeObserver(viewModel)
         _binding = null
     }
 }
