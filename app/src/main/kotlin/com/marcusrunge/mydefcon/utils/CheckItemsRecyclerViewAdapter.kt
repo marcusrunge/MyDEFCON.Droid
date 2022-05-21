@@ -63,8 +63,9 @@ class CheckItemsRecyclerViewAdapter(
                 onChanged.invoke(`object` as CheckItem)
             }
             viewDataBinding.root.findViewById<CheckBox>(R.id.checkBox)
-                .setOnCheckedChangeListener { _, _ ->
-                    onChanged.invoke(`object` as CheckItem)
+                .setOnCheckedChangeListener { _, isChecked ->
+                    (`object` as CheckItem).isChecked = isChecked
+                    onChanged.invoke(`object`)
                 }
         }
     }

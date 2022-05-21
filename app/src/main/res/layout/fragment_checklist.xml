@@ -23,9 +23,9 @@
             android:id="@+id/defconGroup"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
             android:checkedButton="@={viewmodel.checkedRadioButtonId}"
             android:orientation="horizontal"
-            android:layout_marginBottom="2dp"
             app:layout_constraintBottom_toTopOf="@+id/checkListRecyclerView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -112,81 +112,86 @@
             android:id="@+id/counterOne"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textColor="@android:color/white"
-            android:background="@drawable/counter_text_shape"
-            android:text="@{viewmodel.defcon1ItemsCount}"
             android:layout_marginVertical="2dp"
+            android:background="@drawable/counter_text_shape"
+            android:gravity="center"
+            android:text="@{viewmodel.defcon1ItemsCount}"
+            android:textColor="@android:color/white"
             app:layout_constraintEnd_toStartOf="@+id/counterTwo"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/defconGroup" />
+            app:layout_constraintTop_toBottomOf="@id/defconGroup"
+            app:setBackgroundDrawableColor="@{viewmodel.defcon1ItemsCountBackgroundColorResource}" />
 
         <TextView
             android:id="@+id/counterTwo"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textColor="@android:color/white"
-            android:background="@drawable/counter_text_shape"
-            android:text="@{viewmodel.defcon2ItemsCount}"
             android:layout_marginVertical="2dp"
+            android:background="@drawable/counter_text_shape"
+            android:gravity="center"
+            android:text="@{viewmodel.defcon2ItemsCount}"
+            android:textColor="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="@id/counterOne"
             app:layout_constraintEnd_toStartOf="@+id/counterThree"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/counterOne"
             app:layout_constraintTop_toTopOf="@id/counterOne"
-            app:layout_constraintBottom_toBottomOf="@id/counterOne"/>
+            app:setBackgroundDrawableColor="@{viewmodel.defcon2ItemsCountBackgroundColorResource}" />
 
         <TextView
             android:id="@+id/counterThree"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textColor="@android:color/white"
             android:background="@drawable/counter_text_shape"
+            android:gravity="center"
             android:text="@{viewmodel.defcon3ItemsCount}"
+            android:textColor="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="@id/counterTwo"
             app:layout_constraintEnd_toStartOf="@+id/counterFour"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/counterTwo"
             app:layout_constraintTop_toTopOf="@id/counterTwo"
-            app:layout_constraintBottom_toBottomOf="@id/counterTwo"/>
+            app:setBackgroundDrawableColor="@{viewmodel.defcon3ItemsCountBackgroundColorResource}" />
 
         <TextView
             android:id="@+id/counterFour"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textColor="@android:color/white"
             android:background="@drawable/counter_text_shape"
+            android:gravity="center"
             android:text="@{viewmodel.defcon4ItemsCount}"
+            android:textColor="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="@id/counterThree"
             app:layout_constraintEnd_toStartOf="@+id/counterFife"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/counterThree"
             app:layout_constraintTop_toTopOf="@id/counterThree"
-            app:layout_constraintBottom_toBottomOf="@id/counterThree"/>
+            app:setBackgroundDrawableColor="@{viewmodel.defcon4ItemsCountBackgroundColorResource}" />
 
         <TextView
             android:id="@+id/counterFife"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textColor="@android:color/white"
             android:background="@drawable/counter_text_shape"
+            android:gravity="center"
             android:text="@{viewmodel.defcon5ItemsCount}"
+            android:textColor="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="@id/counterFour"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/counterFour"
             app:layout_constraintTop_toTopOf="@id/counterFour"
-            app:layout_constraintBottom_toBottomOf="@id/counterFour"/>
+            app:setBackgroundDrawableColor="@{viewmodel.defcon5ItemsCountBackgroundColorResource}" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/checkListRecyclerView"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_marginTop="2dp"
             android:layout_weight="1"
             android:background="#B2000000"
             android:descendantFocusability="afterDescendants"
-            android:layout_marginTop="2dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -203,10 +208,10 @@
             android:layout_marginBottom="4.0dp"
             android:onClick="@{() -> viewmodel.onAdd()}"
             android:src="@drawable/ic_add_black_24dp"
-            app:tint="@color/red_A700"
             app:backgroundTint="@color/yellow_A200"
             app:layout_constraintBottom_toBottomOf="@id/checkListRecyclerView"
             app:layout_constraintEnd_toEndOf="parent"
+            app:tint="@color/red_A700"
             tools:ignore="ContentDescription,SpeakableTextPresentCheck" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

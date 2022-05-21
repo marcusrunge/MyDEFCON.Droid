@@ -18,6 +18,7 @@
     <color name="yellow_700">#fbc02d</color>
     <color name="yellow_800">#f9a825</color>
     <color name="yellow_900">#f57f17</color>
+    <color name="yellow_900_085">#d9f57f17</color>
     <color name="yellow_A100">#ffff8d</color>
     <color name="yellow_A200">#ffff00</color>
     <color name="yellow_A200V1">#e5e500</color>
@@ -59,6 +60,7 @@
     <color name="red_500">#f44336</color>
     <color name="red_600">#e53935</color>
     <color name="red_700">#d32f2f</color>
+    <color name="red_700_085">#D9d32f2f</color>
     <color name="red_800">#c62828</color>
     <color name="red_900">#b71c1c</color>
     <color name="red_A100">#ff8a80</color>

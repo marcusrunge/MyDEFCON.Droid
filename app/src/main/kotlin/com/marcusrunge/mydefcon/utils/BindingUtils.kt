@@ -60,4 +60,12 @@ object BindingUtils {
     fun bindItemTouchHelper(recyclerView: RecyclerView, itemTouchHelper: ItemTouchHelper?) {
         itemTouchHelper?.attachToRecyclerView(recyclerView)
     }
+
+    @BindingAdapter("setBackgroundDrawableColor")
+    @JvmStatic
+    fun bindbackgroundDrawableColor(view: View, resourceId: Int?) {
+        if (resourceId != null) {
+            view.background.setTint(view.context.resources.getColor(resourceId, view.context.theme))
+        }
+    }
 }

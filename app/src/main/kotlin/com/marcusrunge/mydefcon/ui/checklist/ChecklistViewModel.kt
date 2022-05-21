@@ -3,7 +3,10 @@ package com.marcusrunge.mydefcon.ui.checklist
 import android.annotation.SuppressLint
 import android.app.Application
 import android.os.Message
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.core.interfaces.Core
@@ -91,33 +94,98 @@ class ChecklistViewModel @Inject constructor(
                 _defcon2ItemsCount.value = defcon2UncheckedItemsCount.toString()
                 _defcon3ItemsCount.value = defcon3UncheckedItemsCount.toString()
                 _defcon4ItemsCount.value = defcon4UncheckedItemsCount.toString()
+                _defcon1ItemsCountBackgroundColorResource.value = when {
+                    defcon1UncheckedItemsCount == 0 -> R.color.green_700_O85
+                    defcon1UncheckedItemsCount > 0 && defcon1CheckedItemsCount > 0 -> R.color.yellow_900_085
+                    else -> R.color.red_700_085
+                }
+                _defcon2ItemsCountBackgroundColorResource.value = when {
+                    defcon2UncheckedItemsCount == 0 -> R.color.green_700_O85
+                    defcon2UncheckedItemsCount > 0 && defcon2CheckedItemsCount > 0 -> R.color.yellow_900_085
+                    else -> R.color.red_700_085
+                }
+                _defcon3ItemsCountBackgroundColorResource.value = when {
+                    defcon3UncheckedItemsCount == 0 -> R.color.green_700_O85
+                    defcon3UncheckedItemsCount > 0 && defcon3CheckedItemsCount > 0 -> R.color.yellow_900_085
+                    else -> R.color.red_700_085
+                }
+                _defcon4ItemsCountBackgroundColorResource.value = when {
+                    defcon4UncheckedItemsCount == 0 -> R.color.green_700_O85
+                    defcon4UncheckedItemsCount > 0 && defcon4CheckedItemsCount > 0 -> R.color.yellow_900_085
+                    else -> R.color.red_700_085
+                }
             }
             2 -> {
                 _defcon1ItemsCount.value = "0"
                 _defcon2ItemsCount.value = defcon2UncheckedItemsCount.toString()
                 _defcon3ItemsCount.value = defcon3UncheckedItemsCount.toString()
                 _defcon4ItemsCount.value = defcon4UncheckedItemsCount.toString()
+                _defcon1ItemsCountBackgroundColorResource.value = R.color.green_700_O85
+                _defcon2ItemsCountBackgroundColorResource.value = when {
+                    defcon2UncheckedItemsCount == 0 -> R.color.green_700_O85
+                    defcon2UncheckedItemsCount > 0 && defcon2CheckedItemsCount > 0 -> R.color.yellow_900_085
+                    else -> R.color.red_700_085
+                }
+                _defcon3ItemsCountBackgroundColorResource.value = when {
+                    defcon3UncheckedItemsCount == 0 -> R.color.green_700_O85
+                    defcon3UncheckedItemsCount > 0 && defcon3CheckedItemsCount > 0 -> R.color.yellow_900_085
+                    else -> R.color.red_700_085
+                }
+                _defcon4ItemsCountBackgroundColorResource.value = when {
+                    defcon4UncheckedItemsCount == 0 -> R.color.green_700_O85
+                    defcon4UncheckedItemsCount > 0 && defcon4CheckedItemsCount > 0 -> R.color.yellow_900_085
+                    else -> R.color.red_700_085
+                }
             }
             3 -> {
                 _defcon1ItemsCount.value = "0"
                 _defcon2ItemsCount.value = "0"
                 _defcon3ItemsCount.value = defcon3UncheckedItemsCount.toString()
                 _defcon4ItemsCount.value = defcon4UncheckedItemsCount.toString()
+                _defcon1ItemsCountBackgroundColorResource.value = R.color.green_700_O85
+                _defcon2ItemsCountBackgroundColorResource.value = R.color.green_700_O85
+                _defcon3ItemsCountBackgroundColorResource.value = when {
+                    defcon3UncheckedItemsCount == 0 -> R.color.green_700_O85
+                    defcon3UncheckedItemsCount > 0 && defcon3CheckedItemsCount > 0 -> R.color.yellow_900_085
+                    else -> R.color.red_700_085
+                }
+                _defcon4ItemsCountBackgroundColorResource.value = when {
+                    defcon4UncheckedItemsCount == 0 -> R.color.green_700_O85
+                    defcon4UncheckedItemsCount > 0 && defcon4CheckedItemsCount > 0 -> R.color.yellow_900_085
+                    else -> R.color.red_700_085
+                }
             }
             4 -> {
                 _defcon1ItemsCount.value = "0"
                 _defcon2ItemsCount.value = "0"
                 _defcon3ItemsCount.value = "0"
                 _defcon4ItemsCount.value = defcon4UncheckedItemsCount.toString()
+                _defcon1ItemsCountBackgroundColorResource.value = R.color.green_700_O85
+                _defcon2ItemsCountBackgroundColorResource.value = R.color.green_700_O85
+                _defcon3ItemsCountBackgroundColorResource.value = R.color.green_700_O85
+                _defcon4ItemsCountBackgroundColorResource.value = when {
+                    defcon4UncheckedItemsCount == 0 -> R.color.green_700_O85
+                    defcon4UncheckedItemsCount > 0 && defcon4CheckedItemsCount > 0 -> R.color.yellow_900_085
+                    else -> R.color.red_700_085
+                }
             }
             5 -> {
                 _defcon1ItemsCount.value = "0"
                 _defcon2ItemsCount.value = "0"
                 _defcon3ItemsCount.value = "0"
                 _defcon4ItemsCount.value = "0"
+                _defcon1ItemsCountBackgroundColorResource.value = R.color.green_700_O85
+                _defcon2ItemsCountBackgroundColorResource.value = R.color.green_700_O85
+                _defcon3ItemsCountBackgroundColorResource.value = R.color.green_700_O85
+                _defcon4ItemsCountBackgroundColorResource.value = R.color.green_700_O85
             }
         }
         _defcon5ItemsCount.value = defcon5UncheckedItemsCount.toString()
+        _defcon5ItemsCountBackgroundColorResource.value = when {
+            defcon5UncheckedItemsCount == 0 -> R.color.green_700_O85
+            defcon5UncheckedItemsCount > 0 && defcon5CheckedItemsCount > 0 -> R.color.yellow_900_085
+            else -> R.color.red_700_085
+        }
     }
 
     private var checkItemsStatus: Int = 5

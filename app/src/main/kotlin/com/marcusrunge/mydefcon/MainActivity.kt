@@ -111,7 +111,8 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
                 view.getGlobalVisibleRect(outRect)
                 if (!outRect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
                     view.clearFocus()
-                    val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+                    val inputMethodManager =
+                        getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
                     inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0)
                 }
             }
