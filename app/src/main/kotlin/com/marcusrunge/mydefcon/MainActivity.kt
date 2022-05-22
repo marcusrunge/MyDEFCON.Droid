@@ -1,5 +1,6 @@
 package com.marcusrunge.mydefcon
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
@@ -15,6 +16,7 @@ import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.databinding.ActivityMainBinding
 import com.marcusrunge.mydefcon.ui.main.MainViewModel
+import com.marcusrunge.mydefcon.utils.BitmapUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -50,7 +52,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         when (item.itemId) {
             else -> return when (item.itemId) {
                 R.id.action_statusshare -> {
-                    core.remote.ShareStatus()
+                    shareStatus()
                     true
                 }
                 R.id.action_listsync -> {
@@ -80,6 +82,17 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
                 else -> super.onOptionsItemSelected(item)
             }
         }
+    }
+
+    private fun shareStatus() {
+        val bitmap = BitmapUtils.createBitmapFromDrawableResource(applicationContext ,when(core.preferences.status){
+            1->R.drawable.ic_defcon1
+            2->R.drawable.ic_defcon2
+            3->R.drawable.ic_defcon3
+            4->R.drawable.ic_defcon4
+            5->R.drawable.ic_defcon5
+            else -> null
+        })
     }
 
     override fun onDestinationChanged(
