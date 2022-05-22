@@ -1,6 +1,5 @@
 package com.marcusrunge.mydefcon
 
-import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
@@ -93,6 +92,9 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
             5->R.drawable.ic_defcon5
             else -> null
         })
+        val uri = BitmapUtils.createUriForBitmap(applicationContext, externalCacheDir, bitmap)
+        val intent = BitmapUtils.createImagePngIntent(uri)
+        startActivity(Intent.createChooser(intent, "Share with"));
     }
 
     override fun onDestinationChanged(
