@@ -84,14 +84,16 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     }
 
     private fun shareStatus() {
-        val bitmap = BitmapUtils.createBitmapFromDrawableResource(applicationContext ,when(core.preferences.status){
-            1->R.drawable.ic_defcon1
-            2->R.drawable.ic_defcon2
-            3->R.drawable.ic_defcon3
-            4->R.drawable.ic_defcon4
-            5->R.drawable.ic_defcon5
-            else -> null
-        })
+        val bitmap = BitmapUtils.createBitmapFromDrawableResource(
+            applicationContext, when (core.preferences.status) {
+                1 -> R.drawable.ic_defcon1
+                2 -> R.drawable.ic_defcon2
+                3 -> R.drawable.ic_defcon3
+                4 -> R.drawable.ic_defcon4
+                5 -> R.drawable.ic_defcon5
+                else -> null
+            }
+        )
         val uri = BitmapUtils.createUriForBitmap(applicationContext, externalCacheDir, bitmap)
         val intent = BitmapUtils.createImagePngIntent(uri)
         startActivity(Intent.createChooser(intent, "Share with"));

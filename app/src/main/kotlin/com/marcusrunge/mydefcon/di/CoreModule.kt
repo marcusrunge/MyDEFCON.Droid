@@ -1,6 +1,7 @@
 package com.marcusrunge.mydefcon.di
 
 import com.marcusrunge.mydefcon.core.CoreFactoryImpl
+import com.marcusrunge.mydefcon.core.interfaces.BroadcastOperations
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.core.interfaces.PreferencesOperations
 import dagger.Module
@@ -14,6 +15,9 @@ import javax.inject.Singleton
 object CoreModule {
     @Provides
     @Singleton
-    fun provideCore(preferencesOperations: PreferencesOperations): Core =
-        CoreFactoryImpl.create(preferencesOperations)
+    fun provideCore(
+        preferencesOperations: PreferencesOperations,
+        broadcastOperations: BroadcastOperations
+    ): Core =
+        CoreFactoryImpl.create(preferencesOperations, broadcastOperations)
 }

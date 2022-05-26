@@ -1,10 +1,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/appwidget_root"
     style="@style/Widget.MyDEFCON.AppWidget.Container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:theme="@style/Theme.MyDEFCON.AppWidgetContainer"
-    android:background="@color/transparent">
+    android:background="@color/transparent"
+    android:theme="@style/Theme.MyDEFCON.AppWidgetContainer">
 
     <TextView
         android:id="@+id/appwidget_text"
@@ -17,8 +18,8 @@
         android:contentDescription="@string/appwidget_text"
         android:gravity="center"
         android:text="5"
-        android:textStyle="bold"
         android:textColor="?attr/DefconDark"
+        android:textStyle="bold"
         android:theme="@style/Theme.MyDEFCON.Five"
         tools:ignore="HardcodedText" />
 </RelativeLayout>

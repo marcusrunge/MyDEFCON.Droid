@@ -10,4 +10,9 @@ interface Core {
      * Gets @see Remote
      */
     val remote: Remote
+
+    /**
+     * Gets @see BroadCast
+     */
+    val broadCast: Broadcast
 }

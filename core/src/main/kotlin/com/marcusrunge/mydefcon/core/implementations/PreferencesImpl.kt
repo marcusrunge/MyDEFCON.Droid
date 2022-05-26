@@ -9,6 +9,10 @@ internal class PreferencesImpl(private val coreBase: CoreBase) : Preferences {
         get() = coreBase.preferencesOperations.getInt("status")
         set(value) {
             coreBase.preferencesOperations.setInt("status", value)
+            coreBase.broadcastOperations.sendBroadcast(
+                "com.marcusrunge.mydefcon.DEFCON_UPDATE",
+                value.toString()
+            )
         }
 
     internal companion object {

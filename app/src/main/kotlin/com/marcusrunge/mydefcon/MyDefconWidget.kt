@@ -1,14 +1,19 @@
 package com.marcusrunge.mydefcon
 
+import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
+import android.content.Intent
 import android.widget.RemoteViews
+import com.marcusrunge.mydefcon.core.interfaces.Core
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-/**
- * Implementation of App Widget functionality.
- */
+@AndroidEntryPoint
 class MyDefconWidget : AppWidgetProvider() {
+    @Inject
+    lateinit var core: Core
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
@@ -27,18 +32,32 @@ class MyDefconWidget : AppWidgetProvider() {
     override fun onDisabled(context: Context) {
         // Enter relevant functionality for when the last widget is disabled
     }
+
+    override fun onReceive(context: Context?, intent: Intent?) {
+        super.onReceive(context, intent)
+        if (intent?.action == "com.marcusrunge.mydefcon.DEFCON_UPDATE") {
+            //TODO
+        }
+    }
+
+    private fun updateAppWidget(
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        appWidgetId: Int
+    ) {
+        val views = RemoteViews(context.packageName, R.layout.my_defcon_widget)
+        val mainActivity = Intent(context, MainActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            0,
+            mainActivity,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        views.apply {
+            views.setTextViewText(R.id.appwidget_text, core.preferences.status.toString())
+            setOnClickPendingIntent(R.id.appwidget_root, pendingIntent)
+        }
+        appWidgetManager.updateAppWidget(appWidgetId, views)
+    }
 }
 
-internal fun updateAppWidget(
-    context: Context,
-    appWidgetManager: AppWidgetManager,
-    appWidgetId: Int
-) {
-    //val widgetText = context.getString(R.string.appwidget_text)
-    // Construct the RemoteViews object
-    //val views = RemoteViews(context.packageName, R.layout.my_defcon_widget)
-    //views.setTextViewText(R.id.appwidget_text, widgetText)
-
-    // Instruct the widget manager to update the widget
-    //appWidgetManager.updateAppWidget(appWidgetId, views)
-}
