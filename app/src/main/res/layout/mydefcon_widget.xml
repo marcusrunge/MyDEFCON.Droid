@@ -14,12 +14,9 @@
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
         android:autoSizeTextType="uniform"
-        android:background="@drawable/radio_defcon_selected_shape"
         android:contentDescription="@string/appwidget_text"
         android:gravity="center"
-        android:text="5"
         android:textColor="?attr/DefconDark"
         android:textStyle="bold"
-        android:theme="@style/Theme.MyDEFCON.Five"
         tools:ignore="HardcodedText" />
 </RelativeLayout>
