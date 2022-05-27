@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/mru/AndroidStudioProjects/MyDEFCON.Droid/app/src/main/res/drawable/check_redgreen_selector.xml" value="0.2265" />
         <entry key="..\:/Users/mru/AndroidStudioProjects/MyDEFCON.Droid/app/src/main/res/drawable/ic_add_black_24dp.xml" value="0.1" />
         <entry key="..\:/Users/mru/AndroidStudioProjects/MyDEFCON.Droid/app/src/main/res/drawable/ic_defcon1.xml" value="0.2265" />
         <entry key="..\:/Users/mru/AndroidStudioProjects/MyDEFCON.Droid/app/src/main/res/drawable/ic_defcon2.xml" value="0.2265" />
@@ -11,6 +12,7 @@
         <entry key="..\:/Users/mru/AndroidStudioProjects/MyDEFCON.Droid/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2265" />
         <entry key="..\:/Users/mru/AndroidStudioProjects/MyDEFCON.Droid/app/src/main/res/drawable/ic_notifications_black_24dp.xml" value="0.2265" />
         <entry key="..\:/Users/mru/AndroidStudioProjects/MyDEFCON.Droid/app/src/main/res/drawable/ic_share_black_24dp.xml" value="0.1" />
+        <entry key="..\:/Users/mru/AndroidStudioProjects/MyDEFCON.Droid/app/src/main/res/drawable/ic_stat3.xml" value="0.2265" />
         <entry key="..\:/Users/mru/AndroidStudioProjects/MyDEFCON.Droid/app/src/main/res/drawable/ic_sync_black_24dp.xml" value="0.1" />
         <entry key="..\:/Users/mru/AndroidStudioProjects/MyDEFCON.Droid/app/src/main/res/drawable/ic_texture_black_24dp.xml" value="0.2265" />
         <entry key="..\:/Users/mru/AndroidStudioProjects/MyDEFCON.Droid/app/src/main/res/drawable/ic_unbenannt_1.xml" value="0.2265" />
@@ -22,6 +24,7 @@
         <entry key="..\:/Users/mru/AndroidStudioProjects/MyDEFCON.Droid/app/src/main/res/drawable/radio_defcon1_selector.xml" value="0.2265" />
         <entry key="..\:/Users/mru/AndroidStudioProjects/MyDEFCON.Droid/app/src/main/res/drawable/radio_defcon1_unselected_shape.xml" value="0.2265" />
         <entry key="..\:/Users/mru/AndroidStudioProjects/MyDEFCON.Droid/app/src/main/res/drawable/radio_defcon_flat_selected.xml" value="0.2265" />
+        <entry key="..\:/Users/mru/AndroidStudioProjects/MyDEFCON.Droid/app/src/main/res/drawable/radio_defcon_flat_selector.xml" value="0.2265" />
         <entry key="..\:/Users/mru/AndroidStudioProjects/MyDEFCON.Droid/app/src/main/res/drawable/radio_defcon_flat_unselected.xml" value="0.1" />
         <entry key="..\:/Users/mru/AndroidStudioProjects/MyDEFCON.Droid/app/src/main/res/drawable/radio_defcon_selected_shape.xml" value="0.2265" />
         <entry key="..\:/Users/mru/AndroidStudioProjects/MyDEFCON.Droid/app/src/main/res/drawable/radio_defcon_selector.xml" value="0.2265" />
@@ -32,6 +35,7 @@
         <entry key="..\:/Users/mru/AndroidStudioProjects/MyDEFCON.Droid/app/src/main/res/layout/fragment_dashboard.xml" value="0.22826086956521738" />
         <entry key="..\:/Users/mru/AndroidStudioProjects/MyDEFCON.Droid/app/src/main/res/layout/fragment_status.xml" value="0.25" />
         <entry key="..\:/Users/mru/AndroidStudioProjects/MyDEFCON.Droid/app/src/main/res/layout/my_defcon_widget.xml" value="0.22826086956521738" />
+        <entry key="..\:/Users/mru/AndroidStudioProjects/MyDEFCON.Droid/app/src/main/res/layout/mydefcon_widget.xml" value="0.30052083333333335" />
         <entry key="..\:/Users/mru/AndroidStudioProjects/MyDEFCON.Droid/app/src/main/res/layout/privacy_fragment.xml" value="0.22826086956521738" />
         <entry key="..\:/Users/mru/AndroidStudioProjects/MyDEFCON.Droid/app/src/main/res/layout/terms_fragment.xml" value="0.22826086956521738" />
         <entry key="..\:/Users/mru/AndroidStudioProjects/MyDEFCON.Droid/app/src/main/res/menu/bottom_nav_menu.xml" value="0.30052083333333335" />
