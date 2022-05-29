@@ -16,7 +16,7 @@ internal class PreferencesImpl(private val coreBase: CoreBase) : Preferences {
         }
 
     internal companion object {
-        var preferences: Preferences? = null
+        private var preferences: Preferences? = null
         fun create(coreBase: CoreBase): Preferences = when {
             preferences != null -> preferences!!
             else -> {

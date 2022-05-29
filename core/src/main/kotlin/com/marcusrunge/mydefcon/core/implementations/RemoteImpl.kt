@@ -14,7 +14,7 @@ internal class RemoteImpl(private val coreBase: CoreBase) : Remote {
     }
 
     internal companion object {
-        var remote: Remote? = null
+        private var remote: Remote? = null
         fun create(coreBase: CoreBase): Remote = when {
             remote != null -> remote!!
             else -> {

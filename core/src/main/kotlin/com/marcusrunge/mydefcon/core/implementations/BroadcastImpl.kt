@@ -5,7 +5,7 @@ import com.marcusrunge.mydefcon.core.interfaces.Broadcast
 
 internal class BroadcastImpl(private val coreBase: CoreBase) : Broadcast {
     internal companion object {
-        var broadCast: Broadcast? = null
+        private var broadCast: Broadcast? = null
         fun create(coreBase: CoreBase): Broadcast = when {
             broadCast != null -> broadCast!!
             else -> {
