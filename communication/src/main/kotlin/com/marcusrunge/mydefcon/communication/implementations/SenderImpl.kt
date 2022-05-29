@@ -2,6 +2,8 @@ package com.marcusrunge.mydefcon.communication.implementations
 
 import com.marcusrunge.mydefcon.communication.bases.NetworkBase
 import com.marcusrunge.mydefcon.communication.interfaces.Sender
+import com.marcusrunge.mydefcon.communication.models.CheckItemsMessage
+import com.marcusrunge.mydefcon.communication.models.DefconMessage
 import com.marcusrunge.mydefcon.data.entities.CheckItem
 
 internal class SenderImpl(private val base: NetworkBase) : Sender {
@@ -17,10 +19,12 @@ internal class SenderImpl(private val base: NetworkBase) : Sender {
     }
 
     override fun sendDefconStatus(status: Int) {
-        TODO("Not yet implemented")
+        val message=DefconMessage(status)
+        base.defconStatusMessageUuid=message.uuid
     }
 
     override fun sendDefconCheckItems(checkItems: List<CheckItem>) {
-        TODO("Not yet implemented")
+        val message=CheckItemsMessage(checkItems)
+        base.checkItemsMessageUuid=message.uuid
     }
 }

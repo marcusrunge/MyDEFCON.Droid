@@ -22,10 +22,10 @@ interface OnCheckItemsReceivedListener {
      * Occurs when check items have been received.
      * @param checkItems the check items.
      */
-    fun onCheckItemsReceived(checkItems:List<CheckItem>)
+    fun onCheckItemsReceived(checkItems: List<CheckItem>)
 }
 
-internal interface OnReceived{
-    fun onCheckItemsReceived(checkItems:List<CheckItem>)
+internal interface OnReceived {
+    fun onCheckItemsReceived(checkItems: List<CheckItem>)
     fun onDefconStatusReceived(status: Int)
 }

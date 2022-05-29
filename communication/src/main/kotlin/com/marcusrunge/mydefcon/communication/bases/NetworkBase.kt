@@ -12,4 +12,6 @@ internal abstract class NetworkBase(internal val context: Context?) : Network {
         get() = _receiver
     override val sender: Sender
         get() = _sender
+    internal var defconStatusMessageUuid: String? = null
+    internal var checkItemsMessageUuid: String? = null
 }
