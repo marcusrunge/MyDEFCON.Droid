@@ -5,6 +5,8 @@ import com.marcusrunge.mydefcon.communication.interfaces.Sender
 import com.marcusrunge.mydefcon.communication.models.CheckItemsMessage
 import com.marcusrunge.mydefcon.communication.models.DefconMessage
 import com.marcusrunge.mydefcon.data.entities.CheckItem
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 internal class SenderImpl(private val base: NetworkBase) : Sender {
     internal companion object {
@@ -19,12 +21,14 @@ internal class SenderImpl(private val base: NetworkBase) : Sender {
     }
 
     override fun sendDefconStatus(status: Int) {
-        val message=DefconMessage(status)
-        base.defconStatusMessageUuid=message.uuid
+        val message = DefconMessage(status)
+        base.defconStatusMessageUuid = message.uuid
+        val json =  Json.encodeToString(message)
     }
 
     override fun sendDefconCheckItems(checkItems: List<CheckItem>) {
-        val message=CheckItemsMessage(checkItems)
-        base.checkItemsMessageUuid=message.uuid
+        val message = CheckItemsMessage(checkItems)
+        base.checkItemsMessageUuid = message.uuid
+        val json =  Json.encodeToString(message)
     }
 }

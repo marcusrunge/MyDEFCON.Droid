@@ -22,7 +22,7 @@ interface CheckItems {
      * @return A list of check items.
      */
     @Query("SELECT * FROM checkitem WHERE defcon =:defcon AND is_deleted=0")
-    fun getAll(defcon:Int): LiveData<MutableList<CheckItem>>
+    fun getAll(defcon: Int): LiveData<MutableList<CheckItem>>
 
     /**
      * Updates a check item.

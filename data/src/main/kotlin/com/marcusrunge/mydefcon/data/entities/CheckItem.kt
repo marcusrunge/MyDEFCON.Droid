@@ -1,14 +1,12 @@
 package com.marcusrunge.mydefcon.data.entities
 
-import android.widget.ImageView
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.Ignore
 import androidx.room.PrimaryKey
-import java.util.*
-import kotlin.properties.Delegates
+import kotlinx.serialization.Serializable
 
 @Entity
+@Serializable
 data class CheckItem(
     @PrimaryKey(autoGenerate = true) var id: Long,
     @ColumnInfo(name = "text") var text: String?,
