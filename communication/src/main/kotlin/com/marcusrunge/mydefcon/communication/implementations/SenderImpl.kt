@@ -24,7 +24,7 @@ internal class SenderImpl(private val base: NetworkBase) : Sender {
         val message = DefconMessage(status)
         base.defconStatusMessageUuid = message.uuid
         val json =  Json.encodeToString(message)
-        base.getNetworkInfo()
+        base.linkProperties
     }
 
     override fun sendDefconCheckItems(checkItems: List<CheckItem>) {
