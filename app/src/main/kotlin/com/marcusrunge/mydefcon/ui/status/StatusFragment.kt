@@ -40,7 +40,7 @@ class StatusFragment : Fragment() {
                 R.id.radio_defcon4 -> core.preferences.status = 4
                 R.id.radio_defcon5 -> core.preferences.status = 5
             }
-            communication.network.sender.sendDefconStatus(status)
+            communication.network.sender.sendDefconStatus(core.preferences.status)
         }
         viewModel.checkedRadioButtonId.observe(viewLifecycleOwner, statusObserver)
         _binding = FragmentStatusBinding.inflate(inflater, container, false)
