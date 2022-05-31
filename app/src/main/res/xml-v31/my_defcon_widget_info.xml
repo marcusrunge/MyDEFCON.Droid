@@ -6,6 +6,9 @@
     android:minWidth="40dp"
     android:minHeight="40dp"
     android:previewImage="@drawable/ic_defcon12345"
+    android:previewLayout="@layout/mydefcon_widget"
     android:resizeMode="horizontal|vertical"
+    android:targetCellWidth="1"
+    android:targetCellHeight="1"
     android:updatePeriodMillis="86400000"
     android:widgetCategory="home_screen" />

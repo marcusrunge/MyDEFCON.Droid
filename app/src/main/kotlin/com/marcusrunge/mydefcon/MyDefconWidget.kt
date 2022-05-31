@@ -6,7 +6,6 @@ import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.res.ColorStateList
 import android.widget.RemoteViews
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,7 +35,8 @@ class MyDefconWidget : AppWidgetProvider() {
         super.onReceive(context, intent)
         if (intent?.action == "com.marcusrunge.mydefcon.DEFCON_UPDATE") {
             val appWidgetManager = AppWidgetManager.getInstance(context)
-            val componentName = context?.packageName?.let { ComponentName(it, MyDefconWidget::class.java.name) }
+            val componentName =
+                context?.packageName?.let { ComponentName(it, MyDefconWidget::class.java.name) }
             val appWidgetIds = appWidgetManager.getAppWidgetIds(componentName)
             context?.let { onUpdate(it, appWidgetManager, appWidgetIds) }
         }
@@ -57,29 +57,49 @@ class MyDefconWidget : AppWidgetProvider() {
         )
         views.apply {
             views.setTextViewText(R.id.appwidget_text, core.preferences.status.toString())
-            when(core.preferences.status){
-                1->{
+            when (core.preferences.status) {
+                1 -> {
                     views.setTextColor(R.id.appwidget_text, context.getColor(R.color.grey_700))
-                    views.setInt(R.id.appwidget_text,"setBackgroundResource", R.drawable.app_widget_defcon1_shape)
+                    views.setInt(
+                        R.id.appwidget_text,
+                        "setBackgroundResource",
+                        R.drawable.app_widget_defcon1_shape
+                    )
                 }
-                2->{
+                2 -> {
                     views.setTextColor(R.id.appwidget_text, context.getColor(R.color.red_900))
-                    views.setInt(R.id.appwidget_text,"setBackgroundResource", R.drawable.app_widget_defcon2_shape)
+                    views.setInt(
+                        R.id.appwidget_text,
+                        "setBackgroundResource",
+                        R.drawable.app_widget_defcon2_shape
+                    )
                 }
-                3->{
+                3 -> {
                     views.setTextColor(R.id.appwidget_text, context.getColor(R.color.yellow_A200V4))
-                    views.setInt(R.id.appwidget_text,"setBackgroundResource", R.drawable.app_widget_defcon3_shape)
+                    views.setInt(
+                        R.id.appwidget_text,
+                        "setBackgroundResource",
+                        R.drawable.app_widget_defcon3_shape
+                    )
                 }
-                4->{
+                4 -> {
                     views.setTextColor(R.id.appwidget_text, context.getColor(R.color.green_800))
-                    views.setInt(R.id.appwidget_text,"setBackgroundResource", R.drawable.app_widget_defcon4_shape)
+                    views.setInt(
+                        R.id.appwidget_text,
+                        "setBackgroundResource",
+                        R.drawable.app_widget_defcon4_shape
+                    )
                 }
-                5->{
+                5 -> {
                     views.setTextColor(R.id.appwidget_text, context.getColor(R.color.blue_800))
-                    views.setInt(R.id.appwidget_text,"setBackgroundResource", R.drawable.app_widget_defcon5_shape)
+                    views.setInt(
+                        R.id.appwidget_text,
+                        "setBackgroundResource",
+                        R.drawable.app_widget_defcon5_shape
+                    )
                 }
             }
-setOnClickPendingIntent(R.id.appwidget_root, pendingIntent)
+            setOnClickPendingIntent(R.id.appwidget_root, pendingIntent)
         }
         appWidgetManager.updateAppWidget(appWidgetId, views)
     }

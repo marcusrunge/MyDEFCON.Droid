@@ -16,7 +16,6 @@
         android:autoSizeTextType="uniform"
         android:contentDescription="@string/appwidget_text"
         android:gravity="center"
-        android:textColor="?attr/DefconDark"
         android:textStyle="bold"
         tools:ignore="HardcodedText" />
 </RelativeLayout>
