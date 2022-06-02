@@ -8,10 +8,9 @@ import com.marcusrunge.mydefcon.communication.models.DefconMessage
 import com.marcusrunge.mydefcon.data.entities.CheckItem
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import java.net.DatagramPacket
-import java.net.DatagramSocket
 import java.net.Inet4Address
 import java.net.InetAddress
+import kotlin.math.*
 
 
 internal class SenderImpl(private val base: NetworkBase) : Sender {
@@ -33,9 +32,9 @@ internal class SenderImpl(private val base: NetworkBase) : Sender {
         val buffer = json.toByteArray(Charsets.UTF_8)
         val address = base.linkProperties?.linkAddresses.toInet4LinkAddress()
         val broadcast = address.toBroadcastAddress()
-        val socket = DatagramSocket()
+        /*val socket = DatagramSocket()
         val packet = DatagramPacket(buffer, buffer.size, broadcast, 4445)
-        socket.send(packet)
+        socket.send(packet)*/
     }
 
     override fun sendDefconCheckItems(checkItems: List<CheckItem>) {
@@ -46,9 +45,22 @@ internal class SenderImpl(private val base: NetworkBase) : Sender {
 }
 
 private fun LinkAddress?.toBroadcastAddress(): InetAddress? {
-    val prefix=this?.prefixLength
-    val bytes =this?.address
-    return this?.address
+    var prefix = this?.prefixLength
+    val address = this?.address?.address
+    if (prefix != null && address != null) {
+        val subnetBytes =
+            arrayOf(UByte.MAX_VALUE, UByte.MAX_VALUE, UByte.MAX_VALUE, UByte.MAX_VALUE)
+        for (i in subnetBytes.indices) {
+            if (prefix >= 8) {
+                prefix -= 8
+            } else {
+                subnetBytes[i] = subnetBytes[i].toInt().xor((2.0.pow(((8 - prefix).toDouble())) -1).toInt()).toUByte()
+                prefix -= prefix
+            }
+        }
+        //TODO:Calculate Broadcast Address here
+    }
+    return null
 }
 
 private fun List<LinkAddress>?.toInet4LinkAddress(): LinkAddress? {
