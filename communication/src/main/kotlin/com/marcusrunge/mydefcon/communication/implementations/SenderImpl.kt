@@ -8,9 +8,11 @@ import com.marcusrunge.mydefcon.communication.models.DefconMessage
 import com.marcusrunge.mydefcon.data.entities.CheckItem
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import java.net.DatagramPacket
+import java.net.DatagramSocket
 import java.net.Inet4Address
 import java.net.InetAddress
-import kotlin.math.*
+import kotlin.math.pow
 
 
 internal class SenderImpl(private val base: NetworkBase) : Sender {
@@ -30,11 +32,11 @@ internal class SenderImpl(private val base: NetworkBase) : Sender {
         base.defconStatusMessageUuid = message.uuid
         val json = Json.encodeToString(message)
         val buffer = json.toByteArray(Charsets.UTF_8)
-        val address = base.linkProperties?.linkAddresses.toInet4LinkAddress()
-        val broadcast = address.toBroadcastAddress()
-        /*val socket = DatagramSocket()
+        val address = base.linkProperties?.linkAddresses.findInet4LinkAddress()
+        val broadcast = address.calculateBroadcastAddress()
+        val socket = DatagramSocket()
         val packet = DatagramPacket(buffer, buffer.size, broadcast, 4445)
-        socket.send(packet)*/
+        socket.send(packet)
     }
 
     override fun sendDefconCheckItems(checkItems: List<CheckItem>) {
@@ -44,26 +46,45 @@ internal class SenderImpl(private val base: NetworkBase) : Sender {
     }
 }
 
-private fun LinkAddress?.toBroadcastAddress(): InetAddress? {
+private fun LinkAddress?.calculateBroadcastAddress(): InetAddress? {
     var prefix = this?.prefixLength
     val address = this?.address?.address
     if (prefix != null && address != null) {
         val subnetBytes =
             arrayOf(UByte.MAX_VALUE, UByte.MAX_VALUE, UByte.MAX_VALUE, UByte.MAX_VALUE)
+        val networkBytes =
+            arrayOf(UByte.MIN_VALUE, UByte.MIN_VALUE, UByte.MIN_VALUE, UByte.MIN_VALUE)
+        val broadcastBytes =
+            arrayOf(UByte.MIN_VALUE, UByte.MIN_VALUE, UByte.MIN_VALUE, UByte.MIN_VALUE)
         for (i in subnetBytes.indices) {
             if (prefix >= 8) {
                 prefix -= 8
             } else {
-                subnetBytes[i] = subnetBytes[i].toInt().xor((2.0.pow(((8 - prefix).toDouble())) -1).toInt()).toUByte()
+                subnetBytes[i] =
+                    subnetBytes[i].toInt().xor((2.0.pow(((8 - prefix).toDouble())) - 1).toInt())
+                        .toUByte()
                 prefix -= prefix
             }
         }
-        //TODO:Calculate Broadcast Address here
+        for (i in networkBytes.indices) {
+            networkBytes[i] = address[i].toInt().and(subnetBytes[i].toInt()).toUByte()
+        }
+        for (i in broadcastBytes.indices) {
+            broadcastBytes[i] = ((networkBytes[i] + subnetBytes[i].inv()).toUByte())
+        }
+        return InetAddress.getByAddress(
+            byteArrayOf(
+                broadcastBytes[0].toInt().toByte(),
+                broadcastBytes[1].toInt().toByte(),
+                broadcastBytes[2].toInt().toByte(),
+                broadcastBytes[3].toInt().toByte()
+            )
+        )
     }
     return null
 }
 
-private fun List<LinkAddress>?.toInet4LinkAddress(): LinkAddress? {
+private fun List<LinkAddress>?.findInet4LinkAddress(): LinkAddress? {
     this?.forEach {
         if (it.address is Inet4Address) return (it)
     }
