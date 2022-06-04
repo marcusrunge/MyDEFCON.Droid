@@ -52,11 +52,9 @@ private fun LinkAddress?.calculateBroadcastAddress(): InetAddress? {
     if (prefix != null && address != null) {
         val subnetBytes =
             arrayOf(UByte.MAX_VALUE, UByte.MAX_VALUE, UByte.MAX_VALUE, UByte.MAX_VALUE)
-        val networkBytes =
-            arrayOf(UByte.MIN_VALUE, UByte.MIN_VALUE, UByte.MIN_VALUE, UByte.MIN_VALUE)
         val broadcastBytes =
             arrayOf(UByte.MIN_VALUE, UByte.MIN_VALUE, UByte.MIN_VALUE, UByte.MIN_VALUE)
-        for (i in subnetBytes.indices) {
+        subnetBytes.indices.forEach { i ->
             if (prefix >= 8) {
                 prefix -= 8
             } else {
@@ -66,11 +64,9 @@ private fun LinkAddress?.calculateBroadcastAddress(): InetAddress? {
                 prefix -= prefix
             }
         }
-        for (i in networkBytes.indices) {
-            networkBytes[i] = address[i].toInt().and(subnetBytes[i].toInt()).toUByte()
-        }
-        for (i in broadcastBytes.indices) {
-            broadcastBytes[i] = ((networkBytes[i] + subnetBytes[i].inv()).toUByte())
+        broadcastBytes.indices.forEach { i ->
+            (address[i].toInt().and(subnetBytes[i].toInt())and(subnetBytes[i].toInt().inv())).toUByte()
+                .also { broadcastBytes[i] = it }
         }
         return InetAddress.getByAddress(
             byteArrayOf(
