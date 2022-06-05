@@ -31,7 +31,7 @@ interface Receiver {
     /**
      * Stops listening for defcon status changes.
      */
-    fun stopDefconStatusChangeListener()
+    suspend fun stopDefconStatusChangeListener()
 
     /**
      * Starts listening for check items synchronisation.
@@ -40,7 +40,7 @@ interface Receiver {
     /**
      * Stops listening for check items synchronisation.
      */
-    fun stopCheckItemsSyncListener()
+    suspend fun stopCheckItemsSyncListener()
 }
 
 interface OnDefconStatusReceivedListener {

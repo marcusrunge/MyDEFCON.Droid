@@ -5,19 +5,23 @@ import com.marcusrunge.mydefcon.communication.interfaces.OnCheckItemsReceivedLis
 import com.marcusrunge.mydefcon.communication.interfaces.OnDefconStatusReceivedListener
 import com.marcusrunge.mydefcon.communication.interfaces.OnReceived
 import com.marcusrunge.mydefcon.communication.interfaces.Receiver
+import com.marcusrunge.mydefcon.communication.models.DefconMessage
 import com.marcusrunge.mydefcon.data.entities.CheckItem
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import java.lang.ref.WeakReference
 import java.net.DatagramPacket
 import java.net.DatagramSocket
-import java.net.InetAddress
+import java.util.concurrent.locks.ReentrantLock
 
 internal class ReceiverImpl(private val base: NetworkBase) : Receiver, OnReceived {
     private val onDefconStatusReceivedListeners: MutableList<WeakReference<OnDefconStatusReceivedListener>> =
         mutableListOf()
     private val onCheckItemsReceivedListeners: MutableList<WeakReference<OnCheckItemsReceivedListener>> =
         mutableListOf()
+    private var defconStatusChangeJob: Job? = null
+    private val defconStatusChangeListenerLock = ReentrantLock()
 
     internal companion object {
         private var instance: Receiver? = null
@@ -61,19 +65,41 @@ internal class ReceiverImpl(private val base: NetworkBase) : Receiver, OnReceive
     }
 
     override suspend fun startDefconStatusChangeListener() {
+        defconStatusChangeListenerLock.lock()
         withContext(Dispatchers.IO) {
-            TODO("Not yet implemented")
+            defconStatusChangeJob = launch {
+                while (true) {
+                    val buffer = ByteArray(256)
+                    var socket: DatagramSocket? = null
+                    try {
+                        socket = DatagramSocket(4445)
+                        socket.broadcast = true
+                        val packet = DatagramPacket(buffer, buffer.size)
+                        socket.receive(packet)
+                        val data = String(packet.data,0,packet.length)
+                        val defconMessage= Json.decodeFromString<DefconMessage>(data)
+                        if(defconMessage.uuid!=base.defconStatusMessageUuid) onDefconStatusReceived(defconMessage.status)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    } finally {
+                        socket?.close()
+                    }
+                }
+            }
         }
     }
-    override fun stopDefconStatusChangeListener() {
-        TODO("Not yet implemented")
+
+    override suspend fun stopDefconStatusChangeListener() {
+        defconStatusChangeJob?.cancelAndJoin()
+        defconStatusChangeJob = null
+        defconStatusChangeListenerLock.unlock()
     }
 
     override suspend fun startCheckItemsSyncListener() {
         TODO("Not yet implemented")
     }
 
-    override fun stopCheckItemsSyncListener() {
+    override suspend fun stopCheckItemsSyncListener() {
         TODO("Not yet implemented")
     }
 
