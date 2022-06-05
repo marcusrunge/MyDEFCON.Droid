@@ -6,6 +6,8 @@ import com.marcusrunge.mydefcon.communication.interfaces.Sender
 import com.marcusrunge.mydefcon.communication.models.CheckItemsMessage
 import com.marcusrunge.mydefcon.communication.models.DefconMessage
 import com.marcusrunge.mydefcon.data.entities.CheckItem
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.net.DatagramPacket
@@ -27,19 +29,21 @@ internal class SenderImpl(private val base: NetworkBase) : Sender {
         }
     }
 
-    override fun sendDefconStatus(status: Int) {
+    override suspend fun sendDefconStatus(status: Int) {
         val message = DefconMessage(status)
         base.defconStatusMessageUuid = message.uuid
         val json = Json.encodeToString(message)
         val buffer = json.toByteArray(Charsets.UTF_8)
         val address = base.linkProperties?.linkAddresses.findInet4LinkAddress()
         val broadcast = address.calculateBroadcastAddress()
-        val socket = DatagramSocket()
-        val packet = DatagramPacket(buffer, buffer.size, broadcast, 4445)
-        socket.send(packet)
+        withContext(Dispatchers.IO) {
+            val socket = DatagramSocket()
+            val packet = DatagramPacket(buffer, buffer.size, broadcast, 4445)
+            socket.send(packet)
+        }
     }
 
-    override fun sendDefconCheckItems(checkItems: List<CheckItem>) {
+    override suspend fun sendDefconCheckItems(checkItems: List<CheckItem>) {
         val message = CheckItemsMessage(checkItems)
         base.checkItemsMessageUuid = message.uuid
         val json = Json.encodeToString(message)

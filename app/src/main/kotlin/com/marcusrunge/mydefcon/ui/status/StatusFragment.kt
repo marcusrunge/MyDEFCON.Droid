@@ -7,11 +7,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.communication.interfaces.Communication
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.databinding.FragmentStatusBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -40,7 +42,7 @@ class StatusFragment : Fragment() {
                 R.id.radio_defcon4 -> core.preferences.status = 4
                 R.id.radio_defcon5 -> core.preferences.status = 5
             }
-            communication.network.sender.sendDefconStatus(core.preferences.status)
+            lifecycleScope.launch { communication.network.sender.sendDefconStatus(core.preferences.status) }
         }
         viewModel.checkedRadioButtonId.observe(viewLifecycleOwner, statusObserver)
         _binding = FragmentStatusBinding.inflate(inflater, container, false)
