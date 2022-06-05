@@ -6,7 +6,12 @@ import com.marcusrunge.mydefcon.communication.interfaces.OnDefconStatusReceivedL
 import com.marcusrunge.mydefcon.communication.interfaces.OnReceived
 import com.marcusrunge.mydefcon.communication.interfaces.Receiver
 import com.marcusrunge.mydefcon.data.entities.CheckItem
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.lang.ref.WeakReference
+import java.net.DatagramPacket
+import java.net.DatagramSocket
+import java.net.InetAddress
 
 internal class ReceiverImpl(private val base: NetworkBase) : Receiver, OnReceived {
     private val onDefconStatusReceivedListeners: MutableList<WeakReference<OnDefconStatusReceivedListener>> =
@@ -53,6 +58,23 @@ internal class ReceiverImpl(private val base: NetworkBase) : Receiver, OnReceive
                 iterator.remove()
             }
         }
+    }
+
+    override suspend fun startDefconStatusChangeListener() {
+        withContext(Dispatchers.IO) {
+            TODO("Not yet implemented")
+        }
+    }
+    override fun stopDefconStatusChangeListener() {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun startCheckItemsSyncListener() {
+        TODO("Not yet implemented")
+    }
+
+    override fun stopCheckItemsSyncListener() {
+        TODO("Not yet implemented")
     }
 
     override fun onCheckItemsReceived(checkItems: List<CheckItem>) {
