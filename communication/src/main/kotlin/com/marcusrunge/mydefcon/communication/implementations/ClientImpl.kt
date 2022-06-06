@@ -3,27 +3,35 @@ package com.marcusrunge.mydefcon.communication.implementations
 import android.net.LinkAddress
 import com.marcusrunge.mydefcon.communication.bases.NetworkBase
 import com.marcusrunge.mydefcon.communication.interfaces.Client
+import com.marcusrunge.mydefcon.communication.interfaces.OnCheckItemsReceivedListener
 import com.marcusrunge.mydefcon.communication.interfaces.Synchronizer
+import com.marcusrunge.mydefcon.communication.models.CheckItemsMessage
 import com.marcusrunge.mydefcon.communication.models.DefconMessage
 import com.marcusrunge.mydefcon.communication.models.RequestMessage
+import com.marcusrunge.mydefcon.data.entities.CheckItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import java.net.DatagramPacket
-import java.net.DatagramSocket
-import java.net.Inet4Address
-import java.net.InetAddress
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.lang.ref.WeakReference
+import java.net.*
+import java.util.stream.Collectors
 import kotlin.math.pow
 
 
-internal class SenderImpl(private val base: NetworkBase) : Client, Synchronizer {
+internal class ClientImpl(private val base: NetworkBase) : Client, Synchronizer {
+    private val onCheckItemsReceivedListeners: MutableList<WeakReference<OnCheckItemsReceivedListener>> =
+        mutableListOf()
+
     internal companion object {
         private var instance: Client? = null
         fun create(base: NetworkBase): Client = when {
             instance != null -> instance!!
             else -> {
-                instance = SenderImpl(base)
+                instance = ClientImpl(base)
                 instance!!
             }
         }
@@ -58,7 +66,43 @@ internal class SenderImpl(private val base: NetworkBase) : Client, Synchronizer 
     }
 
     override suspend fun syncCheckItems(address: InetAddress) {
-        TODO("Not yet implemented")
+        val socket = Socket(address, 8889)
+        try {
+            val reader = BufferedReader(InputStreamReader(socket.getInputStream()))
+            val json = reader.lines().collect(Collectors.joining())
+            reader.close()
+            val checkItemsMessage = Json.decodeFromString<CheckItemsMessage>(json)
+            if (checkItemsMessage.uuid != base.checkItemsMessageUuid) onCheckItemsReceived(
+                checkItemsMessage.checkItems
+            )
+        } catch (e: Exception) {
+        } finally {
+            socket?.close()
+        }
+    }
+
+    override fun onCheckItemsReceived(checkItems: List<CheckItem>) {
+        for (weakRef in onCheckItemsReceivedListeners) {
+            try {
+                weakRef.get()?.onCheckItemsReceived(checkItems)
+            } catch (e: Exception) {
+            }
+        }
+    }
+
+    override fun addOnCheckItemsReceivedListener(onCheckItemsReceivedListener: OnCheckItemsReceivedListener) {
+        onCheckItemsReceivedListeners.add(WeakReference(onCheckItemsReceivedListener))
+    }
+
+    override fun removeOnCheckItemsReceivedListener(onCheckItemsReceivedListener: OnCheckItemsReceivedListener) {
+        val iterator: MutableIterator<WeakReference<OnCheckItemsReceivedListener>> =
+            onCheckItemsReceivedListeners.iterator()
+        while (iterator.hasNext()) {
+            val weakRef: WeakReference<OnCheckItemsReceivedListener> = iterator.next()
+            if (weakRef.get() === onCheckItemsReceivedListener) {
+                iterator.remove()
+            }
+        }
     }
 }
 

@@ -1,23 +1,31 @@
 package com.marcusrunge.mydefcon.communication.implementations
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import com.marcusrunge.mydefcon.communication.bases.NetworkBase
-import com.marcusrunge.mydefcon.communication.interfaces.*
+import com.marcusrunge.mydefcon.communication.interfaces.OnDefconStatusReceivedListener
+import com.marcusrunge.mydefcon.communication.interfaces.OnReceived
+import com.marcusrunge.mydefcon.communication.interfaces.Server
+import com.marcusrunge.mydefcon.communication.interfaces.Synchronizer
 import com.marcusrunge.mydefcon.communication.models.DefconMessage
 import com.marcusrunge.mydefcon.communication.models.RequestMessage
 import com.marcusrunge.mydefcon.data.entities.CheckItem
 import kotlinx.coroutines.*
 import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import java.io.BufferedWriter
+import java.io.OutputStreamWriter
+import java.io.PrintWriter
 import java.lang.ref.WeakReference
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
+import java.net.ServerSocket
 import java.util.concurrent.locks.ReentrantLock
 
 internal class ServerImpl(private val base: NetworkBase) : Server, OnReceived {
     private val onDefconStatusReceivedListeners: MutableList<WeakReference<OnDefconStatusReceivedListener>> =
-        mutableListOf()
-    private val onCheckItemsReceivedListeners: MutableList<WeakReference<OnCheckItemsReceivedListener>> =
         mutableListOf()
     private var udpServerJob: Job? = null
     private var tcpServerJob: Job? = null
@@ -50,34 +58,18 @@ internal class ServerImpl(private val base: NetworkBase) : Server, OnReceived {
         }
     }
 
-    override fun addOnCheckItemsReceivedListener(onCheckItemsReceivedListener: OnCheckItemsReceivedListener) {
-        onCheckItemsReceivedListeners.add(WeakReference(onCheckItemsReceivedListener))
-    }
-
-    override fun removeOnCheckItemsReceivedListener(onCheckItemsReceivedListener: OnCheckItemsReceivedListener) {
-        val iterator: MutableIterator<WeakReference<OnCheckItemsReceivedListener>> =
-            onCheckItemsReceivedListeners.iterator()
-        while (iterator.hasNext()) {
-            val weakRef: WeakReference<OnCheckItemsReceivedListener> = iterator.next()
-            if (weakRef.get() === onCheckItemsReceivedListener) {
-                iterator.remove()
-            }
-        }
-    }
-
     override suspend fun startUdpServer() {
         udpServerLock.lock()
         withContext(Dispatchers.IO) {
             udpServerJob = launch {
                 val whileLock = ReentrantLock()
+                val socket = DatagramSocket(8888)
+                socket.broadcast = true
                 while (true) {
                     whileLock.lock()
                     val buffer = ByteArray(256)
-                    var socket: DatagramSocket? = null
+                    val packet = DatagramPacket(buffer, buffer.size)
                     try {
-                        socket = DatagramSocket(8888)
-                        socket.broadcast = true
-                        val packet = DatagramPacket(buffer, buffer.size)
                         socket.receive(packet)
                         val data = String(packet.data, 0, packet.length)
                         try {
@@ -95,7 +87,7 @@ internal class ServerImpl(private val base: NetworkBase) : Server, OnReceived {
                     } catch (e: Exception) {
                         e.printStackTrace()
                     } finally {
-                        socket?.close()
+                        socket.close()
                         whileLock.unlock()
                     }
                 }
@@ -109,27 +101,32 @@ internal class ServerImpl(private val base: NetworkBase) : Server, OnReceived {
         udpServerLock.unlock()
     }
 
-    override suspend fun startCheckItemsSyncListener() {
+    override suspend fun startTcpServer() {
         tcpServerLock.lock()
         withContext(Dispatchers.IO) {
             tcpServerJob = launch {
+                val serverSocket = ServerSocket(8889)
+                val whileLock = ReentrantLock()
                 while (true) {
-                    val buffer = ByteArray(256)
-                    var socket: DatagramSocket? = null
+                    whileLock.lock()
+                    val socket = serverSocket.accept()
                     try {
-                        socket = DatagramSocket(8888)
-                        socket.broadcast = true
-                        val packet = DatagramPacket(buffer, buffer.size)
-                        socket.receive(packet)
-                        val data = String(packet.data, 0, packet.length)
-                        val defconMessage = Json.decodeFromString<DefconMessage>(data)
-                        if (defconMessage.uuid != base.defconStatusMessageUuid) onDefconStatusReceived(
-                            defconMessage.status
+                        val writer = PrintWriter(
+                            BufferedWriter(OutputStreamWriter(socket.getOutputStream())),
+                            true
                         )
+                        val observer = Observer<MutableList<CheckItem>> {
+                            val json = Json.encodeToString(it)
+                            writer.println(json)
+                            writer.close()
+                        }
+                        val checkItems = base.data.repository.checkItems.getAll()
+                        checkItems.observeForeverOnce(observer)
                     } catch (e: Exception) {
                         e.printStackTrace()
                     } finally {
-                        socket?.close()
+                        socket.close()
+                        whileLock.unlock()
                     }
                 }
             }
@@ -140,15 +137,6 @@ internal class ServerImpl(private val base: NetworkBase) : Server, OnReceived {
         tcpServerJob?.cancelAndJoin()
         tcpServerJob = null
         tcpServerLock.unlock()
-    }
-
-    override fun onCheckItemsReceived(checkItems: List<CheckItem>) {
-        for (weakRef in onCheckItemsReceivedListeners) {
-            try {
-                weakRef.get()?.onCheckItemsReceived(checkItems)
-            } catch (e: Exception) {
-            }
-        }
     }
 
     override fun onDefconStatusReceived(status: Int) {
@@ -165,4 +153,13 @@ internal class ServerImpl(private val base: NetworkBase) : Server, OnReceived {
             address
         )
     }
+}
+
+fun <T> LiveData<T>.observeForeverOnce(observer: Observer<T>) {
+    observeForever(object : Observer<T> {
+        override fun onChanged(t: T?) {
+            observer.onChanged(t)
+            removeObserver(this)
+        }
+    })
 }

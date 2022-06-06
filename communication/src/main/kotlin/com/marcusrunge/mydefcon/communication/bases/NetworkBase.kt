@@ -7,9 +7,11 @@ import android.net.LinkProperties
 import com.marcusrunge.mydefcon.communication.interfaces.Client
 import com.marcusrunge.mydefcon.communication.interfaces.Network
 import com.marcusrunge.mydefcon.communication.interfaces.Server
+import com.marcusrunge.mydefcon.data.interfaces.Data
 
 
-internal abstract class NetworkBase(internal val context: Context?) : Network {
+internal abstract class NetworkBase(internal val context: Context?, internal val data: Data) :
+    Network {
     protected lateinit var _server: Server
     protected lateinit var _client: Client
     override val server: Server

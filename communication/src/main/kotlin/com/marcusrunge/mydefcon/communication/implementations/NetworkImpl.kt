@@ -9,7 +9,7 @@ internal class NetworkImpl(context: Context?) : NetworkBase(context) {
 
     init {
         _server = ServerImpl.create(this)
-        _client = SenderImpl.create(this)
+        _client = ClientImpl.create(this)
     }
 
     internal companion object {
