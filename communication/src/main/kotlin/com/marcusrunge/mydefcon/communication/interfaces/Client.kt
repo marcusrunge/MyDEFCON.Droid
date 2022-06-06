@@ -1,14 +1,19 @@
 package com.marcusrunge.mydefcon.communication.interfaces
 
-import com.marcusrunge.mydefcon.data.entities.CheckItem
+import java.net.InetAddress
 
-interface Sender {
+interface Client {
     /**
      * Sends a defcon status to udp listeners.
      */
     suspend fun sendDefconStatus(status: Int)
+
     /**
      * Sends a list of check items to udp listeners.
      */
-    suspend fun sendDefconCheckItems(checkItems: List<CheckItem>)
+    suspend fun requestSyncCheckItems()
+}
+
+internal interface Synchronizer {
+    suspend fun syncCheckItems(address: InetAddress)
 }

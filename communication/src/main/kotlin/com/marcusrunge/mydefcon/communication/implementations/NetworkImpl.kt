@@ -6,12 +6,14 @@ import com.marcusrunge.mydefcon.communication.bases.NetworkBase
 import com.marcusrunge.mydefcon.communication.interfaces.Network
 
 internal class NetworkImpl(context: Context?) : NetworkBase(context) {
+
     init {
-        _receiver = ReceiverImpl.create(this)
-        _sender = SenderImpl.create(this)
+        _server = ServerImpl.create(this)
+        _client = SenderImpl.create(this)
     }
 
     internal companion object {
+        const val CHECKITEMSSYNC_REQUESTCODE = 1
         private var instance: Network? = null
         fun create(base: CommunicationBase): Network = when {
             instance != null -> instance!!

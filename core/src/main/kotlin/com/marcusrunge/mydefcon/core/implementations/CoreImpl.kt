@@ -11,7 +11,6 @@ internal class CoreImpl(
     CoreBase(preferencesOperations, broadcastOperations) {
     init {
         _preferences = PreferencesImpl.create(this)
-        _remote = RemoteImpl.create(this)
         _broadcast = BroadcastImpl.create(this)
     }
 }

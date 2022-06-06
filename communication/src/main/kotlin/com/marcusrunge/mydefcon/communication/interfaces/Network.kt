@@ -2,12 +2,12 @@ package com.marcusrunge.mydefcon.communication.interfaces
 
 interface Network {
     /**
-     * Provides receiver related functionality.
+     * Provides server related functionality.
      */
-    val receiver: Receiver
+    val server: Server
 
     /**
-     * Provides sender related functionality.
+     * Provides client related functionality.
      */
-    val sender: Sender
+    val client: Client
 }

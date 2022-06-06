@@ -8,15 +8,18 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
+import com.marcusrunge.mydefcon.communication.interfaces.Communication
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.databinding.ActivityMainBinding
 import com.marcusrunge.mydefcon.ui.main.MainViewModel
 import com.marcusrunge.mydefcon.utils.BitmapUtils
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -24,6 +27,9 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedListener {
     @Inject
     lateinit var core: Core
+
+    @Inject
+    lateinit var communication: Communication
     private lateinit var navController: NavController
     private lateinit var binding: ActivityMainBinding
     private var optionsMenu: Menu? = null
@@ -55,7 +61,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
                     true
                 }
                 R.id.action_listsync -> {
-                    core.remote.SyncChecklist()
+                    lifecycleScope.launch { communication.network.client.requestSyncCheckItems() }
                     true
                 }
                 R.id.navigation_settings -> {

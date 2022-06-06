@@ -4,5 +4,5 @@ interface Broadcast {
     /**
      * Sends a DEFCON status update broadcast
      */
-    fun sendDefconBroadcast(defcon:Int)
+    fun sendDefconBroadcast(defcon: Int)
 }

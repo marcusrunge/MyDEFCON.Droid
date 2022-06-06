@@ -2,10 +2,10 @@ package com.marcusrunge.mydefcon.communication.implementations
 
 import android.net.LinkAddress
 import com.marcusrunge.mydefcon.communication.bases.NetworkBase
-import com.marcusrunge.mydefcon.communication.interfaces.Sender
-import com.marcusrunge.mydefcon.communication.models.CheckItemsMessage
+import com.marcusrunge.mydefcon.communication.interfaces.Client
+import com.marcusrunge.mydefcon.communication.interfaces.Synchronizer
 import com.marcusrunge.mydefcon.communication.models.DefconMessage
-import com.marcusrunge.mydefcon.data.entities.CheckItem
+import com.marcusrunge.mydefcon.communication.models.RequestMessage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
@@ -17,10 +17,10 @@ import java.net.InetAddress
 import kotlin.math.pow
 
 
-internal class SenderImpl(private val base: NetworkBase) : Sender {
+internal class SenderImpl(private val base: NetworkBase) : Client, Synchronizer {
     internal companion object {
-        private var instance: Sender? = null
-        fun create(base: NetworkBase): Sender = when {
+        private var instance: Client? = null
+        fun create(base: NetworkBase): Client = when {
             instance != null -> instance!!
             else -> {
                 instance = SenderImpl(base)
@@ -38,15 +38,27 @@ internal class SenderImpl(private val base: NetworkBase) : Sender {
         val broadcast = address.calculateBroadcastAddress()
         withContext(Dispatchers.IO) {
             val socket = DatagramSocket()
-            val packet = DatagramPacket(buffer, buffer.size, broadcast, 4445)
+            val packet = DatagramPacket(buffer, buffer.size, broadcast, 8888)
             socket.send(packet)
         }
     }
 
-    override suspend fun sendDefconCheckItems(checkItems: List<CheckItem>) {
-        val message = CheckItemsMessage(checkItems)
-        base.checkItemsMessageUuid = message.uuid
+    override suspend fun requestSyncCheckItems() {
+        val message = RequestMessage(NetworkImpl.CHECKITEMSSYNC_REQUESTCODE)
+        base.requestMessageUuid = message.uuid
         val json = Json.encodeToString(message)
+        val buffer = json.toByteArray(Charsets.UTF_8)
+        val address = base.linkProperties?.linkAddresses.findInet4LinkAddress()
+        val broadcast = address.calculateBroadcastAddress()
+        withContext(Dispatchers.IO) {
+            val socket = DatagramSocket()
+            val packet = DatagramPacket(buffer, buffer.size, broadcast, 8888)
+            socket.send(packet)
+        }
+    }
+
+    override suspend fun syncCheckItems(address: InetAddress) {
+        TODO("Not yet implemented")
     }
 }
 

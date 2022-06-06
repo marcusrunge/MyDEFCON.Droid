@@ -7,11 +7,6 @@ interface Core {
     val preferences: Preferences
 
     /**
-     * Gets @see Remote
-     */
-    val remote: Remote
-
-    /**
      * Gets @see BroadCast
      */
     val broadCast: Broadcast

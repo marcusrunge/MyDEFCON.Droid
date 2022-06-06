@@ -24,6 +24,7 @@ class StatusFragment : Fragment() {
 
     @Inject
     lateinit var core: Core
+
     @Inject
     lateinit var communication: Communication
 
@@ -32,6 +33,7 @@ class StatusFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        lifecycleScope.launch { communication.network.server.startUdpServer() }
         val viewModel =
             ViewModelProvider(this)[StatusViewModel::class.java]
         val statusObserver = Observer<Int> { status ->
@@ -42,7 +44,7 @@ class StatusFragment : Fragment() {
                 R.id.radio_defcon4 -> core.preferences.status = 4
                 R.id.radio_defcon5 -> core.preferences.status = 5
             }
-            lifecycleScope.launch { communication.network.sender.sendDefconStatus(core.preferences.status) }
+            lifecycleScope.launch { communication.network.client.sendDefconStatus(core.preferences.status) }
         }
         viewModel.checkedRadioButtonId.observe(viewLifecycleOwner, statusObserver)
         _binding = FragmentStatusBinding.inflate(inflater, container, false)

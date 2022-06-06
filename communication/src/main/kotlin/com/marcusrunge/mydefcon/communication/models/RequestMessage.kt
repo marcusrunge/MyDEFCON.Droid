@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 import java.util.*
 
 @Serializable
-data class DefconMessage(val status: Int) {
+data class RequestMessage(val requestCode: Int) {
     val uuid: String = UUID.randomUUID().toString()
 }

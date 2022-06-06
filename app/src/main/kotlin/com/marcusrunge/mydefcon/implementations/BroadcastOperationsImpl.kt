@@ -2,7 +2,6 @@ package com.marcusrunge.mydefcon.implementations
 
 import android.content.Context
 import android.content.Intent
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.marcusrunge.mydefcon.MyDefconWidget
 import com.marcusrunge.mydefcon.core.interfaces.BroadcastOperations
 import javax.inject.Inject
