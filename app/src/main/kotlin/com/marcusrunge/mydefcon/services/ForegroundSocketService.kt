@@ -15,6 +15,7 @@ import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import com.marcusrunge.mydefcon.BuildConfig
 import com.marcusrunge.mydefcon.R
+import com.marcusrunge.mydefcon.communication.interfaces.Communication
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -25,17 +26,13 @@ import javax.inject.Inject
 class ForegroundSocketService : LifecycleService() {
     @Inject
     lateinit var core: Core
-    //@Inject
-    //lateinit var communication: Communication
+    @Inject
+    lateinit var communication: Communication
 
     private var started = false
-    private var isForeground = false
     private val localBinder = LocalBinder()
-    private var bindCount = 0
-    private fun isBound() = bindCount > 0
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        //if (intent?.action == ACTION_STOP_UPDATES) { }
         if (!started) {
             started = true
             lifecycleScope.launch {
@@ -45,7 +42,7 @@ class ForegroundSocketService : LifecycleService() {
                 //TODO:Start TCP Server
             }
         }
-        manageLifetime()
+        showNotification()
         return START_STICKY
     }
 
@@ -60,45 +57,14 @@ class ForegroundSocketService : LifecycleService() {
     }
 
     private fun handleBind() {
-        bindCount++
         startService(Intent(this, this::class.java))
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
-        bindCount--
-        lifecycleScope.launch {
-            delay(UNBIND_DELAY_MILLIS)
-            manageLifetime()
-        }
         return true
     }
 
-    private fun manageLifetime() {
-        when {
-            isBound() -> exitForeground()
-            core.preferences.status > 0 -> enterForeground()
-            else -> stopSelf()
-        }
-    }
-
-    private fun exitForeground() {
-        if (isForeground) {
-            isForeground = false
-            stopForeground(true)
-        }
-    }
-
-    private fun enterForeground() {
-        if (!isForeground) {
-            isForeground = true
-            showNotification()
-        }
-    }
-
     private fun showNotification() {
-        if (!isForeground) {
-            return
-        }
         createNotificationChannel()
         startForeground(NOTIFICATION_ID, buildNotification())
     }
@@ -117,18 +83,10 @@ class ForegroundSocketService : LifecycleService() {
     }
 
     private fun buildNotification(): Notification {
-        // Tapping the notification opens the app.
         val pendingIntent = PendingIntent.getActivity(
             this,
             0,
             packageManager.getLaunchIntentForPackage(this.packageName),
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-        // Include an action to stop location updates without going through the app UI.
-        val stopIntent = PendingIntent.getService(
-            this,
-            0,
-            Intent(this, this::class.java).setAction(ACTION_STOP_UPDATES),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
@@ -141,11 +99,9 @@ class ForegroundSocketService : LifecycleService() {
         }
 
         return NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-            .setContentTitle(getString(R.string.notification_title))
             .setContentText("DEFCON ${core.preferences.status}")
             .setContentIntent(pendingIntent)
             .setSmallIcon(smallIcon)
-            //.addAction(R.drawable.ic_stop, getString(R.string.stop), stopIntent)
             .setOngoing(true)
             .setCategory(NotificationCompat.CATEGORY_SERVICE)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -154,10 +110,8 @@ class ForegroundSocketService : LifecycleService() {
     }
 
     private companion object {
-        const val UNBIND_DELAY_MILLIS = 2000.toLong() // 2 seconds
         const val NOTIFICATION_ID = 1
         const val NOTIFICATION_CHANNEL_ID = "SocketListening"
-        const val ACTION_STOP_UPDATES = BuildConfig.APPLICATION_ID + ".ACTION_STOP_UPDATES"
     }
 
     internal inner class LocalBinder : Binder() {

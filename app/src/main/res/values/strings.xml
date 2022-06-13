@@ -22,5 +22,4 @@
     <string name="add_widget">Add widget</string>
     <string name="app_widget_description">DEFCON Status</string>
     <string name="notification_channel_name">Socket listening</string>
-    <string name="notification_title">Socket listening</string>
 </resources>
