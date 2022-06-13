@@ -65,31 +65,34 @@ internal class ServerImpl(private val base: NetworkBase) : Server, OnReceived {
                 val whileLock = ReentrantLock()
                 val socket = DatagramSocket(8888)
                 socket.broadcast = true
-                while (true) {
-                    whileLock.lock()
-                    val buffer = ByteArray(256)
-                    val packet = DatagramPacket(buffer, buffer.size)
-                    try {
-                        socket.receive(packet)
-                        val data = String(packet.data, 0, packet.length)
+                try {
+                    while (true) {
+                        whileLock.lock()
+                        val buffer = ByteArray(256)
+                        val packet = DatagramPacket(buffer, buffer.size)
                         try {
-                            val defconMessage = Json.decodeFromString<DefconMessage>(data)
-                            if (defconMessage.uuid != base.defconStatusMessageUuid) onDefconStatusReceived(
-                                defconMessage.status
-                            )
+                            socket.receive(packet)
+                            val data = String(packet.data, 0, packet.length)
+                            try {
+                                val defconMessage = Json.decodeFromString<DefconMessage>(data)
+                                if (defconMessage.uuid != base.defconStatusMessageUuid) onDefconStatusReceived(
+                                    defconMessage.status
+                                )
+                            } catch (e: Exception) {
+                                val requestMessage = Json.decodeFromString<RequestMessage>(data)
+                                if (requestMessage.uuid != base.requestMessageUuid) onRequestReceived(
+                                    requestMessage.requestCode,
+                                    packet.address
+                                )
+                            }
                         } catch (e: Exception) {
-                            val requestMessage = Json.decodeFromString<RequestMessage>(data)
-                            if (requestMessage.uuid != base.requestMessageUuid) onRequestReceived(
-                                requestMessage.requestCode,
-                                packet.address
-                            )
+                        } finally {
+                            whileLock.unlock()
                         }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    } finally {
-                        socket.close()
-                        whileLock.unlock()
                     }
+                } catch (e: Exception) {
+                } finally {
+                    socket.close()
                 }
             }
         }
@@ -107,27 +110,31 @@ internal class ServerImpl(private val base: NetworkBase) : Server, OnReceived {
             tcpServerJob = launch {
                 val serverSocket = ServerSocket(8889)
                 val whileLock = ReentrantLock()
-                while (true) {
-                    whileLock.lock()
-                    val socket = serverSocket.accept()
-                    try {
-                        val writer = PrintWriter(
-                            BufferedWriter(OutputStreamWriter(socket.getOutputStream())),
-                            true
-                        )
-                        val observer = Observer<MutableList<CheckItem>> {
-                            val json = Json.encodeToString(it)
-                            writer.println(json)
-                            writer.close()
+                try {
+                    while (true) {
+                        whileLock.lock()
+                        val socket = serverSocket.accept()
+                        try {
+                            val writer = PrintWriter(
+                                BufferedWriter(OutputStreamWriter(socket.getOutputStream())),
+                                true
+                            )
+                            val observer = Observer<MutableList<CheckItem>> {
+                                val json = Json.encodeToString(it)
+                                writer.println(json)
+                                writer.close()
+                            }
+                            val checkItems = base.data?.repository?.checkItems?.getAll()
+                            checkItems?.observeForeverOnce(observer)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        } finally {
+                            whileLock.unlock()
                         }
-                        val checkItems = base.data?.repository?.checkItems?.getAll()
-                        checkItems?.observeForeverOnce(observer)
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    } finally {
-                        socket.close()
-                        whileLock.unlock()
                     }
+                } catch (e: Exception) {
+                } finally {
+                    serverSocket.close()
                 }
             }
         }
