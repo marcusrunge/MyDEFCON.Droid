@@ -7,7 +7,6 @@ import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
-import android.location.Location
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
@@ -16,7 +15,6 @@ import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import com.marcusrunge.mydefcon.BuildConfig
 import com.marcusrunge.mydefcon.R
-import com.marcusrunge.mydefcon.communication.interfaces.Communication
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -27,8 +25,8 @@ import javax.inject.Inject
 class ForegroundSocketService : LifecycleService() {
     @Inject
     lateinit var core: Core
-    @Inject
-    lateinit var communication: Communication
+    //@Inject
+    //lateinit var communication: Communication
 
     private var started = false
     private var isForeground = false
@@ -47,6 +45,7 @@ class ForegroundSocketService : LifecycleService() {
                 //TODO:Start TCP Server
             }
         }
+        manageLifetime()
         return START_STICKY
     }
 
@@ -77,7 +76,7 @@ class ForegroundSocketService : LifecycleService() {
     private fun manageLifetime() {
         when {
             isBound() -> exitForeground()
-            core.preferences.status>0 -> enterForeground()
+            core.preferences.status > 0 -> enterForeground()
             else -> stopSelf()
         }
     }
@@ -117,7 +116,7 @@ class ForegroundSocketService : LifecycleService() {
         }
     }
 
-    private fun buildNotification() : Notification {
+    private fun buildNotification(): Notification {
         // Tapping the notification opens the app.
         val pendingIntent = PendingIntent.getActivity(
             this,
@@ -146,7 +145,7 @@ class ForegroundSocketService : LifecycleService() {
             .setContentText("DEFCON ${core.preferences.status}")
             .setContentIntent(pendingIntent)
             .setSmallIcon(smallIcon)
-             //.addAction(R.drawable.ic_stop, getString(R.string.stop), stopIntent)
+            //.addAction(R.drawable.ic_stop, getString(R.string.stop), stopIntent)
             .setOngoing(true)
             .setCategory(NotificationCompat.CATEGORY_SERVICE)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)

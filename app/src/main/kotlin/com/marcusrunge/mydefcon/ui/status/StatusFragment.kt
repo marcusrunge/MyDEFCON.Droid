@@ -1,5 +1,7 @@
 package com.marcusrunge.mydefcon.ui.status
 
+import android.content.Context.BIND_AUTO_CREATE
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +14,7 @@ import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.communication.interfaces.Communication
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.databinding.FragmentStatusBinding
+import com.marcusrunge.mydefcon.services.ForegroundSocketService
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -21,6 +24,7 @@ class StatusFragment : Fragment() {
 
     private var _binding: FragmentStatusBinding? = null
     private val binding get() = _binding!!
+    private lateinit var viewModel: StatusViewModel
 
     @Inject
     lateinit var core: Core
@@ -34,7 +38,7 @@ class StatusFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         lifecycleScope.launch { communication.network.server.startUdpServer() }
-        val viewModel =
+        viewModel =
             ViewModelProvider(this)[StatusViewModel::class.java]
         val statusObserver = Observer<Int> { status ->
             when (status) {
@@ -51,6 +55,17 @@ class StatusFragment : Fragment() {
         binding.viewmodel = viewModel
         binding.lifecycleOwner = this
         return binding.root
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val serviceIntent = Intent(context, ForegroundSocketService::class.java)
+        context?.bindService(serviceIntent, viewModel, BIND_AUTO_CREATE)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        context?.unbindService(viewModel)
     }
 
     override fun onDestroyView() {

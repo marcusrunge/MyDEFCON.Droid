@@ -120,8 +120,8 @@ internal class ServerImpl(private val base: NetworkBase) : Server, OnReceived {
                             writer.println(json)
                             writer.close()
                         }
-                        val checkItems = base.data.repository.checkItems.getAll()
-                        checkItems.observeForeverOnce(observer)
+                        val checkItems = base.data?.repository?.checkItems?.getAll()
+                        checkItems?.observeForeverOnce(observer)
                     } catch (e: Exception) {
                         e.printStackTrace()
                     } finally {
