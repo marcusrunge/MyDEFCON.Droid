@@ -13,34 +13,42 @@ import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
-import com.marcusrunge.mydefcon.BuildConfig
 import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.communication.interfaces.Communication
+import com.marcusrunge.mydefcon.communication.interfaces.OnCheckItemsReceivedListener
+import com.marcusrunge.mydefcon.communication.interfaces.OnDefconStatusReceivedListener
 import com.marcusrunge.mydefcon.core.interfaces.Core
+import com.marcusrunge.mydefcon.data.entities.CheckItem
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ForegroundSocketService : LifecycleService() {
+class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListener,
+    OnCheckItemsReceivedListener {
     @Inject
     lateinit var core: Core
+
     @Inject
     lateinit var communication: Communication
 
     private var started = false
     private val localBinder = LocalBinder()
+    private var udpServerJob: Job? = null
+    private var tcpServerJob: Job? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (!started) {
             started = true
-            lifecycleScope.launch {
-                //TODO:Start UDP Server
+            udpServerJob = lifecycleScope.launch {
+                communication.network.server.startUdpServer()
             }
-            lifecycleScope.launch {
-                //TODO:Start TCP Server
+            tcpServerJob = lifecycleScope.launch {
+                communication.network.server.startTcpServer()
             }
+            communication.network.server.addOnDefconStatusReceivedListener(this)
+            communication.network.client.addOnCheckItemsReceivedListener(this)
         }
         showNotification()
         return START_STICKY
@@ -62,6 +70,20 @@ class ForegroundSocketService : LifecycleService() {
 
     override fun onUnbind(intent: Intent?): Boolean {
         return true
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        lifecycleScope.launch {
+            communication.network.server.stopUdpServer()
+        }.invokeOnCompletion {
+            udpServerJob?.cancel()
+        }
+        lifecycleScope.launch {
+            communication.network.server.stopTcpServer()
+        }.invokeOnCompletion {
+            tcpServerJob?.cancel()
+        }
     }
 
     private fun showNotification() {
@@ -116,6 +138,14 @@ class ForegroundSocketService : LifecycleService() {
 
     internal inner class LocalBinder : Binder() {
         fun getService(): ForegroundSocketService = this@ForegroundSocketService
+    }
+
+    override fun onDefconStatusReceived(status: Int) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onCheckItemsReceived(checkItems: List<CheckItem>) {
+        TODO("Not yet implemented")
     }
 }
 

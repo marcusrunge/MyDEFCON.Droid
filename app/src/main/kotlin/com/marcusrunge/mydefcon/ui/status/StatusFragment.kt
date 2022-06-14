@@ -37,7 +37,6 @@ class StatusFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        lifecycleScope.launch { communication.network.server.startUdpServer() }
         viewModel =
             ViewModelProvider(this)[StatusViewModel::class.java]
         val statusObserver = Observer<Int> { status ->
