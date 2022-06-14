@@ -2,6 +2,9 @@ package com.marcusrunge.mydefcon.ui.checklist
 
 import android.annotation.SuppressLint
 import android.app.Application
+import android.content.ComponentName
+import android.content.ServiceConnection
+import android.os.IBinder
 import android.os.Message
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -9,6 +12,8 @@ import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.data.entities.CheckItem
 import com.marcusrunge.mydefcon.data.interfaces.Data
+import com.marcusrunge.mydefcon.services.ForegroundSocketService
+import com.marcusrunge.mydefcon.services.OnReceivedListener
 import com.marcusrunge.mydefcon.ui.ObservableViewModel
 import com.marcusrunge.mydefcon.utils.CheckItemsRecyclerViewAdapter
 import com.marcusrunge.mydefcon.utils.SwipeToDeleteCallback
@@ -23,7 +28,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ChecklistViewModel @Inject constructor(
     application: Application, private val core: Core, private val data: Data
-) : ObservableViewModel(application), DefaultLifecycleObserver {
+) : ObservableViewModel(application), DefaultLifecycleObserver, ServiceConnection,
+    OnReceivedListener {
     private val _checkedRadioButtonId = MutableLiveData<Int>()
     private val _defcon1ItemsCount = MutableLiveData("0")
     private val _defcon2ItemsCount = MutableLiveData("0")
@@ -35,6 +41,7 @@ class ChecklistViewModel @Inject constructor(
     private val _defcon3ItemsCountBackgroundColorResource = MutableLiveData<Int>()
     private val _defcon4ItemsCountBackgroundColorResource = MutableLiveData<Int>()
     private val _defcon5ItemsCountBackgroundColorResource = MutableLiveData<Int>()
+    private var foregroundSocketService: ForegroundSocketService? = null
 
     private val checkItemsObserver = Observer<MutableList<CheckItem>> {
         _checkItemsRecyclerViewAdapter.value =
@@ -266,6 +273,23 @@ class ChecklistViewModel @Inject constructor(
         checkItems.removeObserver(checkItemsObserver)
         checkedRadioButtonId.removeObserver(statusObserver)
         super.onCleared()
+    }
+
+    override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
+        foregroundSocketService = (p1 as ForegroundSocketService.LocalBinder).getService()
+        foregroundSocketService?.addOnReceivedListener(this)
+    }
+
+    override fun onServiceDisconnected(p0: ComponentName?) {
+        foregroundSocketService?.removeOnReceivedListener(this)
+        foregroundSocketService = null
+    }
+
+    override fun onCheckItemsReceived(checkItems: List<CheckItem>) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onDefconStatusReceived(status: Int) {
     }
 
     private fun <T> LiveData<T>.getDistinct(): LiveData<T> {

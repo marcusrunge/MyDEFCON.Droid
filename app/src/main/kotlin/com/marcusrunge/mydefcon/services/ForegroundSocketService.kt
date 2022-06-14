@@ -22,6 +22,7 @@ import com.marcusrunge.mydefcon.data.entities.CheckItem
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.lang.ref.WeakReference
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -37,6 +38,23 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
     private val localBinder = LocalBinder()
     private var udpServerJob: Job? = null
     private var tcpServerJob: Job? = null
+    private val onReceivedListeners: MutableList<WeakReference<OnReceivedListener>> =
+        mutableListOf()
+
+    fun addOnReceivedListener(listener: OnReceivedListener) {
+        onReceivedListeners.add(WeakReference(listener))
+    }
+
+    fun removeOnReceivedListener(listener: OnReceivedListener) {
+        val iterator: MutableIterator<WeakReference<OnReceivedListener>> =
+            onReceivedListeners.iterator()
+        while (iterator.hasNext()) {
+            val weakRef: WeakReference<OnReceivedListener> = iterator.next()
+            if (weakRef.get() === listener) {
+                iterator.remove()
+            }
+        }
+    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (!started) {
@@ -86,6 +104,15 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
         }
     }
 
+    override fun onDefconStatusReceived(status: Int) {
+        core.preferences.status = status
+        onReceived(status, null)
+    }
+
+    override fun onCheckItemsReceived(checkItems: List<CheckItem>) {
+        onReceived(null, checkItems)
+    }
+
     private fun showNotification() {
         createNotificationChannel()
         startForeground(NOTIFICATION_ID, buildNotification())
@@ -131,6 +158,16 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
             .build()
     }
 
+    private fun onReceived(status: Int?, items: List<CheckItem>?) {
+        for (weakRef in onReceivedListeners) {
+            try {
+                if (status != null) weakRef.get()?.onDefconStatusReceived(status)
+                if (items != null) weakRef.get()?.onCheckItemsReceived(items)
+            } catch (e: Exception) {
+            }
+        }
+    }
+
     private companion object {
         const val NOTIFICATION_ID = 1
         const val NOTIFICATION_CHANNEL_ID = "SocketListening"
@@ -138,14 +175,6 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
 
     internal inner class LocalBinder : Binder() {
         fun getService(): ForegroundSocketService = this@ForegroundSocketService
-    }
-
-    override fun onDefconStatusReceived(status: Int) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onCheckItemsReceived(checkItems: List<CheckItem>) {
-        TODO("Not yet implemented")
     }
 }
 
@@ -161,4 +190,18 @@ class ForegroundSocketServiceConnection @Inject constructor() : ServiceConnectio
     override fun onServiceDisconnected(name: ComponentName) {
         service = null
     }
+}
+
+interface OnReceivedListener {
+    /**
+     * Occurs when check items have been received.
+     * @param checkItems the check items.
+     */
+    fun onCheckItemsReceived(checkItems: List<CheckItem>)
+
+    /**
+     * Occurs when a new defcon status has been issued.
+     * @param status the defcon status
+     */
+    fun onDefconStatusReceived(status: Int)
 }
