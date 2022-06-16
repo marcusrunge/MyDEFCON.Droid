@@ -7,6 +7,7 @@ import android.content.ServiceConnection
 import android.os.IBinder
 import android.os.Message
 import androidx.lifecycle.*
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.core.interfaces.Core
@@ -23,6 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -232,7 +234,9 @@ class ChecklistViewModel @Inject constructor(
         CoroutineScope(Dispatchers.IO).launch {
             val now = OffsetDateTime.now(ZoneOffset.UTC)
             val checkItem = CheckItem(
-                id = 0, text = null,
+                id = 0,
+                uuid = UUID.randomUUID().toString(),
+                text = null,
                 isChecked = false,
                 isDeleted = false,
                 defcon = checkItemsStatus,

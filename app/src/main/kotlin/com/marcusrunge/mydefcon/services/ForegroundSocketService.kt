@@ -12,6 +12,7 @@ import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.communication.interfaces.Communication
@@ -19,6 +20,7 @@ import com.marcusrunge.mydefcon.communication.interfaces.OnCheckItemsReceivedLis
 import com.marcusrunge.mydefcon.communication.interfaces.OnDefconStatusReceivedListener
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.data.entities.CheckItem
+import com.marcusrunge.mydefcon.data.interfaces.Data
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -33,6 +35,9 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
 
     @Inject
     lateinit var communication: Communication
+
+    @Inject
+    lateinit var data: Data
 
     private var started = false
     private val localBinder = LocalBinder()
@@ -110,6 +115,24 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
     }
 
     override fun onCheckItemsReceived(checkItems: List<CheckItem>) {
+        val checkItemsObserver = Observer<MutableList<CheckItem>> { it0 ->
+            checkItems.forEach { it1 ->
+                var found = false
+                it0.forEach { it3 ->
+                    if (it1.uuid == it3.uuid) {
+                        found = true
+                        it1.id = it3.id
+                        data.repository.checkItems.update(it1)
+                    }
+                }
+                if (!found) {
+                    it1.id = 0
+                    data.repository.checkItems.insert(it1)
+                }
+            }
+        }
+        val observableCheckItems = data.repository.checkItems.getAll()
+        observableCheckItems.observe(this, checkItemsObserver)
         onReceived(null, checkItems)
     }
 
