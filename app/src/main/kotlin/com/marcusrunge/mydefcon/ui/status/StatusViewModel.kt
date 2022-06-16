@@ -1,5 +1,6 @@
 package com.marcusrunge.mydefcon.ui.status
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.ComponentName
 import android.content.ServiceConnection
@@ -20,6 +21,7 @@ class StatusViewModel @Inject constructor(
     application: Application, core: Core
 ) : ObservableViewModel(application), ServiceConnection, OnReceivedListener {
     private val _checkedRadioButtonId = MutableLiveData<Int>()
+    @SuppressLint("StaticFieldLeak")
     private var foregroundSocketService: ForegroundSocketService? = null
 
     init {
@@ -29,7 +31,9 @@ class StatusViewModel @Inject constructor(
     val checkedRadioButtonId: MutableLiveData<Int> = _checkedRadioButtonId
 
     override fun updateView(inputMessage: Message) {
-        TODO("Not yet implemented")
+        if (inputMessage.obj is Int) setDefconStatus(
+            inputMessage.obj as Int
+        )
     }
 
     override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
@@ -46,7 +50,10 @@ class StatusViewModel @Inject constructor(
     }
 
     override fun onDefconStatusReceived(status: Int) {
-        setDefconStatus(status)
+        val setDefconStatusMessage = Message()
+        setDefconStatusMessage.what = UPDATE_VIEW
+        setDefconStatusMessage.obj = status
+        handler.sendMessage(setDefconStatusMessage)
     }
 
     private fun setDefconStatus(status: Int) {

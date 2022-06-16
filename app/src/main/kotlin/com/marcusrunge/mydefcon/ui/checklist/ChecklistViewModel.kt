@@ -41,6 +41,8 @@ class ChecklistViewModel @Inject constructor(
     private val _defcon3ItemsCountBackgroundColorResource = MutableLiveData<Int>()
     private val _defcon4ItemsCountBackgroundColorResource = MutableLiveData<Int>()
     private val _defcon5ItemsCountBackgroundColorResource = MutableLiveData<Int>()
+
+    @SuppressLint("StaticFieldLeak")
     private var foregroundSocketService: ForegroundSocketService? = null
 
     private val checkItemsObserver = Observer<MutableList<CheckItem>> {
@@ -249,10 +251,21 @@ class ChecklistViewModel @Inject constructor(
 
     @SuppressLint("NotifyDataSetChanged")
     override fun updateView(inputMessage: Message) {
-        if (inputMessage.obj is Int) _checkItemsRecyclerViewAdapter.value?.notifyItemInserted(
-            inputMessage.obj as Int
-        )
-        else _checkItemsRecyclerViewAdapter.value?.notifyDataSetChanged()
+        if (inputMessage.what == UPDATE_VIEW) {
+            if (inputMessage.obj is Int) _checkItemsRecyclerViewAdapter.value?.notifyItemInserted(
+                inputMessage.obj as Int
+            )
+        } else if (inputMessage.what == RELOAD_CHECKLIST) {
+            if (inputMessage.obj is List<*>)
+                allCheckItems.value?.clear()
+            val checkItems: MutableList<CheckItem> = mutableListOf()
+            (inputMessage.obj as List<*>).forEach {
+                allCheckItems.value?.add(it as CheckItem)
+                if ((it as CheckItem).defcon == checkItemsStatus) checkItems.add(it)
+            }
+            _checkItemsRecyclerViewAdapter.value?.setData(checkItems)
+            _checkItemsRecyclerViewAdapter.value?.notifyDataSetChanged()
+        }
     }
 
     override fun onResume(owner: LifecycleOwner) {
@@ -286,7 +299,10 @@ class ChecklistViewModel @Inject constructor(
     }
 
     override fun onCheckItemsReceived(checkItems: List<CheckItem>) {
-        TODO("Not yet implemented")
+        val updateViewMessage = Message()
+        updateViewMessage.what = RELOAD_CHECKLIST
+        updateViewMessage.obj = checkItems
+        handler.sendMessage(updateViewMessage)
     }
 
     override fun onDefconStatusReceived(status: Int) {
@@ -316,5 +332,9 @@ class ChecklistViewModel @Inject constructor(
 
     private fun MutableList<CheckItem>.getCount(i: Int, b: Boolean): List<CheckItem> {
         return filter { checkItem -> checkItem.defcon == i && checkItem.isChecked == b }
+    }
+
+    companion object {
+        const val RELOAD_CHECKLIST: Int = 2
     }
 }
