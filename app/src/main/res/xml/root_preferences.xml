@@ -1,1 +1,5 @@
-<PreferenceScreen></PreferenceScreen>
+<PreferenceScreen>
+    <PreferenceCategory app:title="Information">
+        <Preference android:layout="@layout/preference_information" />
+    </PreferenceCategory>
+</PreferenceScreen>
