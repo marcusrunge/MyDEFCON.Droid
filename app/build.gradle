@@ -8,7 +8,6 @@ plugins {
 
 android {
     compileSdk 33
-
     defaultConfig {
         applicationId "com.marcusrunge.mydefcon"
         minSdk 27
@@ -18,7 +17,6 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
     buildTypes {
         release {
             minifyEnabled false
@@ -41,6 +39,9 @@ android {
     namespace 'com.marcusrunge.mydefcon'
     android.sourceSets.all {
         java.srcDir("src/$name/kotlin")
+    }
+    applicationVariants.all { variant ->
+        variant.resValue "string", "versionName", variant.versionName
     }
 }
 
