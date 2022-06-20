@@ -12,13 +12,15 @@
         android:layout_height="wrap_content"
         android:text="@string/app_name"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:textColor="@color/white"/>
 
     <TextView
         android:id="@+id/version_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/versionName"
+        android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/application_name_text" />
 
@@ -27,6 +29,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/information_intro"
+        android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/version_text" />
 
@@ -48,6 +51,7 @@
         android:fontFamily="sans-serif-light"
         android:includeFontPadding="false"
         android:text="SOFTWARETECHNIK"
+        android:textColor="#606165"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/mr_logo"
         tools:ignore="HardcodedText" />
@@ -61,12 +65,14 @@
         android:gravity="center_vertical"
         android:minHeight="48dp"
         android:text="mr.software@outlook.de"
-        android:textColor="#00838F"
+        android:textColor="@color/white"
+        android:textColorLink="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/mr_text"
         tools:ignore="HardcodedText" />
 
     <TextView
+        android:textColor="@color/white"
         android:id="@+id/projecturl_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -79,6 +85,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:autoLink="web"
+        android:textColor="@color/white"
+        android:textColorLink="@color/white"
         android:text="https://github.com/marcusrunge/MyDEFCON.Droid"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/projecturl_text"

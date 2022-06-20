@@ -13,13 +13,12 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <item name="android:windowLightStatusBar">true</item>
         <!-- Customize your theme here. -->
-        <item name="android:windowBackground">@color/yellow_A200</item>
+        <item name="android:windowBackground">#B2000000</item>
         <item name="actionBarTheme">@style/Theme.MyDEFCON.ActionBar</item>
         <item name="android:itemBackground">@color/yellow_A200</item>
         <item name="colorOnSurfaceVariant">@color/red_A700</item>
         <item name="actionMenuTextColor">@color/red_A700</item>
         <item name="android:textColor">@color/red_A700</item>
-        <item name="android:tint">@color/red_A700</item>
         <item name="actionOverflowMenuStyle">@style/Widget.App.PopupMenu</item>
     </style>
 
