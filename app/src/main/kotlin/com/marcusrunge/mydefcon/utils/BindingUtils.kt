@@ -1,5 +1,6 @@
 package com.marcusrunge.mydefcon.utils
 
+import android.graphics.Color
 import android.graphics.Shader
 import android.graphics.drawable.Drawable
 import android.view.View
@@ -46,6 +47,7 @@ object BindingUtils {
     @JvmStatic
     fun setEndpointUrl(view: WebView, endpointUrl: String) {
         view.loadUrl(endpointUrl)
+        view.setBackgroundColor(Color.parseColor("#B2000000"));
     }
 
     @BindingAdapter("setAdapter")
