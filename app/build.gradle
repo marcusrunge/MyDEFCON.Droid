@@ -59,7 +59,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'
     implementation 'androidx.preference:preference-ktx:1.2.0'
     implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.2'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.3'
     implementation project(path: ':core')
     implementation project(path: ':data')
     implementation project(path: ':communication')
