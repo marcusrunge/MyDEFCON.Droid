@@ -25,6 +25,7 @@
     <style name="Theme.MyDEFCON.ActionBar" parent="">
         <item name="android:textColorPrimary">@color/red_A700</item>
         <item name="colorControlNormal">@color/red_A700</item>
+        <item name="android:background">@color/yellow_A200</item>
     </style>
 
     <style name="Theme.MyDEFCON.One">
