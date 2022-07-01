@@ -33,17 +33,6 @@ class ChecklistFragment : Fragment() {
         return binding.root
     }
 
-    override fun onStart() {
-        super.onStart()
-        val serviceIntent = Intent(context, ForegroundSocketService::class.java)
-        context?.bindService(serviceIntent, viewModel, Context.BIND_AUTO_CREATE)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        context?.unbindService(viewModel)
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         lifecycle.removeObserver(viewModel)

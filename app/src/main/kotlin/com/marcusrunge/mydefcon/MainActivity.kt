@@ -16,6 +16,7 @@ import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.marcusrunge.mydefcon.communication.interfaces.Communication
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.databinding.ActivityMainBinding
+import com.marcusrunge.mydefcon.services.ForegroundSocketService
 import com.marcusrunge.mydefcon.ui.main.MainViewModel
 import com.marcusrunge.mydefcon.utils.BitmapUtils
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,6 +45,9 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         OssLicensesMenuActivity.setActivityTitle(getString(R.string.license_title))
         navController = findNavController(R.id.nav_host_fragment_activity_main)
         navController.addOnDestinationChangedListener(this)
+
+        startForegroundService(Intent(this, ForegroundSocketService::class.java))
+        //startService()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

@@ -32,33 +32,16 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
     OnCheckItemsReceivedListener {
     @Inject
     lateinit var core: Core
-
     @Inject
     lateinit var communication: Communication
-
     @Inject
     lateinit var data: Data
-
     private var started = false
-    private val localBinder = LocalBinder()
     private var udpServerJob: Job? = null
     private var tcpServerJob: Job? = null
-    private val onReceivedListeners: MutableList<WeakReference<OnReceivedListener>> =
-        mutableListOf()
 
-    fun addOnReceivedListener(listener: OnReceivedListener) {
-        onReceivedListeners.add(WeakReference(listener))
-    }
-
-    fun removeOnReceivedListener(listener: OnReceivedListener) {
-        val iterator: MutableIterator<WeakReference<OnReceivedListener>> =
-            onReceivedListeners.iterator()
-        while (iterator.hasNext()) {
-            val weakRef: WeakReference<OnReceivedListener> = iterator.next()
-            if (weakRef.get() === listener) {
-                iterator.remove()
-            }
-        }
+    override fun onBind(intent: Intent): IBinder? {
+        return null
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -75,24 +58,6 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
         }
         showNotification()
         return START_STICKY
-    }
-
-    override fun onBind(intent: Intent): IBinder {
-        super.onBind(intent)
-        handleBind()
-        return localBinder
-    }
-
-    override fun onRebind(intent: Intent?) {
-        handleBind()
-    }
-
-    private fun handleBind() {
-        startService(Intent(this, this::class.java))
-    }
-
-    override fun onUnbind(intent: Intent?): Boolean {
-        return true
     }
 
     override fun onDestroy() {
@@ -141,9 +106,7 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
         startForeground(NOTIFICATION_ID, buildNotification())
     }
 
-
     private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationChannel = NotificationChannel(
                 NOTIFICATION_CHANNEL_ID,
                 getString(R.string.notification_channel_name),
@@ -151,7 +114,6 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
             )
             val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             manager.createNotificationChannel(notificationChannel)
-        }
     }
 
     private fun buildNotification(): Notification {
@@ -182,49 +144,11 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
     }
 
     private fun onReceived(status: Int?, items: List<CheckItem>?) {
-        for (weakRef in onReceivedListeners) {
-            try {
-                if (status != null) weakRef.get()?.onDefconStatusReceived(status)
-                if (items != null) weakRef.get()?.onCheckItemsReceived(items)
-            } catch (e: Exception) {
-            }
-        }
+
     }
 
     private companion object {
-        const val NOTIFICATION_ID = 1
-        const val NOTIFICATION_CHANNEL_ID = "SocketListening"
+        const val NOTIFICATION_ID = 12345
+        const val NOTIFICATION_CHANNEL_ID = "socket_listening"
     }
-
-    internal inner class LocalBinder : Binder() {
-        fun getService(): ForegroundSocketService = this@ForegroundSocketService
-    }
-}
-
-class ForegroundSocketServiceConnection @Inject constructor() : ServiceConnection {
-
-    var service: ForegroundSocketService? = null
-        private set
-
-    override fun onServiceConnected(name: ComponentName, binder: IBinder) {
-        service = (binder as ForegroundSocketService.LocalBinder).getService()
-    }
-
-    override fun onServiceDisconnected(name: ComponentName) {
-        service = null
-    }
-}
-
-interface OnReceivedListener {
-    /**
-     * Occurs when check items have been received.
-     * @param checkItems the check items.
-     */
-    fun onCheckItemsReceived(checkItems: List<CheckItem>)
-
-    /**
-     * Occurs when a new defcon status has been issued.
-     * @param status the defcon status
-     */
-    fun onDefconStatusReceived(status: Int)
 }
