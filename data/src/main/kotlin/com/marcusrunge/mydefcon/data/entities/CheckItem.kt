@@ -3,11 +3,10 @@ package com.marcusrunge.mydefcon.data.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import kotlinx.serialization.Serializable
-import java.util.*
+import java.io.Serializable
 
 @Entity
-@Serializable
+@kotlinx.serialization.Serializable
 data class CheckItem(
     @PrimaryKey(autoGenerate = true) var id: Long,
     @ColumnInfo(name="uuid") var uuid: String,
@@ -17,4 +16,4 @@ data class CheckItem(
     @ColumnInfo(name = "defcon") var defcon: Int,
     @ColumnInfo(name = "created") val created: Long?,
     @ColumnInfo(name = "updated") var updated: Long
-)
+): Serializable

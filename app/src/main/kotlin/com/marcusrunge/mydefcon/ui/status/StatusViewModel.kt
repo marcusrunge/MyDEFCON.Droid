@@ -1,22 +1,32 @@
 package com.marcusrunge.mydefcon.ui.status
 
 import android.app.Application
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Message
 import androidx.lifecycle.MutableLiveData
 import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.core.interfaces.Core
+import com.marcusrunge.mydefcon.receiver.DefconStatusReceiver
+import com.marcusrunge.mydefcon.receiver.OnDefconStatusReceivedListener
 import com.marcusrunge.mydefcon.ui.ObservableViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class StatusViewModel @Inject constructor(
-    application: Application, core: Core
-) : ObservableViewModel(application) {
+    private val app: Application, core: Core
+) : ObservableViewModel(app), OnDefconStatusReceivedListener {
     private val _checkedRadioButtonId = MutableLiveData<Int>()
+    private var receiver: DefconStatusReceiver
 
     init {
         setDefconStatus(core.preferences.status)
+        receiver = DefconStatusReceiver()
+        receiver.setOnDefconStatusReceivedListener(this)
+        IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED).also {
+            app.registerReceiver(receiver, it)
+        }
     }
 
     val checkedRadioButtonId: MutableLiveData<Int> = _checkedRadioButtonId
@@ -35,5 +45,18 @@ class StatusViewModel @Inject constructor(
             4 -> _checkedRadioButtonId.value = R.id.radio_defcon4
             else -> _checkedRadioButtonId.value = R.id.radio_defcon5
         }
+    }
+
+    override fun onCleared() {
+        receiver.removeOnDefconStatusReceivedListener()
+        app.unregisterReceiver(receiver)
+        super.onCleared()
+    }
+
+    override fun onDefconStatusReceived(status: Int) {
+        val setDefconStatusMessage = Message()
+        setDefconStatusMessage.what = UPDATE_VIEW
+        setDefconStatusMessage.obj = status
+        handler.sendMessage(setDefconStatusMessage)
     }
 }

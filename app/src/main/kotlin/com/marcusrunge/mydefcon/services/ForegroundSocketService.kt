@@ -4,11 +4,7 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.ComponentName
 import android.content.Intent
-import android.content.ServiceConnection
-import android.os.Binder
-import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
@@ -24,7 +20,7 @@ import com.marcusrunge.mydefcon.data.interfaces.Data
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import java.lang.ref.WeakReference
+import java.io.Serializable
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -32,8 +28,10 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
     OnCheckItemsReceivedListener {
     @Inject
     lateinit var core: Core
+
     @Inject
     lateinit var communication: Communication
+
     @Inject
     lateinit var data: Data
     private var started = false
@@ -107,13 +105,13 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
     }
 
     private fun createNotificationChannel() {
-            val notificationChannel = NotificationChannel(
-                NOTIFICATION_CHANNEL_ID,
-                getString(R.string.notification_channel_name),
-                NotificationManager.IMPORTANCE_DEFAULT
-            )
-            val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-            manager.createNotificationChannel(notificationChannel)
+        val notificationChannel = NotificationChannel(
+            NOTIFICATION_CHANNEL_ID,
+            getString(R.string.notification_channel_name),
+            NotificationManager.IMPORTANCE_DEFAULT
+        )
+        val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        manager.createNotificationChannel(notificationChannel)
     }
 
     private fun buildNotification(): Notification {
@@ -144,7 +142,16 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
     }
 
     private fun onReceived(status: Int?, items: List<CheckItem>?) {
-
+        if (status != null) Intent().also { intent ->
+            intent.action = "com.marcusrunge.mydefcon.DEFCONSTATUS_RECEIVED"
+            intent.putExtra("data", status)
+            sendBroadcast(intent)
+        }
+        if (items != null) if (status != null) Intent().also { intent ->
+            intent.action = "com.marcusrunge.mydefcon.CHECKITEMS_RECEIVED"
+            intent.putExtra("data",items as Serializable)
+            sendBroadcast(intent)
+        }
     }
 
     private companion object {
