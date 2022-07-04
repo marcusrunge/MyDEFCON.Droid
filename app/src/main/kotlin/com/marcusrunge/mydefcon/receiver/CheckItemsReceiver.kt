@@ -3,11 +3,34 @@ package com.marcusrunge.mydefcon.receiver
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import com.marcusrunge.mydefcon.data.entities.CheckItem
 
 class CheckItemsReceiver: BroadcastReceiver() {
+    private var _listener: OnCheckItemsReceivedListener? = null
     override fun onReceive(p0: Context?, p1: Intent?) {
         if (p1?.action=="com.marcusrunge.mydefcon.CHECKITEMS_RECEIVED"){
-
+            _listener?.onCheckItemsReceived(p1.getIntExtra("data", 5))
         }
     }
+    /**
+     * Sets a defcon status received listener.
+     */
+    fun setOnCheckItemsReceivedListener(listener: OnCheckItemsReceivedListener) {
+        _listener = listener
+    }
+
+    /**
+     * Removes the defcon status received listener.
+     */
+    fun removeOnCheckItemsReceivedListener() {
+        _listener = null
+    }
+}
+
+interface OnCheckItemsReceivedListener {
+    /**
+     * Occurs when a status has been received.
+     * @param status the status.
+     */
+    fun onCheckItemsReceived(items:List<CheckItem>)
 }
