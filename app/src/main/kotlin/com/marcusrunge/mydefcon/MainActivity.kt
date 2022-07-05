@@ -1,13 +1,17 @@
 package com.marcusrunge.mydefcon
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
@@ -35,6 +39,14 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     private lateinit var binding: ActivityMainBinding
     private var optionsMenu: Menu? = null
     private val viewModel by viewModels<MainViewModel>()
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                startForegroundService(Intent(this, ForegroundSocketService::class.java))
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,9 +57,20 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         OssLicensesMenuActivity.setActivityTitle(getString(R.string.license_title))
         navController = findNavController(R.id.nav_host_fragment_activity_main)
         navController.addOnDestinationChangedListener(this)
-        if (!ForegroundSocketService.isRunning)
-            startForegroundService(Intent(this, ForegroundSocketService::class.java))
-        //startService()
+        when (PackageManager.PERMISSION_GRANTED) {
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) -> {
+                if (!ForegroundSocketService.isRunning)
+                    startForegroundService(Intent(this, ForegroundSocketService::class.java))
+            }
+            else -> {
+                requestPermissionLauncher.launch(
+                    Manifest.permission.POST_NOTIFICATIONS
+                )
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
