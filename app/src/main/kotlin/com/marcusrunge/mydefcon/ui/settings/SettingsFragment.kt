@@ -5,8 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.marginStart
-import androidx.core.view.setPadding
 import androidx.preference.PreferenceFragmentCompat
 import com.marcusrunge.mydefcon.R
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,7 +21,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         savedInstanceState: Bundle?
     ): View {
         val view = super.onCreateView(inflater, container, savedInstanceState)
-        view.setBackgroundColor(Color.argb(0.698f, 0f, 0f,0f))
+        view.setBackgroundColor(Color.argb(0.698f, 0f, 0f, 0f))
         return view
     }
 }

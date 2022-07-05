@@ -1,7 +1,5 @@
 package com.marcusrunge.mydefcon.ui.checklist
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.marcusrunge.mydefcon.databinding.FragmentChecklistBinding
-import com.marcusrunge.mydefcon.services.ForegroundSocketService
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

@@ -20,7 +20,7 @@ class StatusViewModel @Inject constructor(
     private val app: Application, core: Core
 ) : ObservableViewModel(app), DefaultLifecycleObserver, OnDefconStatusReceivedListener {
     private val _checkedRadioButtonId = MutableLiveData<Int>()
-    private var receiver: DefconStatusReceiver= DefconStatusReceiver()
+    private var receiver: DefconStatusReceiver = DefconStatusReceiver()
 
     init {
         setDefconStatus(core.preferences.status)

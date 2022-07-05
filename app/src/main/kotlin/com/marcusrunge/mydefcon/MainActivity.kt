@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         OssLicensesMenuActivity.setActivityTitle(getString(R.string.license_title))
         navController = findNavController(R.id.nav_host_fragment_activity_main)
         navController.addOnDestinationChangedListener(this)
-        if(!ForegroundSocketService.isRunning)
+        if (!ForegroundSocketService.isRunning)
             startForegroundService(Intent(this, ForegroundSocketService::class.java))
         //startService()
     }

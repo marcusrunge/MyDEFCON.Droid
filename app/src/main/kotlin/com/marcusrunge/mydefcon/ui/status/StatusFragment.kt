@@ -1,7 +1,5 @@
 package com.marcusrunge.mydefcon.ui.status
 
-import android.content.Context.BIND_AUTO_CREATE
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +12,6 @@ import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.communication.interfaces.Communication
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.databinding.FragmentStatusBinding
-import com.marcusrunge.mydefcon.services.ForegroundSocketService
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject

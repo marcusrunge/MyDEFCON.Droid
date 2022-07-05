@@ -55,7 +55,7 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
             communication.network.client.addOnCheckItemsReceivedListener(this)
         }
         showNotification()
-        isRunning=true
+        isRunning = true
         return START_STICKY
     }
 
@@ -71,7 +71,7 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
         }.invokeOnCompletion {
             tcpServerJob?.cancel()
         }
-        isRunning=false
+        isRunning = false
     }
 
     override fun onDefconStatusReceived(status: Int) {
@@ -151,7 +151,7 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
         }
         if (items != null) if (status != null) Intent().also { intent ->
             intent.action = "com.marcusrunge.mydefcon.CHECKITEMS_RECEIVED"
-            intent.putExtra("data",items as Serializable)
+            intent.putExtra("data", items as Serializable)
             sendBroadcast(intent)
         }
     }
@@ -159,6 +159,6 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
     companion object {
         private const val NOTIFICATION_ID = 12345
         private const val NOTIFICATION_CHANNEL_ID = "socket_listening"
-        var isRunning=false
+        var isRunning = false
     }
 }
