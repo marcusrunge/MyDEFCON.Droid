@@ -4,12 +4,13 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.marcusrunge.mydefcon.data.entities.CheckItem
+import java.io.Serializable
 
 class CheckItemsReceiver: BroadcastReceiver() {
     private var _listener: OnCheckItemsReceivedListener? = null
     override fun onReceive(p0: Context?, p1: Intent?) {
         if (p1?.action=="com.marcusrunge.mydefcon.CHECKITEMS_RECEIVED"){
-            _listener?.onCheckItemsReceived(p1.getIntExtra("data", 5))
+            _listener?.onCheckItemsReceived(p1.getSerializableExtra("data", Serializable::class.java) as List<CheckItem>?)
         }
     }
     /**
@@ -32,5 +33,5 @@ interface OnCheckItemsReceivedListener {
      * Occurs when a status has been received.
      * @param status the status.
      */
-    fun onCheckItemsReceived(items:List<CheckItem>)
+    fun onCheckItemsReceived(items:List<CheckItem>?)
 }

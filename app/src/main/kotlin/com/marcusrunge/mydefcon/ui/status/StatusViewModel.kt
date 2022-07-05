@@ -4,6 +4,8 @@ import android.app.Application
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Message
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.core.interfaces.Core
@@ -16,13 +18,12 @@ import javax.inject.Inject
 @HiltViewModel
 class StatusViewModel @Inject constructor(
     private val app: Application, core: Core
-) : ObservableViewModel(app), OnDefconStatusReceivedListener {
+) : ObservableViewModel(app), DefaultLifecycleObserver, OnDefconStatusReceivedListener {
     private val _checkedRadioButtonId = MutableLiveData<Int>()
-    private var receiver: DefconStatusReceiver
+    private var receiver: DefconStatusReceiver= DefconStatusReceiver()
 
     init {
         setDefconStatus(core.preferences.status)
-        receiver = DefconStatusReceiver()
         receiver.setOnDefconStatusReceivedListener(this)
         IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED).also {
             app.registerReceiver(receiver, it)
@@ -47,10 +48,10 @@ class StatusViewModel @Inject constructor(
         }
     }
 
-    override fun onCleared() {
+    override fun onDestroy(owner: LifecycleOwner) {
         receiver.removeOnDefconStatusReceivedListener()
         app.unregisterReceiver(receiver)
-        super.onCleared()
+        super.onDestroy(owner)
     }
 
     override fun onDefconStatusReceived(status: Int) {

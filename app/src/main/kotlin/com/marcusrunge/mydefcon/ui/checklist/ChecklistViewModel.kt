@@ -2,6 +2,8 @@ package com.marcusrunge.mydefcon.ui.checklist
 
 import android.annotation.SuppressLint
 import android.app.Application
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Message
 import androidx.lifecycle.*
 import androidx.lifecycle.Observer
@@ -10,6 +12,8 @@ import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.data.entities.CheckItem
 import com.marcusrunge.mydefcon.data.interfaces.Data
+import com.marcusrunge.mydefcon.receiver.CheckItemsReceiver
+import com.marcusrunge.mydefcon.receiver.OnCheckItemsReceivedListener
 import com.marcusrunge.mydefcon.ui.ObservableViewModel
 import com.marcusrunge.mydefcon.utils.CheckItemsRecyclerViewAdapter
 import com.marcusrunge.mydefcon.utils.SwipeToDeleteCallback
@@ -24,8 +28,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChecklistViewModel @Inject constructor(
-    application: Application, private val core: Core, private val data: Data
-) : ObservableViewModel(application), DefaultLifecycleObserver{
+    private val app: Application, private val core: Core, private val data: Data
+) : ObservableViewModel(app), DefaultLifecycleObserver, OnCheckItemsReceivedListener {
     private val _checkedRadioButtonId = MutableLiveData<Int>()
     private val _defcon1ItemsCount = MutableLiveData("0")
     private val _defcon2ItemsCount = MutableLiveData("0")
@@ -37,6 +41,7 @@ class ChecklistViewModel @Inject constructor(
     private val _defcon3ItemsCountBackgroundColorResource = MutableLiveData<Int>()
     private val _defcon4ItemsCountBackgroundColorResource = MutableLiveData<Int>()
     private val _defcon5ItemsCountBackgroundColorResource = MutableLiveData<Int>()
+    private var receiver: CheckItemsReceiver = CheckItemsReceiver()
 
     private val checkItemsObserver = Observer<MutableList<CheckItem>> {
         _checkItemsRecyclerViewAdapter.value =
@@ -57,7 +62,7 @@ class ChecklistViewModel @Inject constructor(
         _checkItemsRecyclerViewAdapter.value?.setData(it)
         _itemTouchHelper.value = ItemTouchHelper(
             SwipeToDeleteCallback(
-                application.applicationContext,
+                app.applicationContext,
                 _checkItemsRecyclerViewAdapter.value
             )
         )
@@ -221,6 +226,13 @@ class ChecklistViewModel @Inject constructor(
     val defcon5ItemsCountBackgroundColorResource: LiveData<Int>
         get() = _defcon5ItemsCountBackgroundColorResource
 
+    init {
+        receiver.setOnCheckItemsReceivedListener(this)
+        IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED).also {
+            app.registerReceiver(receiver, it)
+        }
+    }
+
     fun onAdd() {
         CoroutineScope(Dispatchers.IO).launch {
             val now = OffsetDateTime.now(ZoneOffset.UTC)
@@ -283,16 +295,6 @@ class ChecklistViewModel @Inject constructor(
         super.onCleared()
     }
 
-    /*override fun onCheckItemsReceived(checkItems: List<CheckItem>) {
-        val updateViewMessage = Message()
-        updateViewMessage.what = RELOAD_CHECKLIST
-        updateViewMessage.obj = checkItems
-        handler.sendMessage(updateViewMessage)
-    }
-
-    override fun onDefconStatusReceived(status: Int) {
-    }*/
-
     private fun <T> LiveData<T>.getDistinct(): LiveData<T> {
         val distinctLiveData = MediatorLiveData<T>()
         distinctLiveData.addSource(this, object : Observer<T> {
@@ -321,5 +323,18 @@ class ChecklistViewModel @Inject constructor(
 
     companion object {
         const val RELOAD_CHECKLIST: Int = 2
+    }
+
+    override fun onCheckItemsReceived(items: List<CheckItem>?) {
+        val updateViewMessage = Message()
+        updateViewMessage.what = RELOAD_CHECKLIST
+        updateViewMessage.obj = checkItems
+        handler.sendMessage(updateViewMessage)
+    }
+
+    override fun onDestroy(owner: LifecycleOwner) {
+        receiver.removeOnCheckItemsReceivedListener()
+        app.unregisterReceiver(receiver)
+        super.onDestroy(owner)
     }
 }
