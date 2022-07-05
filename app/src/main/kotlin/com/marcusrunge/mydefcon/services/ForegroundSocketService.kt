@@ -55,6 +55,7 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
             communication.network.client.addOnCheckItemsReceivedListener(this)
         }
         showNotification()
+        isRunning=true
         return START_STICKY
     }
 
@@ -70,6 +71,7 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
         }.invokeOnCompletion {
             tcpServerJob?.cancel()
         }
+        isRunning=false
     }
 
     override fun onDefconStatusReceived(status: Int) {
@@ -154,8 +156,9 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
         }
     }
 
-    private companion object {
-        const val NOTIFICATION_ID = 12345
-        const val NOTIFICATION_CHANNEL_ID = "socket_listening"
+    companion object {
+        private const val NOTIFICATION_ID = 12345
+        private const val NOTIFICATION_CHANNEL_ID = "socket_listening"
+        var isRunning=false
     }
 }
