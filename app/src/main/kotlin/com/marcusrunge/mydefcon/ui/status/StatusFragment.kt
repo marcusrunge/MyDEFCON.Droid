@@ -1,5 +1,6 @@
 package com.marcusrunge.mydefcon.ui.status
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,10 +9,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.marcusrunge.mydefcon.MyDefconWidget
 import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.communication.interfaces.Communication
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.databinding.FragmentStatusBinding
+import com.marcusrunge.mydefcon.receiver.DefconStatusReceiver
+import com.marcusrunge.mydefcon.services.ForegroundSocketService
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -43,6 +47,12 @@ class StatusFragment : Fragment() {
                 R.id.radio_defcon3 -> core.preferences.status = 3
                 R.id.radio_defcon4 -> core.preferences.status = 4
                 R.id.radio_defcon5 -> core.preferences.status = 5
+            }
+            Intent(context, DefconStatusReceiver::class.java).also { intent ->
+                intent.action = "com.marcusrunge.mydefcon.DEFCONSTATUS_SELECTED"
+                intent.putExtra("data", core.preferences.status)
+                intent.putExtra("source", StatusFragment::class.java.canonicalName)
+                context?.sendBroadcast(intent)
             }
             lifecycleScope.launch { communication.network.client.sendDefconStatus(core.preferences.status) }
         }

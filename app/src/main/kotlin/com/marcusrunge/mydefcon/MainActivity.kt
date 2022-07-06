@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
                     )
                 }
             }
-        } else if (!ForegroundSocketService.isRunning){
+        } else if (!ForegroundSocketService.isRunning) {
             startForegroundService(Intent(this, ForegroundSocketService::class.java))
         }
     }
@@ -104,10 +104,10 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
                     navController.navigate(R.id.navigation_privacy)
                     true
                 }
-                R.id.navigation_licenses -> {
+                /*R.id.navigation_licenses -> {
                     startActivity(Intent(this, OssLicensesMenuActivity::class.java))
                     true
-                }
+                }*/
                 R.id.navigation_terms -> {
                     navController.navigate(R.id.navigation_terms)
                     true

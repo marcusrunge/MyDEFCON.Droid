@@ -54,10 +54,12 @@ class StatusViewModel @Inject constructor(
         super.onDestroy(owner)
     }
 
-    override fun onDefconStatusReceived(status: Int) {
-        val setDefconStatusMessage = Message()
-        setDefconStatusMessage.what = UPDATE_VIEW
-        setDefconStatusMessage.obj = status
-        handler.sendMessage(setDefconStatusMessage)
+    override fun onDefconStatusReceived(status: Int, source: String?) {
+        if (source != StatusFragment::class.java.canonicalName) {
+            val setDefconStatusMessage = Message()
+            setDefconStatusMessage.what = UPDATE_VIEW
+            setDefconStatusMessage.obj = status
+            handler.sendMessage(setDefconStatusMessage)
+        }
     }
 }

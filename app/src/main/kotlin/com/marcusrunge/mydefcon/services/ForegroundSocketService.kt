@@ -17,6 +17,10 @@ import com.marcusrunge.mydefcon.communication.interfaces.OnDefconStatusReceivedL
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.data.entities.CheckItem
 import com.marcusrunge.mydefcon.data.interfaces.Data
+import com.marcusrunge.mydefcon.receiver.CheckItemsReceiver
+import com.marcusrunge.mydefcon.receiver.DefconStatusReceiver
+import com.marcusrunge.mydefcon.ui.status.StatusFragment
+import com.marcusrunge.mydefcon.ui.status.StatusViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -25,7 +29,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListener,
-    OnCheckItemsReceivedListener {
+    OnCheckItemsReceivedListener, com.marcusrunge.mydefcon.receiver.OnDefconStatusReceivedListener {
     @Inject
     lateinit var core: Core
 
@@ -37,6 +41,7 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
     private var started = false
     private var udpServerJob: Job? = null
     private var tcpServerJob: Job? = null
+    private var receiver: DefconStatusReceiver = DefconStatusReceiver()
 
     override fun onBind(intent: Intent): IBinder? {
         return null
@@ -56,6 +61,7 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
         }
         showNotification()
         isRunning = true
+        receiver.setOnDefconStatusReceivedListener(this)
         return START_STICKY
     }
 
@@ -72,11 +78,21 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
             tcpServerJob?.cancel()
         }
         isRunning = false
+        receiver.removeOnDefconStatusReceivedListener()
+        unregisterReceiver(receiver)
     }
+
 
     override fun onDefconStatusReceived(status: Int) {
         core.preferences.status = status
         onReceived(status, null)
+        showNotification()
+    }
+
+    override fun onDefconStatusReceived(status: Int, source: String?) {
+        if (source == StatusFragment::class.java.canonicalName) {
+            showNotification()
+        }
     }
 
     override fun onCheckItemsReceived(checkItems: List<CheckItem>) {
@@ -144,12 +160,13 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
     }
 
     private fun onReceived(status: Int?, items: List<CheckItem>?) {
-        if (status != null) Intent().also { intent ->
+        if (status != null) Intent(this, DefconStatusReceiver::class.java).also { intent ->
             intent.action = "com.marcusrunge.mydefcon.DEFCONSTATUS_RECEIVED"
             intent.putExtra("data", status)
+            intent.putExtra("source", ForegroundSocketService::class.java.canonicalName)
             sendBroadcast(intent)
         }
-        if (items != null) if (status != null) Intent().also { intent ->
+        if (items != null) if (status != null) Intent(this, CheckItemsReceiver::class.java).also { intent ->
             intent.action = "com.marcusrunge.mydefcon.CHECKITEMS_RECEIVED"
             intent.putExtra("data", items as Serializable)
             sendBroadcast(intent)

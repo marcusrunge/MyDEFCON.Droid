@@ -26,20 +26,18 @@
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="com.marcusrunge.mydefcon.DEFCON_UPDATE" />
             </intent-filter>
-
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/my_defcon_widget_info" />
         </receiver>
-
         <receiver
             android:name=".receiver.DefconStatusReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.marcusrunge.mydefcon.DEFCONSTATUS_RECEIVED" />
+                <action android:name="com.marcusrunge.mydefcon.DEFCONSTATUS_SELECTED" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name=".receiver.CheckItemsReceiver"
             android:exported="true">
@@ -53,11 +51,9 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -68,5 +64,4 @@
                 android:resource="@xml/provider_paths" />
         </provider>
     </application>
-
 </manifest>

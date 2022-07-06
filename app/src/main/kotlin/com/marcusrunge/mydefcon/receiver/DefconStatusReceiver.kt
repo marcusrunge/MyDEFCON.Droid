@@ -7,8 +7,11 @@ import android.content.Intent
 class DefconStatusReceiver : BroadcastReceiver() {
     private var _listener: OnDefconStatusReceivedListener? = null
     override fun onReceive(p0: Context?, p1: Intent?) {
-        if (p1 != null && p1.action == "com.marcusrunge.mydefcon.DEFCONSTATUS_RECEIVED") {
-            _listener?.onDefconStatusReceived(p1.getIntExtra("data", 5))
+        if (p1 != null && (p1.action == "com.marcusrunge.mydefcon.DEFCONSTATUS_RECEIVED" || p1.action == "com.marcusrunge.mydefcon.DEFCONSTATUS_SELECTED")) {
+            _listener?.onDefconStatusReceived(
+                p1.getIntExtra("data", 5),
+                p1.getStringExtra("source")
+            )
         }
     }
 
@@ -32,5 +35,5 @@ interface OnDefconStatusReceivedListener {
      * Occurs when a status has been received.
      * @param status the status.
      */
-    fun onDefconStatusReceived(status: Int)
+    fun onDefconStatusReceived(status: Int, source: String?)
 }

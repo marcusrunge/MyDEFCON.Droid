@@ -36,18 +36,21 @@ object BindingUtils {
         )
         (view as BottomNavigationView).setupWithNavController(navController)
         view.setOnItemSelectedListener { item ->
-                       when(item.itemId) {
+            if (navController.backQueue.size > 0) {
+                val entry = navController.backQueue[0]
+                navController.popBackStack(entry.id, true)
+            }
+            when (item.itemId) {
                 R.id.navigation_status -> {
                     navController.navigate(R.id.navigation_status)
-                    navController.clearBackStack(R.id.navigation_status)
                     true
                 }
                 R.id.navigation_checklist -> {
                     navController.navigate(R.id.navigation_checklist)
-                    navController.clearBackStack(R.id.navigation_checklist)
                     true
                 }
-                else -> false  }
+                else -> false
+            }
         }
     }
 
@@ -61,7 +64,7 @@ object BindingUtils {
     @JvmStatic
     fun setEndpointUrl(view: WebView, endpointUrl: String) {
         view.loadUrl(endpointUrl)
-        view.setBackgroundColor(Color.parseColor("#B2000000"));
+        view.setBackgroundColor(Color.parseColor("#B2000000"))
     }
 
     @BindingAdapter("setAdapter")
