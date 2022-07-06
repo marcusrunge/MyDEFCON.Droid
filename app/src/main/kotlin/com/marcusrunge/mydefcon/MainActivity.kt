@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Rect
+import android.os.Build
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
@@ -57,19 +58,23 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         OssLicensesMenuActivity.setActivityTitle(getString(R.string.license_title))
         navController = findNavController(R.id.nav_host_fragment_activity_main)
         navController.addOnDestinationChangedListener(this)
-        when (PackageManager.PERMISSION_GRANTED) {
-            ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.POST_NOTIFICATIONS
-            ) -> {
-                if (!ForegroundSocketService.isRunning)
-                    startForegroundService(Intent(this, ForegroundSocketService::class.java))
-            }
-            else -> {
-                requestPermissionLauncher.launch(
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.S_V2) {
+            when (PackageManager.PERMISSION_GRANTED) {
+                ContextCompat.checkSelfPermission(
+                    this,
                     Manifest.permission.POST_NOTIFICATIONS
-                )
+                ) -> {
+                    if (!ForegroundSocketService.isRunning)
+                        startForegroundService(Intent(this, ForegroundSocketService::class.java))
+                }
+                else -> {
+                    requestPermissionLauncher.launch(
+                        Manifest.permission.POST_NOTIFICATIONS
+                    )
+                }
             }
+        } else if (!ForegroundSocketService.isRunning){
+            startForegroundService(Intent(this, ForegroundSocketService::class.java))
         }
     }
 
@@ -129,7 +134,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         )
         val uri = BitmapUtils.createUriForBitmap(applicationContext, externalCacheDir, bitmap)
         val intent = BitmapUtils.createImagePngIntent(uri)
-        startActivity(Intent.createChooser(intent, "Share with"));
+        startActivity(Intent.createChooser(intent, "Share with"))
     }
 
     override fun onDestinationChanged(
