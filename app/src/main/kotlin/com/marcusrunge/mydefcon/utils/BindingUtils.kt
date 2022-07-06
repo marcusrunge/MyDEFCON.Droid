@@ -35,6 +35,20 @@ object BindingUtils {
             appBarConfiguration
         )
         (view as BottomNavigationView).setupWithNavController(navController)
+        view.setOnItemSelectedListener { item ->
+                       when(item.itemId) {
+                R.id.navigation_status -> {
+                    navController.navigate(R.id.navigation_status)
+                    navController.clearBackStack(R.id.navigation_status)
+                    true
+                }
+                R.id.navigation_checklist -> {
+                    navController.navigate(R.id.navigation_checklist)
+                    navController.clearBackStack(R.id.navigation_checklist)
+                    true
+                }
+                else -> false  }
+        }
     }
 
     @BindingAdapter("setBackground")
