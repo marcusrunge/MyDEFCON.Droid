@@ -8,6 +8,7 @@ import java.io.Serializable
 
 class CheckItemsReceiver : BroadcastReceiver() {
     private var _listener: OnCheckItemsReceivedListener? = null
+    @Suppress("UNCHECKED_CAST")
     override fun onReceive(p0: Context?, p1: Intent?) {
         if (p1?.action == "com.marcusrunge.mydefcon.CHECKITEMS_RECEIVED") {
             _listener?.onCheckItemsReceived(

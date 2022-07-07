@@ -22,6 +22,7 @@ import java.util.stream.Collectors
 import kotlin.math.pow
 
 
+@Suppress("BlockingMethodInNonBlockingContext")
 internal class ClientImpl(private val base: NetworkBase) : Client, Synchronizer {
     private val onCheckItemsReceivedListeners: MutableList<WeakReference<OnCheckItemsReceivedListener>> =
         mutableListOf()
@@ -77,7 +78,7 @@ internal class ClientImpl(private val base: NetworkBase) : Client, Synchronizer 
             )
         } catch (e: Exception) {
         } finally {
-            socket?.close()
+            socket.close()
         }
     }
 
