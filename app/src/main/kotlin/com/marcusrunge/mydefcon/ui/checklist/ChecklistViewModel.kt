@@ -2,11 +2,11 @@ package com.marcusrunge.mydefcon.ui.checklist
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.content.Intent
 import android.content.IntentFilter
 import android.os.Message
 import androidx.lifecycle.*
 import androidx.lifecycle.Observer
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.core.interfaces.Core
@@ -228,9 +228,8 @@ class ChecklistViewModel @Inject constructor(
 
     init {
         receiver.setOnCheckItemsReceivedListener(this)
-        IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED).also {
-            app.registerReceiver(receiver, it)
-        }
+        val filter = IntentFilter("com.marcusrunge.mydefcon.CHECKITEMS_RECEIVED")
+        LocalBroadcastManager.getInstance(app).registerReceiver(receiver, filter)
     }
 
     fun onAdd() {
@@ -334,7 +333,7 @@ class ChecklistViewModel @Inject constructor(
 
     override fun onDestroy(owner: LifecycleOwner) {
         receiver.removeOnCheckItemsReceivedListener()
-        app.unregisterReceiver(receiver)
+        LocalBroadcastManager.getInstance(app).unregisterReceiver(receiver)
         super.onDestroy(owner)
     }
 }

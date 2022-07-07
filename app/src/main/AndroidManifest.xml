@@ -30,21 +30,6 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/my_defcon_widget_info" />
         </receiver>
-        <receiver
-            android:name=".receiver.DefconStatusReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.marcusrunge.mydefcon.DEFCONSTATUS_RECEIVED" />
-                <action android:name="com.marcusrunge.mydefcon.DEFCONSTATUS_SELECTED" />
-            </intent-filter>
-        </receiver>
-        <receiver
-            android:name=".receiver.CheckItemsReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.marcusrunge.mydefcon.CHECKITEMS_RECEIVED" />
-            </intent-filter>
-        </receiver>
 
         <activity
             android:name=".MainActivity"

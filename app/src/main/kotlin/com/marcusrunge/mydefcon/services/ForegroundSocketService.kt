@@ -5,11 +5,13 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.communication.interfaces.Communication
 import com.marcusrunge.mydefcon.communication.interfaces.OnCheckItemsReceivedListener
@@ -20,7 +22,6 @@ import com.marcusrunge.mydefcon.data.interfaces.Data
 import com.marcusrunge.mydefcon.receiver.CheckItemsReceiver
 import com.marcusrunge.mydefcon.receiver.DefconStatusReceiver
 import com.marcusrunge.mydefcon.ui.status.StatusFragment
-import com.marcusrunge.mydefcon.ui.status.StatusViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -62,6 +63,8 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
         showNotification()
         isRunning = true
         receiver.setOnDefconStatusReceivedListener(this)
+        val filter = IntentFilter("com.marcusrunge.mydefcon.DEFCONSTATUS_SELECTED")
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter)
         return START_STICKY
     }
 
@@ -79,7 +82,7 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
         }
         isRunning = false
         receiver.removeOnDefconStatusReceivedListener()
-        unregisterReceiver(receiver)
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
     }
 
 
@@ -164,12 +167,16 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
             intent.action = "com.marcusrunge.mydefcon.DEFCONSTATUS_RECEIVED"
             intent.putExtra("data", status)
             intent.putExtra("source", ForegroundSocketService::class.java.canonicalName)
-            sendBroadcast(intent)
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
         }
-        if (items != null) if (status != null) Intent(this, CheckItemsReceiver::class.java).also { intent ->
+        if (items != null) if (status != null) Intent(
+            this,
+            CheckItemsReceiver::class.java
+        ).also { intent ->
             intent.action = "com.marcusrunge.mydefcon.CHECKITEMS_RECEIVED"
             intent.putExtra("data", items as Serializable)
-            sendBroadcast(intent)
+            intent.putExtra("source", ForegroundSocketService::class.java.canonicalName)
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
         }
     }
 

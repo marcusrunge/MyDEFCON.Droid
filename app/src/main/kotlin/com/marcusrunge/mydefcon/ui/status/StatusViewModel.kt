@@ -1,12 +1,12 @@
 package com.marcusrunge.mydefcon.ui.status
 
 import android.app.Application
-import android.content.Intent
 import android.content.IntentFilter
 import android.os.Message
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.receiver.DefconStatusReceiver
@@ -25,9 +25,8 @@ class StatusViewModel @Inject constructor(
     init {
         setDefconStatus(core.preferences.status)
         receiver.setOnDefconStatusReceivedListener(this)
-        IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED).also {
-            app.registerReceiver(receiver, it)
-        }
+        val filter = IntentFilter("com.marcusrunge.mydefcon.DEFCONSTATUS_RECEIVED")
+        LocalBroadcastManager.getInstance(app).registerReceiver(receiver, filter)
     }
 
     val checkedRadioButtonId: MutableLiveData<Int> = _checkedRadioButtonId
@@ -50,7 +49,7 @@ class StatusViewModel @Inject constructor(
 
     override fun onDestroy(owner: LifecycleOwner) {
         receiver.removeOnDefconStatusReceivedListener()
-        app.unregisterReceiver(receiver)
+        LocalBroadcastManager.getInstance(app).unregisterReceiver(receiver)
         super.onDestroy(owner)
     }
 
