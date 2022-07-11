@@ -46,9 +46,13 @@ internal class ClientImpl(private val base: NetworkBase) : Client, Synchronizer 
         val address = base.linkProperties?.linkAddresses.findInet4LinkAddress()
         val broadcast = address.calculateBroadcastAddress()
         withContext(Dispatchers.IO) {
-            val socket = DatagramSocket()
-            val packet = DatagramPacket(buffer, buffer.size, broadcast, 8888)
-            socket.send(packet)
+            try {
+                val socket = DatagramSocket()
+                val packet = DatagramPacket(buffer, buffer.size, broadcast, 8888)
+                socket.send(packet)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
