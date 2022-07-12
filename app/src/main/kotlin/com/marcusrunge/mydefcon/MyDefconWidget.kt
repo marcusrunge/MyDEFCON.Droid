@@ -48,7 +48,7 @@ class MyDefconWidget : AppWidgetProvider() {
         appWidgetId: Int
     ) {
         val views = RemoteViews(context.packageName, R.layout.mydefcon_widget)
-        val mainActivity = Intent(context, MainActivity::class.java)
+        val mainActivity = Intent(context, SplashActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
             context,
             0,
