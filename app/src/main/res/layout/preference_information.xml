@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingStart="48dp"
-    android:paddingEnd="48dp">
+    android:paddingStart="72dp"
+    android:paddingEnd="16dp">
 
     <TextView
         android:id="@+id/application_name_text"

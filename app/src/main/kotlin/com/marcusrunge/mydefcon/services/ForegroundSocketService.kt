@@ -87,7 +87,7 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
 
 
     override fun onDefconStatusReceived(status: Int) {
-        if(core.preferences.status!=status) {
+        if (core.preferences.status != status) {
             core.preferences.status = status
             onReceived(status, null)
             showNotification()
