@@ -10,6 +10,7 @@ import com.marcusrunge.mydefcon.communication.models.DefconMessage
 import com.marcusrunge.mydefcon.communication.models.RequestMessage
 import com.marcusrunge.mydefcon.data.entities.CheckItem
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -26,6 +27,8 @@ import kotlin.math.pow
 internal class ClientImpl(private val base: NetworkBase) : Client, Synchronizer {
     private val onCheckItemsReceivedListeners: MutableList<WeakReference<OnCheckItemsReceivedListener>> =
         mutableListOf()
+    val statusSemaphore = Semaphore(permits = 1)
+    val syncSemaphore = Semaphore(permits = 1)
 
     internal companion object {
         private var instance: Client? = null
@@ -39,6 +42,7 @@ internal class ClientImpl(private val base: NetworkBase) : Client, Synchronizer 
     }
 
     override suspend fun sendDefconStatus(status: Int) {
+        statusSemaphore.acquire()
         val message = DefconMessage(status)
         base.defconStatusMessageUuid = message.uuid
         val json = Json.encodeToString(message)
@@ -52,11 +56,14 @@ internal class ClientImpl(private val base: NetworkBase) : Client, Synchronizer 
                 socket.send(packet)
             } catch (e: Exception) {
                 e.printStackTrace()
+            } finally {
+                statusSemaphore.release()
             }
         }
     }
 
     override suspend fun requestSyncCheckItems() {
+        syncSemaphore.acquire()
         val message = RequestMessage(NetworkImpl.CHECKITEMSSYNC_REQUESTCODE)
         base.requestMessageUuid = message.uuid
         val json = Json.encodeToString(message)
@@ -64,9 +71,15 @@ internal class ClientImpl(private val base: NetworkBase) : Client, Synchronizer 
         val address = base.linkProperties?.linkAddresses.findInet4LinkAddress()
         val broadcast = address.calculateBroadcastAddress()
         withContext(Dispatchers.IO) {
-            val socket = DatagramSocket()
-            val packet = DatagramPacket(buffer, buffer.size, broadcast, 8888)
-            socket.send(packet)
+            try {
+                val socket = DatagramSocket()
+                val packet = DatagramPacket(buffer, buffer.size, broadcast, 8888)
+                socket.send(packet)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                syncSemaphore.release()
+            }
         }
     }
 
