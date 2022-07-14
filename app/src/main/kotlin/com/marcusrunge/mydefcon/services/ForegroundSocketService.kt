@@ -43,7 +43,7 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
     private var udpServerJob: Job? = null
     private var tcpServerJob: Job? = null
     private var receiver: DefconStatusReceiver = DefconStatusReceiver()
-    private var _status: Int? = null
+    private var _serviceDefconStatus: Int? = null
 
     override fun onBind(intent: Intent): IBinder? {
         return null
@@ -52,6 +52,7 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (!started) {
             started = true
+            _serviceDefconStatus = core.preferences.status
             udpServerJob = lifecycleScope.launch {
                 communication.network.server.startUdpServer()
             }
@@ -88,7 +89,8 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
 
 
     override fun onDefconStatusReceived(status: Int) {
-        if (_status != status) {
+        if (_serviceDefconStatus != status) {
+            _serviceDefconStatus = status
             core.preferences.status = status
             onReceived(status, null)
             showNotification()
@@ -96,7 +98,8 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
     }
 
     override fun onDefconStatusReceived(status: Int, source: String?) {
-        if (source == StatusFragment::class.java.canonicalName && core.preferences.status != status) {
+        if (source == StatusFragment::class.java.canonicalName && _serviceDefconStatus != status) {
+            _serviceDefconStatus = status
             showNotification()
         }
     }
@@ -124,7 +127,6 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
     }
 
     private fun showNotification() {
-        _status = core.preferences.status
         createNotificationChannel()
         startForeground(NOTIFICATION_ID, buildNotification())
     }
@@ -147,7 +149,7 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val smallIcon = when (core.preferences.status) {
+        val smallIcon = when (_serviceDefconStatus) {
             1 -> R.drawable.ic_stat1
             2 -> R.drawable.ic_stat2
             3 -> R.drawable.ic_stat3
