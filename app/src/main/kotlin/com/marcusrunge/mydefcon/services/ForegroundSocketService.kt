@@ -43,6 +43,7 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
     private var udpServerJob: Job? = null
     private var tcpServerJob: Job? = null
     private var receiver: DefconStatusReceiver = DefconStatusReceiver()
+    private var _status: Int? = null
 
     override fun onBind(intent: Intent): IBinder? {
         return null
@@ -87,7 +88,7 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
 
 
     override fun onDefconStatusReceived(status: Int) {
-        if (core.preferences.status != status) {
+        if (_status != status) {
             core.preferences.status = status
             onReceived(status, null)
             showNotification()
@@ -123,6 +124,7 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
     }
 
     private fun showNotification() {
+        _status = core.preferences.status
         createNotificationChannel()
         startForeground(NOTIFICATION_ID, buildNotification())
     }

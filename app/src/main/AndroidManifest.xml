@@ -25,6 +25,10 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"/>
+
         <service
             android:name=".services.ForegroundSocketService"
             android:enabled="true"
@@ -43,15 +47,15 @@
                 android:resource="@xml/my_defcon_widget_info" />
         </receiver>
 
-        <activity
-            android:name=".MainActivity"
-            android:exported="true">
+        <receiver
+            android:name=".receiver.BootCompletedReceiver"
+            android:enabled="true"
+            android:exported="true" >
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.ACTION_EXTERNAL_APPLICATIONS_AVAILABLE" />
             </intent-filter>
-        </activity>
+        </receiver>
 
         <provider
             android:name="androidx.core.content.FileProvider"
