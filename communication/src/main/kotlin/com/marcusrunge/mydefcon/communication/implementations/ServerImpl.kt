@@ -11,6 +11,8 @@ import com.marcusrunge.mydefcon.communication.models.DefconMessage
 import com.marcusrunge.mydefcon.communication.models.RequestMessage
 import com.marcusrunge.mydefcon.data.entities.CheckItem
 import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -29,8 +31,8 @@ internal class ServerImpl(private val base: NetworkBase) : Server, OnReceived {
         mutableListOf()
     private var udpServerJob: Job? = null
     private var tcpServerJob: Job? = null
-    private val udpServerLock = ReentrantLock()
-    private val tcpServerLock = ReentrantLock()
+    private val udpServerLock = Mutex()
+    private val tcpServerLock = Mutex()
 
     internal companion object {
         private var instance: Server? = null
@@ -58,41 +60,45 @@ internal class ServerImpl(private val base: NetworkBase) : Server, OnReceived {
         }
     }
 
+    @Suppress("BlockingMethodInNonBlockingContext")
     override suspend fun startUdpServer() {
-        udpServerLock.lock()
-        withContext(Dispatchers.IO) {
-            udpServerJob = launch {
-                val whileLock = ReentrantLock()
-                val socket = DatagramSocket(8888)
-                socket.broadcast = true
-                try {
-                    while (true) {
-                        whileLock.lock()
-                        val buffer = ByteArray(256)
-                        val packet = DatagramPacket(buffer, buffer.size)
-                        try {
-                            socket.receive(packet)
-                            val data = String(packet.data, 0, packet.length)
+        udpServerLock.withLock(this) {
+            withContext(Dispatchers.IO) {
+                udpServerJob = launch {
+                    val whileLock = ReentrantLock()
+                    val socket = DatagramSocket(8888)
+                    socket.broadcast = true
+                    try {
+                        while (true) {
+                            whileLock.lock()
+                            val buffer = ByteArray(256)
+                            val packet = DatagramPacket(buffer, buffer.size)
                             try {
-                                val defconMessage = Json.decodeFromString<DefconMessage>(data)
-                                if (defconMessage.uuid != base.defconStatusMessageUuid) onDefconStatusReceived(
-                                    defconMessage.status
-                                )
+                                socket.receive(packet)
+                                val data = String(packet.data, 0, packet.length)
+                                try {
+                                    val defconMessage = Json.decodeFromString<DefconMessage>(data)
+                                    if (defconMessage.uuid != base.defconStatusMessageUuid) onDefconStatusReceived(
+                                        defconMessage.status
+                                    )
+                                } catch (e: Exception) {
+                                    val requestMessage = Json.decodeFromString<RequestMessage>(data)
+                                    if (requestMessage.uuid != base.requestMessageUuid) onRequestReceived(
+                                        requestMessage.requestCode,
+                                        packet.address
+                                    )
+                                }
                             } catch (e: Exception) {
-                                val requestMessage = Json.decodeFromString<RequestMessage>(data)
-                                if (requestMessage.uuid != base.requestMessageUuid) onRequestReceived(
-                                    requestMessage.requestCode,
-                                    packet.address
-                                )
+                            } finally {
+                                if (whileLock.isHeldByCurrentThread) {
+                                    whileLock.unlock()
+                                }
                             }
-                        } catch (e: Exception) {
-                        } finally {
-                            whileLock.unlock()
                         }
+                    } catch (e: Exception) {
+                    } finally {
+                        socket.close()
                     }
-                } catch (e: Exception) {
-                } finally {
-                    socket.close()
                 }
             }
         }
@@ -101,40 +107,42 @@ internal class ServerImpl(private val base: NetworkBase) : Server, OnReceived {
     override suspend fun stopUdpServer() {
         udpServerJob?.cancelAndJoin()
         udpServerJob = null
-        udpServerLock.unlock()
+        udpServerLock.unlock(this)
     }
 
+    @Suppress("BlockingMethodInNonBlockingContext")
     override suspend fun startTcpServer() {
-        tcpServerLock.lock()
-        withContext(Dispatchers.IO) {
-            tcpServerJob = launch {
-                val serverSocket = ServerSocket(8889)
-                val whileLock = ReentrantLock()
-                try {
-                    while (true) {
-                        whileLock.lock()
-                        val socket = serverSocket.accept()
-                        try {
-                            val writer = PrintWriter(
-                                BufferedWriter(OutputStreamWriter(socket.getOutputStream())),
-                                true
-                            )
-                            val observer = Observer<MutableList<CheckItem>> {
-                                val json = Json.encodeToString(it)
-                                writer.println(json)
-                                writer.close()
+        tcpServerLock.withLock(this) {
+            withContext(Dispatchers.IO) {
+                tcpServerJob = launch {
+                    val serverSocket = ServerSocket(8889)
+                    val whileLock = ReentrantLock()
+                    try {
+                        while (true) {
+                            whileLock.lock()
+                            val socket = serverSocket.accept()
+                            try {
+                                val writer = PrintWriter(
+                                    BufferedWriter(OutputStreamWriter(socket.getOutputStream())),
+                                    true
+                                )
+                                val observer = Observer<MutableList<CheckItem>> {
+                                    val json = Json.encodeToString(it)
+                                    writer.println(json)
+                                    writer.close()
+                                }
+                                val checkItems = base.data?.repository?.checkItems?.getAll()
+                                checkItems?.observeForeverOnce(observer)
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            } finally {
+                                whileLock.unlock()
                             }
-                            val checkItems = base.data?.repository?.checkItems?.getAll()
-                            checkItems?.observeForeverOnce(observer)
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        } finally {
-                            whileLock.unlock()
                         }
+                    } catch (e: Exception) {
+                    } finally {
+                        serverSocket.close()
                     }
-                } catch (e: Exception) {
-                } finally {
-                    serverSocket.close()
                 }
             }
         }
@@ -143,7 +151,7 @@ internal class ServerImpl(private val base: NetworkBase) : Server, OnReceived {
     override suspend fun stopTcpServer() {
         tcpServerJob?.cancelAndJoin()
         tcpServerJob = null
-        tcpServerLock.unlock()
+        tcpServerLock.unlock(this)
     }
 
     override fun onDefconStatusReceived(status: Int) {
