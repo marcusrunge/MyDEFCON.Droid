@@ -6,7 +6,6 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.Observer
@@ -45,11 +44,8 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
     private var receiver: DefconStatusReceiver = DefconStatusReceiver()
     private var _serviceDefconStatus: Int? = null
 
-    override fun onBind(intent: Intent): IBinder? {
-        return null
-    }
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        super.onStartCommand(intent, flags, startId)
         if (!started) {
             started = true
             _serviceDefconStatus = core.preferences.status

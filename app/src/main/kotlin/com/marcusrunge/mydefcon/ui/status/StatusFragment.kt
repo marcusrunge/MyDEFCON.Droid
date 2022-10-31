@@ -39,21 +39,21 @@ class StatusFragment : Fragment() {
     ): View {
         viewModel =
             ViewModelProvider(this)[StatusViewModel::class.java]
-        val statusObserver = Observer<Int> { status ->
-            when (status) {
-                R.id.radio_defcon1 -> core.preferences.status = 1
-                R.id.radio_defcon2 -> core.preferences.status = 2
-                R.id.radio_defcon3 -> core.preferences.status = 3
-                R.id.radio_defcon4 -> core.preferences.status = 4
-                R.id.radio_defcon5 -> core.preferences.status = 5
+        val statusObserver = Observer<Int> { button ->
+            val status = when (button) {
+                R.id.radio_defcon1 -> 1
+                R.id.radio_defcon2 -> 2
+                R.id.radio_defcon3 -> 3
+                R.id.radio_defcon4 -> 4
+                else -> 5
             }
             Intent(context, DefconStatusReceiver::class.java).also { intent ->
                 intent.action = "com.marcusrunge.mydefcon.DEFCONSTATUS_SELECTED"
-                intent.putExtra("data", core.preferences.status)
+                intent.putExtra("data", status)
                 intent.putExtra("source", StatusFragment::class.java.canonicalName)
                 context?.let { LocalBroadcastManager.getInstance(it).sendBroadcast(intent) }
             }
-            lifecycleScope.launch { communication.network.client.sendDefconStatus(core.preferences.status) }
+            lifecycleScope.launch { communication.network.client.sendDefconStatus(status) }
         }
         viewModel.checkedRadioButtonId.observe(viewLifecycleOwner, statusObserver)
         _binding = FragmentStatusBinding.inflate(inflater, container, false)
