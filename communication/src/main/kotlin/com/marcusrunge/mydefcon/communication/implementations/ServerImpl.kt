@@ -88,14 +88,14 @@ internal class ServerImpl(private val base: NetworkBase) : Server, OnReceived {
                                         packet.address
                                     )
                                 }
-                            } catch (e: Exception) {
+                            } catch (_: Exception) {
                             } finally {
                                 if (whileLock.isHeldByCurrentThread) {
                                     whileLock.unlock()
                                 }
                             }
                         }
-                    } catch (e: Exception) {
+                    } catch (_: Exception) {
                     } finally {
                         socket.close()
                     }
@@ -139,7 +139,7 @@ internal class ServerImpl(private val base: NetworkBase) : Server, OnReceived {
                                 whileLock.unlock()
                             }
                         }
-                    } catch (e: Exception) {
+                    } catch (_: Exception) {
                     } finally {
                         serverSocket.close()
                     }
@@ -158,7 +158,7 @@ internal class ServerImpl(private val base: NetworkBase) : Server, OnReceived {
         for (weakRef in onDefconStatusReceivedListeners) {
             try {
                 weakRef.get()?.onDefconStatusReceived(status)
-            } catch (e: Exception) {
+            } catch (_: Exception) {
             }
         }
     }

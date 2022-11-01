@@ -21,7 +21,6 @@ class StatusViewModel @Inject constructor(
 ) : ObservableViewModel(app), DefaultLifecycleObserver, OnDefconStatusReceivedListener {
     private val _checkedRadioButtonId = MutableLiveData<Int>()
     private var receiver: DefconStatusReceiver = DefconStatusReceiver()
-    private var _listener: OnInterruptedListener? = null
 
     init {
         setDefconStatus(core.preferences.status)
@@ -32,20 +31,6 @@ class StatusViewModel @Inject constructor(
 
     val checkedRadioButtonId: MutableLiveData<Int> = _checkedRadioButtonId
 
-    /**
-     * Sets an interrupted listener.
-     */
-    fun setOnInterruptedListener(listener: OnInterruptedListener) {
-        _listener = listener
-    }
-
-    /**
-     * Removes the interrupted listener.
-     */
-    fun removeOnInterruptedListener() {
-        _listener = null
-    }
-
     override fun updateView(inputMessage: Message) {
         if (inputMessage.obj is Int) setDefconStatus(
             inputMessage.obj as Int
@@ -53,7 +38,6 @@ class StatusViewModel @Inject constructor(
     }
 
     private fun setDefconStatus(status: Int) {
-        _listener?.onInterrupted(true)
         when (status) {
             1 -> _checkedRadioButtonId.value = R.id.radio_defcon1
             2 -> _checkedRadioButtonId.value = R.id.radio_defcon2
@@ -77,12 +61,4 @@ class StatusViewModel @Inject constructor(
             handler.sendMessage(setDefconStatusMessage)
         }
     }
-}
-
-interface OnInterruptedListener {
-    /**
-     * Occurs when an interruption occurred.
-     * @param status the interruption status.
-     */
-    fun onInterrupted(status: Boolean)
 }

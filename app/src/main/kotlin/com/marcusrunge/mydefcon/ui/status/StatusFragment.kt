@@ -18,15 +18,13 @@ import com.marcusrunge.mydefcon.receiver.DefconStatusReceiver
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import java.util.concurrent.atomic.AtomicBoolean
 
 @AndroidEntryPoint
-class StatusFragment : Fragment(), OnInterruptedListener {
+class StatusFragment : Fragment() {
 
     private var _binding: FragmentStatusBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: StatusViewModel
-    private val interrupted = AtomicBoolean()
 
     @Inject
     lateinit var core: Core
@@ -40,7 +38,6 @@ class StatusFragment : Fragment(), OnInterruptedListener {
         savedInstanceState: Bundle?
     ): View {
         viewModel = ViewModelProvider(this)[StatusViewModel::class.java]
-        viewModel.setOnInterruptedListener(this)
         val statusObserver = Observer<Int> { button ->
             val status = when (button) {
                 R.id.radio_defcon1 -> 1
@@ -49,7 +46,6 @@ class StatusFragment : Fragment(), OnInterruptedListener {
                 R.id.radio_defcon4 -> 4
                 else -> 5
             }
-            if(!interrupted.get()) {
                 Intent(context, DefconStatusReceiver::class.java).also { intent ->
                     intent.action = "com.marcusrunge.mydefcon.DEFCONSTATUS_SELECTED"
                     intent.putExtra("data", status)
@@ -57,7 +53,6 @@ class StatusFragment : Fragment(), OnInterruptedListener {
                     context?.let { LocalBroadcastManager.getInstance(it).sendBroadcast(intent) }
                 }
                 lifecycleScope.launch { communication.network.client.sendDefconStatus(status) }
-            } else interrupted.set(false)
         }
         viewModel.checkedRadioButtonId.observe(viewLifecycleOwner, statusObserver)
         _binding = FragmentStatusBinding.inflate(inflater, container, false)
@@ -68,11 +63,6 @@ class StatusFragment : Fragment(), OnInterruptedListener {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        viewModel.removeOnInterruptedListener()
         _binding = null
-    }
-
-    override fun onInterrupted(status: Boolean) {
-        interrupted.set(status)
     }
 }

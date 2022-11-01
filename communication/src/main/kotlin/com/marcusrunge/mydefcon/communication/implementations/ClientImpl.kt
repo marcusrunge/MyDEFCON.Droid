@@ -93,7 +93,7 @@ internal class ClientImpl(private val base: NetworkBase) : Client, Synchronizer 
             if (checkItemsMessage.uuid != base.checkItemsMessageUuid) onCheckItemsReceived(
                 checkItemsMessage.checkItems
             )
-        } catch (e: Exception) {
+        } catch (_: Exception) {
         } finally {
             socket.close()
         }
@@ -103,7 +103,7 @@ internal class ClientImpl(private val base: NetworkBase) : Client, Synchronizer 
         for (weakRef in onCheckItemsReceivedListeners) {
             try {
                 weakRef.get()?.onCheckItemsReceived(checkItems)
-            } catch (e: Exception) {
+            } catch (_: Exception) {
             }
         }
     }
