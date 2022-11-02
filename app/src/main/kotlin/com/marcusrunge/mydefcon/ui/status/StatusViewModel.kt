@@ -8,16 +8,18 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.marcusrunge.mydefcon.R
+import com.marcusrunge.mydefcon.communication.interfaces.Communication
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.receiver.DefconStatusReceiver
 import com.marcusrunge.mydefcon.receiver.OnDefconStatusReceivedListener
+import com.marcusrunge.mydefcon.services.ForegroundSocketService
 import com.marcusrunge.mydefcon.ui.ObservableViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class StatusViewModel @Inject constructor(
-    private val app: Application, core: Core
+    private val app: Application, core: Core, communication: Communication
 ) : ObservableViewModel(app), DefaultLifecycleObserver, OnDefconStatusReceivedListener {
     private val _checkedRadioButtonId = MutableLiveData<Int>()
     private var receiver: DefconStatusReceiver = DefconStatusReceiver()
@@ -54,7 +56,7 @@ class StatusViewModel @Inject constructor(
     }
 
     override fun onDefconStatusReceived(status: Int, source: String?) {
-        if (source != StatusFragment::class.java.canonicalName) {
+        if (source == ForegroundSocketService::class.java.canonicalName) {
             val setDefconStatusMessage = Message()
             setDefconStatusMessage.what = UPDATE_VIEW
             setDefconStatusMessage.obj = status

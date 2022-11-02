@@ -9,6 +9,7 @@ internal class PreferencesImpl(private val coreBase: CoreBase) : Preferences {
         get() = coreBase.preferencesOperations.getInt("status")
         set(value) {
             coreBase.preferencesOperations.setInt("status", value)
+            //Send to MyDefconWidget.
             coreBase.broadcastOperations.sendBroadcast(
                 "com.marcusrunge.mydefcon.DEFCON_UPDATE",
                 value.toString()

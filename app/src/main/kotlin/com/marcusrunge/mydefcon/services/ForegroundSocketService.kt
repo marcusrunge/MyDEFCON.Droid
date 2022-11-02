@@ -169,6 +169,7 @@ class ForegroundSocketService : LifecycleService(), OnDefconStatusReceivedListen
             intent.action = "com.marcusrunge.mydefcon.DEFCONSTATUS_RECEIVED"
             intent.putExtra("data", status)
             intent.putExtra("source", ForegroundSocketService::class.java.canonicalName)
+            //Send to StatusViewModel
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
         }
         if (items != null) if (status != null) Intent(

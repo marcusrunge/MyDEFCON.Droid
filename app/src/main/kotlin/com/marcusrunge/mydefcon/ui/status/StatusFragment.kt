@@ -26,11 +26,11 @@ class StatusFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var viewModel: StatusViewModel
 
-    @Inject
+    /*@Inject
     lateinit var core: Core
 
     @Inject
-    lateinit var communication: Communication
+    lateinit var communication: Communication*/
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,7 +38,7 @@ class StatusFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         viewModel = ViewModelProvider(this)[StatusViewModel::class.java]
-        val statusObserver = Observer<Int> { button ->
+        /*val statusObserver = Observer<Int> { button ->
             val status = when (button) {
                 R.id.radio_defcon1 -> 1
                 R.id.radio_defcon2 -> 2
@@ -54,15 +54,17 @@ class StatusFragment : Fragment() {
                 }
                 lifecycleScope.launch { communication.network.client.sendDefconStatus(status) }
         }
-        viewModel.checkedRadioButtonId.observe(viewLifecycleOwner, statusObserver)
+        viewModel.checkedRadioButtonId.observe(viewLifecycleOwner, statusObserver)*/
         _binding = FragmentStatusBinding.inflate(inflater, container, false)
         binding.viewmodel = viewModel
         binding.lifecycleOwner = this
+        lifecycle.addObserver(viewModel)
         return binding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        lifecycle.removeObserver(viewModel)
         _binding = null
     }
 }
