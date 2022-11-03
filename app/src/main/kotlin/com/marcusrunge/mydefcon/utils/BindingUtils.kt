@@ -5,9 +5,12 @@ import android.graphics.Shader
 import android.graphics.drawable.Drawable
 import android.view.View
 import android.webkit.WebView
+import android.widget.RadioGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -85,6 +88,29 @@ object BindingUtils {
     fun bindbackgroundDrawableColor(view: View, resourceId: Int?) {
         if (resourceId != null) {
             view.background.setTint(view.context.resources.getColor(resourceId, view.context.theme))
+        }
+    }
+
+    @BindingAdapter("selected", "received")
+    @JvmStatic
+    fun bindDefconState(
+        radioGroup: RadioGroup?,
+        selected: MutableLiveData<Int>,
+        received: MutableLiveData<Int>
+    ) {
+        val lifecycleOwner = radioGroup?.findViewTreeLifecycleOwner()
+        if (lifecycleOwner != null) {
+            received.observe(lifecycleOwner) {
+                radioGroup.check(
+                    when (it) {
+                        1 -> R.id.radio_defcon1
+                        2 -> R.id.radio_defcon2
+                        3 -> R.id.radio_defcon3
+                        4 -> R.id.radio_defcon4
+                        else -> R.id.radio_defcon5
+                    }
+                )
+            }
         }
     }
 }
