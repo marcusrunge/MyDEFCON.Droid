@@ -24,7 +24,7 @@ class StatusViewModel @Inject constructor(
     private val _checkedRadioButtonId = MutableLiveData<Int>()
     private var receiver: DefconStatusReceiver = DefconStatusReceiver()
     private lateinit var statusViewModelOwner: LifecycleOwner
-    private val _checkedRadioButtonIdObserver = Observer<Int> {
+    private val checkedRadioButtonIdObserver = Observer<Int> {
         val status = when (it) {
             R.id.radio_defcon1 -> 1
             R.id.radio_defcon2 -> 2
@@ -36,7 +36,9 @@ class StatusViewModel @Inject constructor(
             intent.action = "com.marcusrunge.mydefcon.DEFCONSTATUS_SELECTED"
             intent.putExtra("data", status)
             intent.putExtra("source", StatusFragment::class.java.canonicalName)
-            app.applicationContext?.let {ctx-> LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent) }
+            app.applicationContext?.let { ctx ->
+                LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent)
+            }
         }
         viewModelScope.launch { communication.network.client.sendDefconStatus(status) }
     }
@@ -55,20 +57,10 @@ class StatusViewModel @Inject constructor(
         )
     }
 
-    private fun setDefconStatus(status: Int) {
-        when (status) {
-            1 -> _checkedRadioButtonId.value = R.id.radio_defcon1
-            2 -> _checkedRadioButtonId.value = R.id.radio_defcon2
-            3 -> _checkedRadioButtonId.value = R.id.radio_defcon3
-            4 -> _checkedRadioButtonId.value = R.id.radio_defcon4
-            else -> _checkedRadioButtonId.value = R.id.radio_defcon5
-        }
-    }
-
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
         statusViewModelOwner = owner
-        _checkedRadioButtonId.observe(statusViewModelOwner, _checkedRadioButtonIdObserver)
+        _checkedRadioButtonId.observe(statusViewModelOwner, checkedRadioButtonIdObserver)
         setDefconStatus(core.preferences.status)
     }
 
@@ -84,8 +76,17 @@ class StatusViewModel @Inject constructor(
             val setDefconStatusMessage = Message()
             setDefconStatusMessage.what = UPDATE_VIEW
             setDefconStatusMessage.obj = status
-            _checkedRadioButtonId.removeObservers(statusViewModelOwner)
             handler.sendMessage(setDefconStatusMessage)
+        }
+    }
+
+    private fun setDefconStatus(status: Int) {
+        when (status) {
+            1 -> _checkedRadioButtonId.value = R.id.radio_defcon1
+            2 -> _checkedRadioButtonId.value = R.id.radio_defcon2
+            3 -> _checkedRadioButtonId.value = R.id.radio_defcon3
+            4 -> _checkedRadioButtonId.value = R.id.radio_defcon4
+            else -> _checkedRadioButtonId.value = R.id.radio_defcon5
         }
     }
 }

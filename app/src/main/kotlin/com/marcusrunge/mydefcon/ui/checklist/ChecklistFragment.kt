@@ -25,7 +25,7 @@ class ChecklistFragment : Fragment() {
 
         _binding = FragmentChecklistBinding.inflate(inflater, container, false)
         binding.viewmodel = viewModel
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
         lifecycle.addObserver(viewModel)
         return binding.root
     }

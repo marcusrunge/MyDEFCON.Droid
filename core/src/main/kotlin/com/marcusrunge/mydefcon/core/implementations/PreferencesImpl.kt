@@ -5,17 +5,11 @@ import com.marcusrunge.mydefcon.core.interfaces.Preferences
 import java.util.concurrent.atomic.AtomicInteger
 
 internal class PreferencesImpl(private val coreBase: CoreBase) : Preferences {
-    private val _status = AtomicInteger()
 
-    init {
-        _status.set(coreBase.preferencesOperations.getInt("status"))
-    }
-
-    override var status: Int = _status.get()
+    override var status: Int
+        get() = coreBase.preferencesOperations.getInt("status")
         set(value) {
-            _status.set(value)
             coreBase.preferencesOperations.setInt("status", value)
-            //Send to MyDefconWidget.
             coreBase.broadcastOperations.sendBroadcast(
                 "com.marcusrunge.mydefcon.DEFCON_UPDATE",
                 value.toString()
