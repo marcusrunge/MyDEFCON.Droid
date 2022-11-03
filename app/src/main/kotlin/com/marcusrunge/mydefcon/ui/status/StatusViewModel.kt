@@ -47,7 +47,7 @@ class StatusViewModel @Inject constructor(
         LocalBroadcastManager.getInstance(app).registerReceiver(receiver, filter)
     }
 
-    val checkedRadioButtonId: LiveData<Int> = _checkedRadioButtonId
+    val checkedRadioButtonId: MutableLiveData<Int> = _checkedRadioButtonId
 
     override fun updateView(inputMessage: Message) {
         if (inputMessage.obj is Int) setDefconStatus(
@@ -63,12 +63,12 @@ class StatusViewModel @Inject constructor(
             4 -> _checkedRadioButtonId.value = R.id.radio_defcon4
             else -> _checkedRadioButtonId.value = R.id.radio_defcon5
         }
-        _checkedRadioButtonId.observe(statusViewModelOwner, _checkedRadioButtonIdObserver)
     }
 
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
         statusViewModelOwner = owner
+        _checkedRadioButtonId.observe(statusViewModelOwner, _checkedRadioButtonIdObserver)
         setDefconStatus(core.preferences.status)
     }
 
