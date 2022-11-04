@@ -15,7 +15,6 @@ import com.marcusrunge.mydefcon.services.ForegroundSocketService
 import com.marcusrunge.mydefcon.ui.ObservableViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import java.util.concurrent.atomic.AtomicInteger
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,33 +24,30 @@ class StatusViewModel @Inject constructor(
     private val _checkedRadioButtonId = MutableLiveData<Int>()
     private var receiver: DefconStatusReceiver = DefconStatusReceiver()
     private lateinit var statusViewModelOwner: LifecycleOwner
-    private val atomicDefconStatus=AtomicInteger(5)
     private val checkedRadioButtonIdObserver = Observer<Int> {
-        if(atomicDefconStatus.get()!=it) {
-            val status = when (it) {
-                R.id.radio_defcon1 -> 1
-                R.id.radio_defcon2 -> 2
-                R.id.radio_defcon3 -> 3
-                R.id.radio_defcon4 -> 4
-                else -> 5
-            }
-            Intent(app.applicationContext, DefconStatusReceiver::class.java).also { intent ->
-                intent.action = "com.marcusrunge.mydefcon.DEFCONSTATUS_SELECTED"
-                intent.putExtra("data", status)
-                intent.putExtra("source", StatusFragment::class.java.canonicalName)
-                app.applicationContext?.let { ctx ->
-                    LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent)
-                }
-            }
-            viewModelScope.launch { communication.network.client.sendDefconStatus(status) }
+        val status = when (it) {
+            R.id.radio_defcon1 -> 1
+            R.id.radio_defcon2 -> 2
+            R.id.radio_defcon3 -> 3
+            R.id.radio_defcon4 -> 4
+            else -> 5
         }
+        Intent(app.applicationContext, DefconStatusReceiver::class.java).also { intent ->
+            intent.action = "com.marcusrunge.mydefcon.DEFCONSTATUS_SELECTED"
+            intent.putExtra("data", status)
+            intent.putExtra("source", StatusFragment::class.java.canonicalName)
+            app.applicationContext?.let { ctx ->
+                LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent)
+            }
+        }
+        viewModelScope.launch { communication.network.client.sendDefconStatus(status) }
+
     }
 
     init {
         receiver.setOnDefconStatusReceivedListener(this)
         val filter = IntentFilter("com.marcusrunge.mydefcon.DEFCONSTATUS_RECEIVED")
         LocalBroadcastManager.getInstance(app).registerReceiver(receiver, filter)
-        atomicDefconStatus.set(core.preferences.status)
     }
 
     val checkedRadioButtonId: MutableLiveData<Int> = _checkedRadioButtonId
@@ -66,7 +62,6 @@ class StatusViewModel @Inject constructor(
         super.onCreate(owner)
         statusViewModelOwner = owner
         _checkedRadioButtonId.observe(statusViewModelOwner, checkedRadioButtonIdObserver)
-        setDefconStatus(atomicDefconStatus.get())
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
@@ -81,7 +76,6 @@ class StatusViewModel @Inject constructor(
             val setDefconStatusMessage = Message()
             setDefconStatusMessage.what = UPDATE_VIEW
             setDefconStatusMessage.obj = status
-            atomicDefconStatus.set(status)
             handler.sendMessage(setDefconStatusMessage)
         }
     }
