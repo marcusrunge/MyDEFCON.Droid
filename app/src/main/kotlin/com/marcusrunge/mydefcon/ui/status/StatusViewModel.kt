@@ -4,6 +4,8 @@ import android.app.Application
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Message
+import androidx.databinding.Bindable
+import androidx.databinding.library.baseAdapters.BR
 import androidx.lifecycle.*
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.marcusrunge.mydefcon.R
@@ -41,7 +43,6 @@ class StatusViewModel @Inject constructor(
             }
         }
         viewModelScope.launch { communication.network.client.sendDefconStatus(status) }
-
     }
 
     init {
@@ -51,6 +52,23 @@ class StatusViewModel @Inject constructor(
     }
 
     val checkedRadioButtonId: MutableLiveData<Int> = _checkedRadioButtonId
+    @get:Bindable
+    var selected: Int? = 0
+        set(value) {
+            if (field != value) {
+                field = value
+                notifyPropertyChanged(BR.selected)
+            }
+        }
+
+    @get:Bindable
+    var received: Int? = 0
+        set(value) {
+            if (field != value) {
+                field = value
+                notifyPropertyChanged(BR.received)
+            }
+        }
 
     override fun updateView(inputMessage: Message) {
         if (inputMessage.obj is Int) setDefconStatus(

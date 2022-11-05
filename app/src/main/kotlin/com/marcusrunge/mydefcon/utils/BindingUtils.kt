@@ -3,6 +3,7 @@ package com.marcusrunge.mydefcon.utils
 import android.graphics.Color
 import android.graphics.Shader
 import android.graphics.drawable.Drawable
+import android.view.MotionEvent
 import android.view.View
 import android.webkit.WebView
 import android.widget.RadioGroup
@@ -95,8 +96,8 @@ object BindingUtils {
     @JvmStatic
     fun bindDefconState(
         radioGroup: RadioGroup?,
-        selected: MutableLiveData<Int>,
-        received: MutableLiveData<Int>
+        selected: Int,
+        received:Int
     ) {
         val lifecycleOwner = radioGroup?.findViewTreeLifecycleOwner()
         if (lifecycleOwner != null) {
@@ -110,6 +111,9 @@ object BindingUtils {
                         else -> R.id.radio_defcon5
                     }
                 )
+            }
+            radioGroup.setOnTouchListener { v, event ->
+                true
             }
         }
     }
