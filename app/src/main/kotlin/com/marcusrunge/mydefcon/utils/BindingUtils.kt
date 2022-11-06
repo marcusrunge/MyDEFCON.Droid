@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable
 import android.view.View
 import android.webkit.WebView
 import android.widget.RadioGroup
+import android.widget.RadioGroup.OnCheckedChangeListener
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
@@ -91,26 +92,12 @@ object BindingUtils {
         }
     }
 
-    @BindingAdapter("selected", "received")
+    @BindingAdapter("setReceivedRadioButtonId")
     @JvmStatic
-    fun bindDefconState(
-        radioGroup: RadioGroup?,
-        selected: MutableLiveData<Int>,
-        received: MutableLiveData<Int>
-    ) {
-        val lifecycleOwner = radioGroup?.findViewTreeLifecycleOwner()
-        if (lifecycleOwner != null) {
-            received.observe(lifecycleOwner) {
-                radioGroup.check(
-                    when (it) {
-                        1 -> R.id.radio_defcon1
-                        2 -> R.id.radio_defcon2
-                        3 -> R.id.radio_defcon3
-                        4 -> R.id.radio_defcon4
-                        else -> R.id.radio_defcon5
-                    }
-                )
-            }
+    fun bindReceivedRadioButtonId(radioGroup: RadioGroup?, receivedRadioButtonId: MutableLiveData<Int>?) {
+        if (radioGroup != null && receivedRadioButtonId!=null) {
+            if(radioGroup.checkedRadioButtonId!=receivedRadioButtonId.value)
+                receivedRadioButtonId.value?.let { radioGroup.check(it) }
         }
     }
 }

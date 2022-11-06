@@ -21,27 +21,29 @@ import javax.inject.Inject
 class StatusViewModel @Inject constructor(
     private val app: Application, val core: Core, communication: Communication
 ) : ObservableViewModel(app), DefaultLifecycleObserver, OnDefconStatusReceivedListener {
-    private val _checkedRadioButtonId = MutableLiveData<Int>()
+    val selectedRadioButtonId = MutableLiveData<Int>()
+    val receivedRadioButtonId = MutableLiveData<Int>()
     private var receiver: DefconStatusReceiver = DefconStatusReceiver()
     private lateinit var statusViewModelOwner: LifecycleOwner
-    private val checkedRadioButtonIdObserver = Observer<Int> {
-        val status = when (it) {
-            R.id.radio_defcon1 -> 1
-            R.id.radio_defcon2 -> 2
-            R.id.radio_defcon3 -> 3
-            R.id.radio_defcon4 -> 4
-            else -> 5
-        }
-        Intent(app.applicationContext, DefconStatusReceiver::class.java).also { intent ->
-            intent.action = "com.marcusrunge.mydefcon.DEFCONSTATUS_SELECTED"
-            intent.putExtra("data", status)
-            intent.putExtra("source", StatusFragment::class.java.canonicalName)
-            app.applicationContext?.let { ctx ->
-                LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent)
+    private val selectedRadioButtonIdObserver = Observer<Int> {
+        if (receivedRadioButtonId.value != it) {
+            val status = when (it) {
+                R.id.radio_defcon1 -> 1
+                R.id.radio_defcon2 -> 2
+                R.id.radio_defcon3 -> 3
+                R.id.radio_defcon4 -> 4
+                else -> 5
             }
+            Intent(app.applicationContext, DefconStatusReceiver::class.java).also { intent ->
+                intent.action = "com.marcusrunge.mydefcon.DEFCONSTATUS_SELECTED"
+                intent.putExtra("data", status)
+                intent.putExtra("source", StatusFragment::class.java.canonicalName)
+                app.applicationContext?.let { ctx ->
+                    LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent)
+                }
+            }
+            viewModelScope.launch { communication.network.client.sendDefconStatus(status) }
         }
-        viewModelScope.launch { communication.network.client.sendDefconStatus(status) }
-
     }
 
     init {
@@ -49,8 +51,6 @@ class StatusViewModel @Inject constructor(
         val filter = IntentFilter("com.marcusrunge.mydefcon.DEFCONSTATUS_RECEIVED")
         LocalBroadcastManager.getInstance(app).registerReceiver(receiver, filter)
     }
-
-    val checkedRadioButtonId: MutableLiveData<Int> = _checkedRadioButtonId
 
     override fun updateView(inputMessage: Message) {
         if (inputMessage.obj is Int) setDefconStatus(
@@ -61,13 +61,15 @@ class StatusViewModel @Inject constructor(
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
         statusViewModelOwner = owner
-        _checkedRadioButtonId.observe(statusViewModelOwner, checkedRadioButtonIdObserver)
+        selectedRadioButtonId.observe(statusViewModelOwner, selectedRadioButtonIdObserver)
+        setDefconStatus(core.preferences.status)
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
         receiver.removeOnDefconStatusReceivedListener()
         LocalBroadcastManager.getInstance(app).unregisterReceiver(receiver)
-        _checkedRadioButtonId.removeObservers(owner)
+        selectedRadioButtonId.removeObservers(owner)
+        receivedRadioButtonId.removeObservers(owner)
         super.onDestroy(owner)
     }
 
@@ -82,11 +84,11 @@ class StatusViewModel @Inject constructor(
 
     private fun setDefconStatus(status: Int) {
         when (status) {
-            1 -> _checkedRadioButtonId.value = R.id.radio_defcon1
-            2 -> _checkedRadioButtonId.value = R.id.radio_defcon2
-            3 -> _checkedRadioButtonId.value = R.id.radio_defcon3
-            4 -> _checkedRadioButtonId.value = R.id.radio_defcon4
-            else -> _checkedRadioButtonId.value = R.id.radio_defcon5
+            1 -> receivedRadioButtonId.value = R.id.radio_defcon1
+            2 -> receivedRadioButtonId.value = R.id.radio_defcon2
+            3 -> receivedRadioButtonId.value = R.id.radio_defcon3
+            4 -> receivedRadioButtonId.value = R.id.radio_defcon4
+            else -> receivedRadioButtonId.value = R.id.radio_defcon5
         }
     }
 }
