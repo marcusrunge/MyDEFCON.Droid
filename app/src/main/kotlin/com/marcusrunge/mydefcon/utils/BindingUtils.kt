@@ -91,13 +91,4 @@ object BindingUtils {
             view.background.setTint(view.context.resources.getColor(resourceId, view.context.theme))
         }
     }
-
-    @BindingAdapter("setReceivedRadioButtonId")
-    @JvmStatic
-    fun bindReceivedRadioButtonId(radioGroup: RadioGroup?, receivedRadioButtonId: MutableLiveData<Int>?) {
-        if (radioGroup != null && receivedRadioButtonId!=null) {
-            if(radioGroup.checkedRadioButtonId!=receivedRadioButtonId.value)
-                receivedRadioButtonId.value?.let { radioGroup.check(it) }
-        }
-    }
 }

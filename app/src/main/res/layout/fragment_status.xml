@@ -22,8 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="@dimen/activity_horizontal_margin"
-            android:checkedButton="@={viewmodel.selectedRadioButtonId}"
-            app:setReceivedRadioButtonId="@{viewmodel.receivedRadioButtonId}"
+            android:checkedButton="@={viewmodel.checkedButtonId}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
@@ -41,7 +40,8 @@
                 android:paddingEnd="16dp"
                 android:text="@string/defcon_1"
                 android:textColor="@drawable/radio_defcon_flat_text_selector"
-                android:theme="@style/Theme.MyDEFCON.One" />
+                android:theme="@style/Theme.MyDEFCON.One"
+                android:checked="@={viewmodel.isDefcon1ButtonChecked}"/>
 
             <RadioButton
                 android:id="@+id/radio_defcon2"
@@ -58,7 +58,8 @@
                 android:paddingEnd="16dp"
                 android:text="@string/defcon_2"
                 android:textColor="@drawable/radio_defcon_flat_text_selector"
-                android:theme="@style/Theme.MyDEFCON.Two" />
+                android:theme="@style/Theme.MyDEFCON.Two"
+                android:checked="@={viewmodel.isDefcon2ButtonChecked}"/>
 
             <RadioButton
                 android:id="@+id/radio_defcon3"
@@ -74,7 +75,8 @@
                 android:paddingEnd="16dp"
                 android:text="@string/defcon_3"
                 android:textColor="@drawable/radio_defcon_flat_text_selector"
-                android:theme="@style/Theme.MyDEFCON.Three" />
+                android:theme="@style/Theme.MyDEFCON.Three"
+                android:checked="@={viewmodel.isDefcon3ButtonChecked}"/>
 
             <RadioButton
                 android:id="@+id/radio_defcon4"
@@ -91,7 +93,8 @@
                 android:paddingEnd="16dp"
                 android:text="@string/defcon_4"
                 android:textColor="@drawable/radio_defcon_flat_text_selector"
-                android:theme="@style/Theme.MyDEFCON.Four" />
+                android:theme="@style/Theme.MyDEFCON.Four"
+                android:checked="@={viewmodel.isDefcon4ButtonChecked}"/>
 
             <RadioButton
                 android:id="@+id/radio_defcon5"
@@ -107,7 +110,8 @@
                 android:paddingEnd="16dp"
                 android:text="@string/defcon_5"
                 android:textColor="@drawable/radio_defcon_flat_text_selector"
-                android:theme="@style/Theme.MyDEFCON.Five" />
+                android:theme="@style/Theme.MyDEFCON.Five"
+                android:checked="@={viewmodel.isDefcon5ButtonChecked}"/>
         </RadioGroup>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

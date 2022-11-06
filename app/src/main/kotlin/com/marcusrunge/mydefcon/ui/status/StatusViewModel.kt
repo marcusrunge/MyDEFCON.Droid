@@ -19,32 +19,32 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StatusViewModel @Inject constructor(
-    private val app: Application, val core: Core, communication: Communication
+    private val app: Application, val core: Core, val communication: Communication
 ) : ObservableViewModel(app), DefaultLifecycleObserver, OnDefconStatusReceivedListener {
-    val selectedRadioButtonId = MutableLiveData<Int>()
-    val receivedRadioButtonId = MutableLiveData<Int>()
     private var receiver: DefconStatusReceiver = DefconStatusReceiver()
     private lateinit var statusViewModelOwner: LifecycleOwner
-    private val selectedRadioButtonIdObserver = Observer<Int> {
-        if (receivedRadioButtonId.value != it) {
-            val status = when (it) {
-                R.id.radio_defcon1 -> 1
-                R.id.radio_defcon2 -> 2
-                R.id.radio_defcon3 -> 3
-                R.id.radio_defcon4 -> 4
-                else -> 5
-            }
-            Intent(app.applicationContext, DefconStatusReceiver::class.java).also { intent ->
-                intent.action = "com.marcusrunge.mydefcon.DEFCONSTATUS_SELECTED"
-                intent.putExtra("data", status)
-                intent.putExtra("source", StatusFragment::class.java.canonicalName)
-                app.applicationContext?.let { ctx ->
-                    LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent)
-                }
-            }
-            viewModelScope.launch { communication.network.client.sendDefconStatus(status) }
-        }
-    }
+    private val isDefcon1ButtonCheckedObserver =
+        Observer<Boolean> { if (it) distributeDefconStatus(1) }
+    private val isDefcon2ButtonCheckedObserver =
+        Observer<Boolean> { if (it) distributeDefconStatus(2) }
+    private val isDefcon3ButtonCheckedObserver =
+        Observer<Boolean> { if (it) distributeDefconStatus(3) }
+    private val isDefcon4ButtonCheckedObserver =
+        Observer<Boolean> { if (it) distributeDefconStatus(4) }
+    private val isDefcon5ButtonCheckedObserver =
+        Observer<Boolean> { if (it) distributeDefconStatus(5) }
+    private val _isDefcon1ButtonChecked = MutableLiveData<Boolean>()
+    private val _isDefcon2ButtonChecked = MutableLiveData<Boolean>()
+    private val _isDefcon3ButtonChecked = MutableLiveData<Boolean>()
+    private val _isDefcon4ButtonChecked = MutableLiveData<Boolean>()
+    private val _isDefcon5ButtonChecked = MutableLiveData<Boolean>()
+    private val _checkedButtonId = MutableLiveData<Int>()
+    val checkedButtonId = _checkedButtonId
+    val isDefcon1ButtonChecked = _isDefcon1ButtonChecked
+    val isDefcon2ButtonChecked = _isDefcon2ButtonChecked
+    val isDefcon3ButtonChecked = _isDefcon3ButtonChecked
+    val isDefcon4ButtonChecked = _isDefcon4ButtonChecked
+    val isDefcon5ButtonChecked = _isDefcon5ButtonChecked
 
     init {
         receiver.setOnDefconStatusReceivedListener(this)
@@ -53,7 +53,7 @@ class StatusViewModel @Inject constructor(
     }
 
     override fun updateView(inputMessage: Message) {
-        if (inputMessage.obj is Int) setDefconStatus(
+        if (inputMessage.obj is Int) setDefconStatusButton(
             inputMessage.obj as Int
         )
     }
@@ -61,15 +61,22 @@ class StatusViewModel @Inject constructor(
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
         statusViewModelOwner = owner
-        selectedRadioButtonId.observe(statusViewModelOwner, selectedRadioButtonIdObserver)
-        setDefconStatus(core.preferences.status)
+        setDefconStatusButton(core.preferences.status)
+        isDefcon1ButtonChecked.observe(statusViewModelOwner, isDefcon1ButtonCheckedObserver)
+        isDefcon2ButtonChecked.observe(statusViewModelOwner, isDefcon2ButtonCheckedObserver)
+        isDefcon3ButtonChecked.observe(statusViewModelOwner, isDefcon3ButtonCheckedObserver)
+        isDefcon4ButtonChecked.observe(statusViewModelOwner, isDefcon4ButtonCheckedObserver)
+        isDefcon5ButtonChecked.observe(statusViewModelOwner, isDefcon5ButtonCheckedObserver)
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
         receiver.removeOnDefconStatusReceivedListener()
         LocalBroadcastManager.getInstance(app).unregisterReceiver(receiver)
-        selectedRadioButtonId.removeObservers(owner)
-        receivedRadioButtonId.removeObservers(owner)
+        isDefcon1ButtonChecked.removeObservers(owner)
+        isDefcon2ButtonChecked.removeObservers(owner)
+        isDefcon3ButtonChecked.removeObservers(owner)
+        isDefcon4ButtonChecked.removeObservers(owner)
+        isDefcon5ButtonChecked.removeObservers(owner)
         super.onDestroy(owner)
     }
 
@@ -82,13 +89,26 @@ class StatusViewModel @Inject constructor(
         }
     }
 
-    private fun setDefconStatus(status: Int) {
+    private fun setDefconStatusButton(status: Int) {
         when (status) {
-            1 -> receivedRadioButtonId.value = R.id.radio_defcon1
-            2 -> receivedRadioButtonId.value = R.id.radio_defcon2
-            3 -> receivedRadioButtonId.value = R.id.radio_defcon3
-            4 -> receivedRadioButtonId.value = R.id.radio_defcon4
-            else -> receivedRadioButtonId.value = R.id.radio_defcon5
+            1 -> isDefcon1ButtonChecked.value=true
+            2 -> isDefcon2ButtonChecked.value=true
+            3 -> isDefcon3ButtonChecked.value=true
+            4 -> isDefcon4ButtonChecked.value=true
+            else -> isDefcon5ButtonChecked.value=true
         }
+    }
+
+    private fun distributeDefconStatus(status: Int) {
+        core.preferences.status=status
+        Intent(app.applicationContext, DefconStatusReceiver::class.java).also { intent ->
+            intent.action = "com.marcusrunge.mydefcon.DEFCONSTATUS_SELECTED"
+            intent.putExtra("data", status)
+            intent.putExtra("source", StatusFragment::class.java.canonicalName)
+            app.applicationContext?.let { ctx ->
+                LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent)
+            }
+        }
+        viewModelScope.launch { communication.network.client.sendDefconStatus(status) }
     }
 }
