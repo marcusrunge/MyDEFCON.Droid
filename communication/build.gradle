@@ -29,7 +29,7 @@ android {
         jvmTarget = '1.8'
     }
     namespace 'com.marcusrunge.mydefcon.communication'
-    buildToolsVersion '33.0.0'
+    buildToolsVersion '33.0.1'
     android.sourceSets.all {
         java.srcDir("src/$name/kotlin")
     }
