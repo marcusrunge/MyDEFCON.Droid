@@ -62,8 +62,8 @@ internal class ServerImpl(private val base: NetworkBase) : Server, OnReceived {
 
     @Suppress("BlockingMethodInNonBlockingContext")
     override suspend fun startUdpServer() {
-        udpServerLock.withLock(this) {
-            withContext(Dispatchers.IO) {
+        withContext(Dispatchers.IO) {
+            udpServerLock.withLock(this) {
                 udpServerJob = launch {
                     val whileLock = ReentrantLock()
                     val socket = DatagramSocket(8888)
@@ -107,13 +107,14 @@ internal class ServerImpl(private val base: NetworkBase) : Server, OnReceived {
     override suspend fun stopUdpServer() {
         udpServerJob?.cancelAndJoin()
         udpServerJob = null
-        udpServerLock.unlock(this)
+        if (udpServerLock.isLocked)
+            udpServerLock.unlock(this)
     }
 
     @Suppress("BlockingMethodInNonBlockingContext")
     override suspend fun startTcpServer() {
-        tcpServerLock.withLock(this) {
-            withContext(Dispatchers.IO) {
+        withContext(Dispatchers.IO) {
+            tcpServerLock.withLock(this) {
                 tcpServerJob = launch {
                     val serverSocket = ServerSocket(8889)
                     val whileLock = ReentrantLock()
@@ -151,7 +152,8 @@ internal class ServerImpl(private val base: NetworkBase) : Server, OnReceived {
     override suspend fun stopTcpServer() {
         tcpServerJob?.cancelAndJoin()
         tcpServerJob = null
-        tcpServerLock.unlock(this)
+        if (tcpServerLock.isLocked)
+            tcpServerLock.unlock(this)
     }
 
     override fun onDefconStatusReceived(status: Int) {

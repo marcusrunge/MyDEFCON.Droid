@@ -30,7 +30,7 @@ class TermsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.viewmodel = viewModel
-        binding.lifecycleOwner = this.viewLifecycleOwner
+        binding.lifecycleOwner = viewLifecycleOwner
     }
 
     override fun onDestroyView() {

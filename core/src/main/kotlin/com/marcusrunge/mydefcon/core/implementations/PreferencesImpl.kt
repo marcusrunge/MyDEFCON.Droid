@@ -2,14 +2,14 @@ package com.marcusrunge.mydefcon.core.implementations
 
 import com.marcusrunge.mydefcon.core.bases.CoreBase
 import com.marcusrunge.mydefcon.core.interfaces.Preferences
+import java.util.concurrent.atomic.AtomicInteger
 
 internal class PreferencesImpl(private val coreBase: CoreBase) : Preferences {
-    //TODO:Async
+
     override var status: Int
         get() = coreBase.preferencesOperations.getInt("status")
         set(value) {
             coreBase.preferencesOperations.setInt("status", value)
-            //Send to MyDefconWidget.
             coreBase.broadcastOperations.sendBroadcast(
                 "com.marcusrunge.mydefcon.DEFCON_UPDATE",
                 value.toString()
