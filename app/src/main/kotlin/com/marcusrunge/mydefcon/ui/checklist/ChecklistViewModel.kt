@@ -299,7 +299,7 @@ class ChecklistViewModel @Inject constructor(
         distinctLiveData.addSource(this, object : Observer<T> {
             private var initialized = false
             private var value: T? = null
-            override fun onChanged(obj: T?) {
+            override fun onChanged(obj: T) {
                 when {
                     !initialized -> {
                         initialized = true

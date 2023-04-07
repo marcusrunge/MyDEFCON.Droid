@@ -66,7 +66,7 @@ internal class ServerImpl(private val base: NetworkBase) : Server, OnReceived {
             udpServerLock.withLock(this) {
                 udpServerJob = launch {
                     val whileLock = ReentrantLock()
-                    val socket = DatagramSocket(8888)
+                    val socket = DatagramSocket(3092)
                     socket.broadcast = true
                     try {
                         while (true) {
@@ -116,7 +116,7 @@ internal class ServerImpl(private val base: NetworkBase) : Server, OnReceived {
         withContext(Dispatchers.IO) {
             tcpServerLock.withLock(this) {
                 tcpServerJob = launch {
-                    val serverSocket = ServerSocket(8889)
+                    val serverSocket = ServerSocket(3126)
                     val whileLock = ReentrantLock()
                     try {
                         while (true) {
@@ -174,8 +174,8 @@ internal class ServerImpl(private val base: NetworkBase) : Server, OnReceived {
 
 fun <T> LiveData<T>.observeForeverOnce(observer: Observer<T>) {
     observeForever(object : Observer<T> {
-        override fun onChanged(t: T?) {
-            observer.onChanged(t)
+        override fun onChanged(value: T) {
+            observer.onChanged(value)
             removeObserver(this)
         }
     })
