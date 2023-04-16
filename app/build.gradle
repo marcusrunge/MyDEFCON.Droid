@@ -37,7 +37,7 @@ android {
         enabled = true
     }
     namespace 'com.marcusrunge.mydefcon'
-    buildToolsVersion '34.0.0 rc2'
+    buildToolsVersion '34.0.0 rc3'
     android.sourceSets.all {
         java.srcDir("src/$name/kotlin")
     }
