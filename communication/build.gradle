@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         minSdk 27
@@ -29,7 +29,7 @@ android {
         jvmTarget = '11'
     }
     namespace 'com.marcusrunge.mydefcon.communication'
-    buildToolsVersion '34.0.0 rc4'
+    buildToolsVersion '34.0.0'
     android.sourceSets.all {
         java.srcDir("src/$name/kotlin")
     }
