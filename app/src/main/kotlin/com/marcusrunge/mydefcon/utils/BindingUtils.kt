@@ -40,8 +40,8 @@ object BindingUtils {
         )
         (view as BottomNavigationView).setupWithNavController(navController)
         view.setOnItemSelectedListener { item ->
-            if (navController.backQueue.size > 0) {
-                val entry = navController.backQueue[0]
+            if (navController.currentBackStack.value.isNotEmpty()) {
+                val entry = navController.currentBackStack.value[0]
                 navController.popBackStack(entry.id, true)
             }
             when (item.itemId) {
