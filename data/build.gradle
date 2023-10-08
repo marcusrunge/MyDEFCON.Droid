@@ -1,17 +1,14 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
-    id 'kotlin-kapt'
     id 'org.jetbrains.kotlin.plugin.serialization'
+    id 'com.google.devtools.ksp'
 }
 
 android {
     compileSdk 34
-
     defaultConfig {
         minSdk 27
-        targetSdk 33
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
         javaCompileOptions {
@@ -31,15 +28,14 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = '11'
+        jvmTarget = '17'
     }
     namespace 'com.marcusrunge.mydefcon.data'
-    buildToolsVersion '34.0.0'
-    android.sourceSets.all {
+    android.sourceSets.configureEach {
         java.srcDir("src/$name/kotlin")
     }
 }
@@ -48,7 +44,7 @@ dependencies {
     def room_version = '2.5.2'
     implementation 'androidx.core:core-ktx:1.12.0'
     implementation "androidx.room:room-runtime:$room_version"
-    kapt "androidx.room:room-compiler:$room_version"
+    ksp "androidx.room:room-compiler:$room_version"
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.2'
     implementation 'androidx.lifecycle:lifecycle-common-java8:2.6.2'
     implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0'
