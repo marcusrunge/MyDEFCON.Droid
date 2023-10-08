@@ -11,7 +11,7 @@ android {
     compileSdk 34
     defaultConfig {
         applicationId "com.marcusrunge.MyDEFCON"
-        minSdk 27
+        minSdk 30
         versionCode 293
         versionName "2.1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
