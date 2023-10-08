@@ -298,17 +298,17 @@ class ChecklistViewModel @Inject constructor(
         val distinctLiveData = MediatorLiveData<T>()
         distinctLiveData.addSource(this, object : Observer<T> {
             private var initialized = false
-            private var value: T? = null
+            private var liveValue: T? = null
             override fun onChanged(obj: T) {
                 when {
                     !initialized -> {
                         initialized = true
-                        value = obj
-                        distinctLiveData.postValue(value!!)
+                        liveValue = obj
+                        distinctLiveData.postValue(liveValue!!)
                     }
-                    obj == null && value != null || obj != value -> {
-                        value = obj
-                        distinctLiveData.postValue(value!!)
+                    obj == null && liveValue != null || obj != liveValue -> {
+                        liveValue = obj
+                        distinctLiveData.postValue(liveValue!!)
                     }
                 }
             }
