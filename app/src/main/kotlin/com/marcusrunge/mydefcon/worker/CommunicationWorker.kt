@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import androidx.core.app.NotificationCompat
+import androidx.hilt.work.HiltWorker
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -24,6 +25,8 @@ import com.marcusrunge.mydefcon.data.interfaces.Data
 import com.marcusrunge.mydefcon.receiver.CheckItemsReceiver
 import com.marcusrunge.mydefcon.receiver.DefconStatusReceiver
 import com.marcusrunge.mydefcon.ui.status.StatusFragment
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -32,18 +35,15 @@ import kotlinx.coroutines.launch
 import java.io.Serializable
 import javax.inject.Inject
 
-@AndroidEntryPoint
-class CommunicationWorker(context: Context, parameters: WorkerParameters) :
+@HiltWorker
+class CommunicationWorker @AssistedInject constructor(@Assisted context: Context,
+                                                      @Assisted parameters: WorkerParameters,
+                                                      val core: Core,
+                                                      val communication: Communication,
+                                                      val data: Data) :
     CoroutineWorker(context, parameters), OnDefconStatusReceivedListener,
     OnCheckItemsReceivedListener, com.marcusrunge.mydefcon.receiver.OnDefconStatusReceivedListener {
-    @Inject
-    lateinit var core: Core
 
-    @Inject
-    lateinit var communication: Communication
-
-    @Inject
-    lateinit var data: Data
     private var started = false
     private var udpServerJob: Job? = null
     private var tcpServerJob: Job? = null

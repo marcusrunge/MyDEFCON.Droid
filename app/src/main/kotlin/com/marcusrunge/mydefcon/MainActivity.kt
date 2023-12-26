@@ -17,12 +17,16 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.WorkRequest
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.marcusrunge.mydefcon.communication.interfaces.Communication
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.databinding.ActivityMainBinding
 import com.marcusrunge.mydefcon.ui.main.MainViewModel
 import com.marcusrunge.mydefcon.utils.BitmapUtils
+import com.marcusrunge.mydefcon.worker.CommunicationWorker
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -39,12 +43,15 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     private lateinit var binding: ActivityMainBinding
     private var optionsMenu: Menu? = null
     private val viewModel by viewModels<MainViewModel>()
+    private  val communicationWorkRequest: WorkRequest = OneTimeWorkRequestBuilder<CommunicationWorker>().build()
     private val requestPermissionLauncher =
         registerForActivityResult(
             ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
             if (isGranted) {
-                //TODO: Start worker
+                WorkManager
+                    .getInstance(this)
+                    .enqueue(communicationWorkRequest)
             }
         }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,7 +69,9 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
                     this,
                     Manifest.permission.POST_NOTIFICATIONS
                 ) -> {
-                    //TODO: Start worker
+                    WorkManager
+                        .getInstance(this)
+                        .enqueue(communicationWorkRequest)
                 }
                 else -> {
                     requestPermissionLauncher.launch(
