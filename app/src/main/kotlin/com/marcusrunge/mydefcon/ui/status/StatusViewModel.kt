@@ -6,13 +6,12 @@ import android.content.IntentFilter
 import android.os.Message
 import androidx.lifecycle.*
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.communication.interfaces.Communication
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.receiver.DefconStatusReceiver
 import com.marcusrunge.mydefcon.receiver.OnDefconStatusReceivedListener
-import com.marcusrunge.mydefcon.services.ForegroundSocketService
 import com.marcusrunge.mydefcon.ui.ObservableViewModel
+import com.marcusrunge.mydefcon.worker.CommunicationWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -81,7 +80,7 @@ class StatusViewModel @Inject constructor(
     }
 
     override fun onDefconStatusReceived(status: Int, source: String?) {
-        if (source == ForegroundSocketService::class.java.canonicalName) {
+        if (source == CommunicationWorker::class.java.canonicalName) {
             val setDefconStatusMessage = Message()
             setDefconStatusMessage.what = UPDATE_VIEW
             setDefconStatusMessage.obj = status

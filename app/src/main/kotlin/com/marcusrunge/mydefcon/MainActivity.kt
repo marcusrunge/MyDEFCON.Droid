@@ -21,7 +21,6 @@ import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.marcusrunge.mydefcon.communication.interfaces.Communication
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.databinding.ActivityMainBinding
-import com.marcusrunge.mydefcon.services.ForegroundSocketService
 import com.marcusrunge.mydefcon.ui.main.MainViewModel
 import com.marcusrunge.mydefcon.utils.BitmapUtils
 import dagger.hilt.android.AndroidEntryPoint
@@ -45,10 +44,9 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
             ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
             if (isGranted) {
-                startForegroundService(Intent(this, ForegroundSocketService::class.java))
+                //TODO: Start worker
             }
         }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -64,8 +62,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
                     this,
                     Manifest.permission.POST_NOTIFICATIONS
                 ) -> {
-                    if (!ForegroundSocketService.isRunning)
-                        startForegroundService(Intent(this, ForegroundSocketService::class.java))
+                    //TODO: Start worker
                 }
                 else -> {
                     requestPermissionLauncher.launch(
@@ -73,8 +70,6 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
                     )
                 }
             }
-        } else if (!ForegroundSocketService.isRunning) {
-            startForegroundService(Intent(this, ForegroundSocketService::class.java))
         }
     }
 
