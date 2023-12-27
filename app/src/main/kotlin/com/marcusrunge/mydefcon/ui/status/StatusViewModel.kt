@@ -4,7 +4,11 @@ import android.app.Application
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Message
-import androidx.lifecycle.*
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.viewModelScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.marcusrunge.mydefcon.communication.interfaces.Communication
 import com.marcusrunge.mydefcon.core.interfaces.Core
@@ -90,16 +94,16 @@ class StatusViewModel @Inject constructor(
 
     private fun setDefconStatusButton(status: Int) {
         when (status) {
-            1 -> isDefcon1ButtonChecked.value=true
-            2 -> isDefcon2ButtonChecked.value=true
-            3 -> isDefcon3ButtonChecked.value=true
-            4 -> isDefcon4ButtonChecked.value=true
-            else -> isDefcon5ButtonChecked.value=true
+            1 -> isDefcon1ButtonChecked.value = true
+            2 -> isDefcon2ButtonChecked.value = true
+            3 -> isDefcon3ButtonChecked.value = true
+            4 -> isDefcon4ButtonChecked.value = true
+            else -> isDefcon5ButtonChecked.value = true
         }
     }
 
     private fun distributeDefconStatus(status: Int) {
-        core.preferences.status=status
+        core.preferences.status = status
         Intent(app.applicationContext, DefconStatusReceiver::class.java).also { intent ->
             intent.action = "com.marcusrunge.mydefcon.DEFCONSTATUS_SELECTED"
             intent.putExtra("data", status)

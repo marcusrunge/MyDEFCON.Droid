@@ -66,6 +66,7 @@ class MyDefconWidget : AppWidgetProvider() {
                         R.drawable.app_widget_defcon1_shape
                     )
                 }
+
                 2 -> {
                     views.setTextColor(R.id.appwidget_text, context.getColor(R.color.red_900))
                     views.setInt(
@@ -74,6 +75,7 @@ class MyDefconWidget : AppWidgetProvider() {
                         R.drawable.app_widget_defcon2_shape
                     )
                 }
+
                 3 -> {
                     views.setTextColor(R.id.appwidget_text, context.getColor(R.color.yellow_A200V4))
                     views.setInt(
@@ -82,6 +84,7 @@ class MyDefconWidget : AppWidgetProvider() {
                         R.drawable.app_widget_defcon3_shape
                     )
                 }
+
                 4 -> {
                     views.setTextColor(R.id.appwidget_text, context.getColor(R.color.green_800))
                     views.setInt(
@@ -90,6 +93,7 @@ class MyDefconWidget : AppWidgetProvider() {
                         R.drawable.app_widget_defcon4_shape
                     )
                 }
+
                 5 -> {
                     views.setTextColor(R.id.appwidget_text, context.getColor(R.color.blue_800))
                     views.setInt(

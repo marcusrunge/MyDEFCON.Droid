@@ -15,32 +15,34 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.communication.interfaces.Communication
 import com.marcusrunge.mydefcon.communication.interfaces.OnCheckItemsReceivedListener
 import com.marcusrunge.mydefcon.communication.interfaces.OnDefconStatusReceivedListener
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.data.entities.CheckItem
 import com.marcusrunge.mydefcon.data.interfaces.Data
+import com.marcusrunge.mydefcon.notifications.R
+import com.marcusrunge.mydefcon.notifications.interfaces.Notifications
 import com.marcusrunge.mydefcon.receiver.CheckItemsReceiver
 import com.marcusrunge.mydefcon.receiver.DefconStatusReceiver
 import com.marcusrunge.mydefcon.ui.status.StatusFragment
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.io.Serializable
-import javax.inject.Inject
 
 @HiltWorker
-class CommunicationWorker @AssistedInject constructor(@Assisted context: Context,
-                                                      @Assisted parameters: WorkerParameters,
-                                                      val core: Core,
-                                                      val communication: Communication,
-                                                      val data: Data) :
+class CommunicationWorker @AssistedInject constructor(
+    @Assisted context: Context,
+    @Assisted parameters: WorkerParameters,
+    val core: Core,
+    val communication: Communication,
+    val data: Data,
+    val notifications: Notifications
+) :
     CoroutineWorker(context, parameters), OnDefconStatusReceivedListener,
     OnCheckItemsReceivedListener, com.marcusrunge.mydefcon.receiver.OnDefconStatusReceivedListener {
 

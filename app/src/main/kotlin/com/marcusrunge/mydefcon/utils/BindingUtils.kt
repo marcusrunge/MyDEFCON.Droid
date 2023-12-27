@@ -45,10 +45,12 @@ object BindingUtils {
                     navController.navigate(R.id.navigation_status)
                     true
                 }
+
                 R.id.navigation_checklist -> {
                     navController.navigate(R.id.navigation_checklist)
                     true
                 }
+
                 else -> false
             }
         }

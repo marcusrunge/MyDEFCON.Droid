@@ -119,6 +119,7 @@ class ChecklistViewModel @Inject constructor(
                     else -> R.color.red_700_085
                 }
             }
+
             2 -> {
                 _defcon1ItemsCount.value = "0"
                 _defcon2ItemsCount.value = defcon2UncheckedItemsCount.toString()
@@ -141,6 +142,7 @@ class ChecklistViewModel @Inject constructor(
                     else -> R.color.red_700_085
                 }
             }
+
             3 -> {
                 _defcon1ItemsCount.value = "0"
                 _defcon2ItemsCount.value = "0"
@@ -159,6 +161,7 @@ class ChecklistViewModel @Inject constructor(
                     else -> R.color.red_700_085
                 }
             }
+
             4 -> {
                 _defcon1ItemsCount.value = "0"
                 _defcon2ItemsCount.value = "0"
@@ -173,6 +176,7 @@ class ChecklistViewModel @Inject constructor(
                     else -> R.color.red_700_085
                 }
             }
+
             5 -> {
                 _defcon1ItemsCount.value = "0"
                 _defcon2ItemsCount.value = "0"
@@ -306,6 +310,7 @@ class ChecklistViewModel @Inject constructor(
                         liveValue = obj
                         distinctLiveData.postValue(liveValue!!)
                     }
+
                     obj == null && liveValue != null || obj != liveValue -> {
                         liveValue = obj
                         distinctLiveData.postValue(liveValue!!)

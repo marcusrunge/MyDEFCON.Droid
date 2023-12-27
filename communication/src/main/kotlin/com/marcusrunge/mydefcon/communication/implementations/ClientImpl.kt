@@ -12,13 +12,16 @@ import com.marcusrunge.mydefcon.data.entities.CheckItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.lang.ref.WeakReference
-import java.net.*
+import java.net.DatagramPacket
+import java.net.DatagramSocket
+import java.net.Inet4Address
+import java.net.InetAddress
+import java.net.Socket
 import java.util.stream.Collectors
 import kotlin.math.pow
 

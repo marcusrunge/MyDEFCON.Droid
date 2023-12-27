@@ -73,6 +73,7 @@ class SwipeToDeleteCallback(
                     itemView.bottom
                 )
             }
+
             dX < 0 -> { // Swiping to the left
                 /*val iconLeft = itemView.right - iconMargin - icon!!.intrinsicWidth
                 val iconRight = itemView.right - iconMargin
@@ -82,6 +83,7 @@ class SwipeToDeleteCallback(
                     itemView.top, itemView.right, itemView.bottom
                 )
             }
+
             else -> { // view is unSwiped
                 background!!.setBounds(0, 0, 0, 0)
             }

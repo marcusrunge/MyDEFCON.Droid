@@ -6,7 +6,11 @@ import android.content.pm.PackageManager
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
-import android.view.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.MotionEvent
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.activity.result.contract.ActivityResultContracts
@@ -43,7 +47,8 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     private lateinit var binding: ActivityMainBinding
     private var optionsMenu: Menu? = null
     private val viewModel by viewModels<MainViewModel>()
-    private  val communicationWorkRequest: WorkRequest = OneTimeWorkRequestBuilder<CommunicationWorker>().build()
+    private val communicationWorkRequest: WorkRequest =
+        OneTimeWorkRequestBuilder<CommunicationWorker>().build()
     private val requestPermissionLauncher =
         registerForActivityResult(
             ActivityResultContracts.RequestPermission()
@@ -54,6 +59,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
                     .enqueue(communicationWorkRequest)
             }
         }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -73,6 +79,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
                         .getInstance(this)
                         .enqueue(communicationWorkRequest)
                 }
+
                 else -> {
                     requestPermissionLauncher.launch(
                         Manifest.permission.POST_NOTIFICATIONS
@@ -96,14 +103,17 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
                     shareStatus()
                     true
                 }
+
                 R.id.action_listsync -> {
                     lifecycleScope.launch { communication.network.client.requestSyncCheckItems() }
                     true
                 }
+
                 R.id.navigation_settings -> {
                     navController.navigate(R.id.navigation_settings)
                     true
                 }
+
                 R.id.navigation_privacy -> {
                     navController.navigate(R.id.navigation_privacy)
                     true
@@ -116,10 +126,12 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
                     navController.navigate(R.id.navigation_terms)
                     true
                 }
+
                 android.R.id.home -> {
                     navController.popBackStack()
                     true
                 }
+
                 else -> super.onOptionsItemSelected(item)
             }
         }
@@ -151,10 +163,12 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
                 optionsMenu?.findItem(R.id.action_listsync)?.isVisible = true
                 optionsMenu?.findItem(R.id.action_statusshare)?.isVisible = false
             }
+
             R.id.navigation_status -> {
                 optionsMenu?.findItem(R.id.action_listsync)?.isVisible = false
                 optionsMenu?.findItem(R.id.action_statusshare)?.isVisible = true
             }
+
             else -> {
                 optionsMenu?.findItem(R.id.action_listsync)?.isVisible = false
                 optionsMenu?.findItem(R.id.action_statusshare)?.isVisible = false
