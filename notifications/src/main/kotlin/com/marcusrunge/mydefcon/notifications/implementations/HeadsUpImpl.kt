@@ -15,6 +15,7 @@ import com.marcusrunge.mydefcon.notifications.interfaces.HeadsUp
 internal class HeadsUpImpl(private val notificationsBase: NotificationsBase) : HeadsUp {
     companion object {
         private var headsUp: HeadsUp? = null
+        const val MYDEFCON_STATUS_CHANNEL_ID = "mydefcon_status"
         fun create(notificationsBase: NotificationsBase): HeadsUp = when {
             headsUp != null -> headsUp!!
             else -> {
@@ -166,7 +167,7 @@ internal class HeadsUpImpl(private val notificationsBase: NotificationsBase) : H
 
         val builder = NotificationCompat.Builder(
             notificationsBase.context!!,
-            NotificationChannel.DEFAULT_CHANNEL_ID
+            MYDEFCON_STATUS_CHANNEL_ID
         )
             .setContentIntent(pendingIntent)
             .setOngoing(ongoing)
@@ -181,7 +182,7 @@ internal class HeadsUpImpl(private val notificationsBase: NotificationsBase) : H
 
     private fun createNotificationChannel() {
         val notificationChannel = NotificationChannel(
-            NotificationChannel.DEFAULT_CHANNEL_ID,
+            MYDEFCON_STATUS_CHANNEL_ID,
             notificationsBase.context?.getString(R.string.notification_channel_name),
             NotificationManager.IMPORTANCE_DEFAULT
         )

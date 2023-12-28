@@ -1,14 +1,8 @@
 package com.marcusrunge.mydefcon.worker
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import androidx.core.app.NotificationCompat
 import androidx.hilt.work.HiltWorker
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ProcessLifecycleOwner
@@ -38,10 +32,10 @@ import java.io.Serializable
 class CommunicationWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted parameters: WorkerParameters,
-    val core: Core,
-    val communication: Communication,
-    val data: Data,
-    val notifications: Notifications
+    private val core: Core,
+    private val communication: Communication,
+    private val data: Data,
+    private val notifications: Notifications
 ) :
     CoroutineWorker(context, parameters), OnDefconStatusReceivedListener,
     OnCheckItemsReceivedListener, com.marcusrunge.mydefcon.receiver.OnDefconStatusReceivedListener {
@@ -50,11 +44,11 @@ class CommunicationWorker @AssistedInject constructor(
     private var udpServerJob: Job? = null
     private var tcpServerJob: Job? = null
     private var receiver: DefconStatusReceiver = DefconStatusReceiver()
-    private var _serviceDefconStatus: Int? = null
+    private var _workerDefconStatus: Int? = null
     override suspend fun doWork(): Result {
         if (!started) {
             started = true
-            _serviceDefconStatus = core.preferences.status
+            _workerDefconStatus = core.preferences.status
             udpServerJob = CoroutineScope(Dispatchers.IO).launch {
                 communication.network.server.startUdpServer()
             }
@@ -72,8 +66,8 @@ class CommunicationWorker @AssistedInject constructor(
     }
 
     override fun onDefconStatusReceived(status: Int, source: String?) {
-        if (source == StatusFragment::class.java.canonicalName && _serviceDefconStatus != status) {
-            _serviceDefconStatus = status
+        if (source == StatusFragment::class.java.canonicalName && _workerDefconStatus != status) {
+            _workerDefconStatus = status
             showNotification()
         }
     }
@@ -101,8 +95,8 @@ class CommunicationWorker @AssistedInject constructor(
     }
 
     override fun onDefconStatusReceived(status: Int) {
-        if (_serviceDefconStatus != status) {
-            _serviceDefconStatus = status
+        if (_workerDefconStatus != status) {
+            _workerDefconStatus = status
             core.preferences.status = status
             onReceived(status, null)
             showNotification()
@@ -110,45 +104,19 @@ class CommunicationWorker @AssistedInject constructor(
     }
 
     private fun showNotification() {
-        createNotificationChannel()
-    }
-
-    private fun createNotificationChannel() {
-        val notificationChannel = NotificationChannel(
-            NOTIFICATION_CHANNEL_ID,
-            applicationContext.getString(R.string.notification_channel_name),
-            NotificationManager.IMPORTANCE_DEFAULT
-        )
-        val manager =
-            applicationContext.getSystemService(Service.NOTIFICATION_SERVICE) as NotificationManager
-        manager.createNotificationChannel(notificationChannel)
-    }
-
-    private fun buildNotification(): Notification {
-        val pendingIntent = PendingIntent.getActivity(
-            applicationContext,
-            0,
-            applicationContext.packageManager.getLaunchIntentForPackage(applicationContext.packageName),
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        val smallIcon = when (_serviceDefconStatus) {
+        val smallIcon = when (_workerDefconStatus) {
             1 -> R.drawable.ic_stat1
             2 -> R.drawable.ic_stat2
             3 -> R.drawable.ic_stat3
             4 -> R.drawable.ic_stat4
             else -> R.drawable.ic_stat5
         }
-
-        return NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
-            .setContentText("DEFCON ${core.preferences.status}")
-            .setContentIntent(pendingIntent)
-            .setSmallIcon(smallIcon)
-            .setOngoing(false)
-            .setCategory(NotificationCompat.CATEGORY_SERVICE)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
-            .build()
+        notifications.headsUp.showBasicUrgent(
+            smallIcon,
+            null,
+            "DEFCON ${core.preferences.status}",
+            true
+        )
     }
 
     private fun onReceived(status: Int?, items: List<CheckItem>?) {
@@ -171,11 +139,5 @@ class CommunicationWorker @AssistedInject constructor(
             intent.putExtra("source", CommunicationWorker::class.java.canonicalName)
             LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
         }
-    }
-
-    companion object {
-        private const val NOTIFICATION_ID = 12345
-        private const val NOTIFICATION_CHANNEL_ID = "socket_listening"
-        var isRunning = false
     }
 }
