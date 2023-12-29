@@ -69,7 +69,7 @@ internal class ServerImpl(private val base: NetworkBase) : Server, OnReceived {
             udpServerLock.withLock(this) {
                 udpServerJob = launch {
                     val whileLock = ReentrantLock()
-                    val socket = DatagramSocket(3092)
+                    val socket = DatagramSocket(11000)
                     socket.reuseAddress = true
                     socket.broadcast = true
                     try {
@@ -120,7 +120,7 @@ internal class ServerImpl(private val base: NetworkBase) : Server, OnReceived {
         withContext(Dispatchers.IO) {
             tcpServerLock.withLock(this) {
                 tcpServerJob = launch {
-                    val serverSocket = ServerSocket(3126)
+                    val serverSocket = ServerSocket(11001)
                     serverSocket.reuseAddress = true
                     val whileLock = ReentrantLock()
                     try {

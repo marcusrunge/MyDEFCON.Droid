@@ -21,8 +21,9 @@ import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.Inet4Address
 import java.net.InetAddress
+import java.net.InetSocketAddress
 import java.net.Socket
-import java.util.stream.Collectors
+import java.net.SocketOptions
 import kotlin.math.pow
 
 
@@ -30,8 +31,8 @@ import kotlin.math.pow
 internal class ClientImpl(private val base: NetworkBase) : Client, Synchronizer {
     private val onCheckItemsReceivedListeners: MutableList<WeakReference<OnCheckItemsReceivedListener>> =
         mutableListOf()
-    val statusSemaphore = Semaphore(permits = 1)
-    val syncSemaphore = Semaphore(permits = 1)
+    private val statusSemaphore = Semaphore(permits = 1)
+    private val syncSemaphore = Semaphore(permits = 1)
 
     internal companion object {
         private var instance: Client? = null
@@ -55,7 +56,7 @@ internal class ClientImpl(private val base: NetworkBase) : Client, Synchronizer 
         withContext(Dispatchers.IO) {
             try {
                 val socket = DatagramSocket()
-                val packet = DatagramPacket(buffer, buffer.size, broadcast, 8888)
+                val packet = DatagramPacket(buffer, buffer.size, broadcast, 11000)
                 socket.send(packet)
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -76,7 +77,7 @@ internal class ClientImpl(private val base: NetworkBase) : Client, Synchronizer 
         withContext(Dispatchers.IO) {
             try {
                 val socket = DatagramSocket()
-                val packet = DatagramPacket(buffer, buffer.size, broadcast, 8888)
+                val packet = DatagramPacket(buffer, buffer.size, broadcast, 11000)
                 socket.send(packet)
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -87,10 +88,17 @@ internal class ClientImpl(private val base: NetworkBase) : Client, Synchronizer 
     }
 
     override suspend fun syncCheckItems(address: InetAddress) {
-        val socket = Socket(address, 8889)
+        var socket: Socket? = null
         try {
+            socket = Socket()
+            socket.connect(InetSocketAddress(address, 11001), SocketOptions.SO_TIMEOUT)
             val reader = BufferedReader(InputStreamReader(socket.getInputStream()))
-            val json = reader.lines().collect(Collectors.joining())
+            val stringBuilder = StringBuilder()
+            var line: String?
+            while (reader.readLine().also { line = it } != null) {
+                stringBuilder.append(line)
+            }
+            val json = stringBuilder.toString()
             reader.close()
             val checkItemsMessage = Json.decodeFromString<CheckItemsMessage>(json)
             if (checkItemsMessage.uuid != base.checkItemsMessageUuid) onCheckItemsReceived(
@@ -98,7 +106,7 @@ internal class ClientImpl(private val base: NetworkBase) : Client, Synchronizer 
             )
         } catch (_: Exception) {
         } finally {
-            socket.close()
+            socket?.close()
         }
     }
 

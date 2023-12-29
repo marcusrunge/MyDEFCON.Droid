@@ -46,6 +46,7 @@ internal class HeadsUpImpl(private val notificationsBase: NotificationsBase) : H
             NotificationCompat.PRIORITY_MAX
         )
         with(NotificationManagerCompat.from(notificationsBase.context!!)) {
+            cancelAll()
             notificationId++
             notify(notificationId, notification)
         }
@@ -66,6 +67,7 @@ internal class HeadsUpImpl(private val notificationsBase: NotificationsBase) : H
             NotificationCompat.PRIORITY_HIGH
         )
         with(NotificationManagerCompat.from(notificationsBase.context!!)) {
+            cancelAll()
             notificationId++
             notify(notificationId, notification)
         }
@@ -86,6 +88,7 @@ internal class HeadsUpImpl(private val notificationsBase: NotificationsBase) : H
             NotificationCompat.PRIORITY_LOW
         )
         with(NotificationManagerCompat.from(notificationsBase.context!!)) {
+            cancelAll()
             notificationId++
             notify(notificationId, notification)
         }
@@ -106,6 +109,7 @@ internal class HeadsUpImpl(private val notificationsBase: NotificationsBase) : H
             NotificationCompat.PRIORITY_MIN
         )
         with(NotificationManagerCompat.from(notificationsBase.context!!)) {
+            cancelAll()
             notificationId++
             notify(notificationId, notification)
         }
