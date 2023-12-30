@@ -12,15 +12,20 @@ import com.marcusrunge.mydefcon.data.entities.CheckItem
 interface CheckItems {
 
     /**
+     * Gets all check items as mutable live data.
+     * @see CheckItem
+     * @return A live data mutable list of check items.
+     */
+    @Query("SELECT * FROM checkitem WHERE is_deleted=0")
+    fun getAllMutableLive(): LiveData<MutableList<CheckItem>>
+
+    /**
      * Gets all check items.
      * @see CheckItem
      * @return A list of check items.
      */
     @Query("SELECT * FROM checkitem WHERE is_deleted=0")
-    fun getAll(): LiveData<MutableList<CheckItem>>
-
-    @Query("SELECT * FROM checkitem WHERE is_deleted=0")
-    fun getAllAsList(): List<CheckItem>
+    fun getAll(): List<CheckItem>
 
     /**
      * Gets all check items.
@@ -29,7 +34,7 @@ interface CheckItems {
      * @return A list of check items.
      */
     @Query("SELECT * FROM checkitem WHERE defcon =:defcon AND is_deleted=0")
-    fun getAll(defcon: Int): LiveData<MutableList<CheckItem>>
+    fun getAllMutableLive(defcon: Int): LiveData<MutableList<CheckItem>>
 
     /**
      * Updates a check item.

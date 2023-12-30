@@ -132,7 +132,7 @@ internal class ServerImpl(private val base: NetworkBase) : Server, OnReceived {
                                     BufferedWriter(OutputStreamWriter(socket.getOutputStream())),
                                     true
                                 )
-                                val checkItems = base.data?.repository?.checkItems?.getAllAsList()
+                                val checkItems = base.data?.repository?.checkItems?.getAll()
                                 val message = checkItems?.let { CheckItemsMessage(it) }
                                 base.checkItemsMessageUuid = message?.uuid
                                 val json = Json.encodeToString(message)

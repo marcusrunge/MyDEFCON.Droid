@@ -49,14 +49,14 @@ class ChecklistViewModel @Inject constructor(
                 CoroutineScope(Dispatchers.IO).launch {
                     it.updated = OffsetDateTime.now(ZoneOffset.UTC).toEpochSecond()
                     data.repository.checkItems.update(it)
-                    allCheckItems = data.repository.checkItems.getAll().getDistinct()
+                    allCheckItems = data.repository.checkItems.getAllMutableLive().getDistinct()
                 }
             }, {
                 CoroutineScope(Dispatchers.IO).launch {
                     it.updated = OffsetDateTime.now(ZoneOffset.UTC).toEpochSecond()
                     it.isDeleted = true
                     data.repository.checkItems.update(it)
-                    allCheckItems = data.repository.checkItems.getAll().getDistinct()
+                    allCheckItems = data.repository.checkItems.getAllMutableLive().getDistinct()
                 }
             })
         _checkItemsRecyclerViewAdapter.value?.setData(it)
@@ -77,7 +77,7 @@ class ChecklistViewModel @Inject constructor(
             R.id.radio_defcon5 -> checkItemsStatus = 5
         }
         if (::checkItems.isInitialized) checkItems.removeObserver(checkItemsObserver)
-        checkItems = data.repository.checkItems.getAll(checkItemsStatus).getDistinct()
+        checkItems = data.repository.checkItems.getAllMutableLive(checkItemsStatus).getDistinct()
         checkItems.observeForever(checkItemsObserver)
     }
 
@@ -288,7 +288,7 @@ class ChecklistViewModel @Inject constructor(
             else -> _checkedRadioButtonId.value = R.id.radio_defcon5
         }
         checkedRadioButtonId.observeForever(statusObserver)
-        allCheckItems = data.repository.checkItems.getAll().getDistinct()
+        allCheckItems = data.repository.checkItems.getAllMutableLive().getDistinct()
         allCheckItems.observeForever(allCheckItemsObserver)
     }
 

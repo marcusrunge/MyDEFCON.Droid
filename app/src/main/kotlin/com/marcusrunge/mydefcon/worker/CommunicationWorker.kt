@@ -89,7 +89,7 @@ class CommunicationWorker @AssistedInject constructor(
                 }
             }
         }
-        val observableCheckItems = data.repository.checkItems.getAll()
+        val observableCheckItems = data.repository.checkItems.getAllMutableLive()
         observableCheckItems.observe(ProcessLifecycleOwner.get(), checkItemsObserver)
         onReceived(null, checkItems)
     }
