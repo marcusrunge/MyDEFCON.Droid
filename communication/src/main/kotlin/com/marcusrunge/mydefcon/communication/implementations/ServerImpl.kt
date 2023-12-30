@@ -7,9 +7,9 @@ import com.marcusrunge.mydefcon.communication.interfaces.OnDefconStatusReceivedL
 import com.marcusrunge.mydefcon.communication.interfaces.OnReceived
 import com.marcusrunge.mydefcon.communication.interfaces.Server
 import com.marcusrunge.mydefcon.communication.interfaces.Synchronizer
+import com.marcusrunge.mydefcon.communication.models.CheckItemsMessage
 import com.marcusrunge.mydefcon.communication.models.DefconMessage
 import com.marcusrunge.mydefcon.communication.models.RequestMessage
-import com.marcusrunge.mydefcon.data.entities.CheckItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
@@ -132,13 +132,12 @@ internal class ServerImpl(private val base: NetworkBase) : Server, OnReceived {
                                     BufferedWriter(OutputStreamWriter(socket.getOutputStream())),
                                     true
                                 )
-                                val observer = Observer<MutableList<CheckItem>> {
-                                    val json = Json.encodeToString(it)
-                                    writer.println(json)
-                                    writer.close()
-                                }
-                                val checkItems = base.data?.repository?.checkItems?.getAll()
-                                checkItems?.observeForeverOnce(observer)
+                                val checkItems = base.data?.repository?.checkItems?.getAllAsList()
+                                val message = checkItems?.let { CheckItemsMessage(it) }
+                                base.checkItemsMessageUuid = message?.uuid
+                                val json = Json.encodeToString(message)
+                                writer.println(json)
+                                writer.close()
                             } catch (e: Exception) {
                                 e.printStackTrace()
                             } finally {

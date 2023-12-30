@@ -164,17 +164,17 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     ) {
         when (destination.id) {
             R.id.navigation_checklist -> {
-                //optionsMenu?.findItem(R.id.action_listsync)?.isVisible = true
+                optionsMenu?.findItem(R.id.action_listsync)?.isVisible = true
                 optionsMenu?.findItem(R.id.action_statusshare)?.isVisible = false
             }
 
             R.id.navigation_status -> {
-                //optionsMenu?.findItem(R.id.action_listsync)?.isVisible = false
+                optionsMenu?.findItem(R.id.action_listsync)?.isVisible = false
                 optionsMenu?.findItem(R.id.action_statusshare)?.isVisible = true
             }
 
             else -> {
-                //optionsMenu?.findItem(R.id.action_listsync)?.isVisible = false
+                optionsMenu?.findItem(R.id.action_listsync)?.isVisible = false
                 optionsMenu?.findItem(R.id.action_statusshare)?.isVisible = false
             }
         }

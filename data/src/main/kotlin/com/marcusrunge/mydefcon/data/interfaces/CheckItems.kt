@@ -19,6 +19,9 @@ interface CheckItems {
     @Query("SELECT * FROM checkitem WHERE is_deleted=0")
     fun getAll(): LiveData<MutableList<CheckItem>>
 
+    @Query("SELECT * FROM checkitem WHERE is_deleted=0")
+    fun getAllAsList(): List<CheckItem>
+
     /**
      * Gets all check items.
      * @see CheckItem
