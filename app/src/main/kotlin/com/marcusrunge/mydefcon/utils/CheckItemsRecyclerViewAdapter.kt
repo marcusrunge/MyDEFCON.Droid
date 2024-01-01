@@ -47,7 +47,8 @@ class CheckItemsRecyclerViewAdapter(
 
     @SuppressLint("NotifyDataSetChanged")
     fun setData(checkItems: MutableList<CheckItem>) {
-        this.checkItems = checkItems
+        this.checkItems.clear()
+        checkItems.forEach { this.checkItems.add(it) }
         notifyDataSetChanged()
     }
 
