@@ -68,7 +68,6 @@ class SwipeToDeleteCallback(
             return
         }
 
-
         val backgroundCornerOffset = 20
         val iconMargin = (itemView.height - icon!!.intrinsicHeight) / 2
         val iconTop = itemView.top + (itemView.height - icon!!.intrinsicHeight) / 2

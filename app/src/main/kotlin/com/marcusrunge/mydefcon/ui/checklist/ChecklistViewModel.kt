@@ -9,6 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.marcusrunge.mydefcon.R
+import com.marcusrunge.mydefcon.communication.implementations.observeForeverOnce
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.data.entities.CheckItem
 import com.marcusrunge.mydefcon.data.interfaces.Data
@@ -43,158 +44,192 @@ class ChecklistViewModel @Inject constructor(
     private val _defcon5ItemsCountBackgroundColorResource = MutableLiveData<Int>()
     private var receiver: CheckItemsReceiver = CheckItemsReceiver()
 
-    private val checkItemsObserver = Observer<MutableList<CheckItem>> {
-        _checkItemsRecyclerViewAdapter.value =
-            CheckItemsRecyclerViewAdapter({
-                CoroutineScope(Dispatchers.IO).launch {
-                    it.updated = OffsetDateTime.now(ZoneOffset.UTC).toEpochSecond()
-                    data.repository.checkItems.update(it)
-                    allCheckItems = data.repository.checkItems.getAllMutableLive().getDistinct()
+    private var _checkItemsObserver: Observer<MutableList<CheckItem>>? = null
+    private val checkItemsObserver: Observer<MutableList<CheckItem>>
+        get() {
+            if (_checkItemsObserver == null) {
+                _checkItemsObserver = Observer {
+                    _checkItemsRecyclerViewAdapter.value=
+                        CheckItemsRecyclerViewAdapter({
+                            viewModelScope.launch(Dispatchers.IO) {
+                                it.updated = OffsetDateTime.now(ZoneOffset.UTC).toEpochSecond()
+                                data.repository.checkItems.update(it)
+                                allCheckItems =
+                                    data.repository.checkItems.getAllMutableLive().getDistinct()
+                            }
+                        }, {
+                            viewModelScope.launch(Dispatchers.IO) {
+                                it.updated = OffsetDateTime.now(ZoneOffset.UTC).toEpochSecond()
+                                it.isDeleted = true
+                                data.repository.checkItems.update(it)
+                                allCheckItems =
+                                    data.repository.checkItems.getAllMutableLive().getDistinct()
+                            }
+                        })
+                    _checkItemsRecyclerViewAdapter.value?.setData(it)
+                    _itemTouchHelper.postValue(ItemTouchHelper(
+                        SwipeToDeleteCallback(
+                            app.applicationContext,
+                            _checkItemsRecyclerViewAdapter.value
+                        )
+                    ))
                 }
-            }, {
-                CoroutineScope(Dispatchers.IO).launch {
-                    it.updated = OffsetDateTime.now(ZoneOffset.UTC).toEpochSecond()
-                    it.isDeleted = true
-                    data.repository.checkItems.update(it)
-                    allCheckItems = data.repository.checkItems.getAllMutableLive().getDistinct()
-                }
-            })
-        _checkItemsRecyclerViewAdapter.value?.setData(it)
-        _itemTouchHelper.value = ItemTouchHelper(
-            SwipeToDeleteCallback(
-                app.applicationContext,
-                _checkItemsRecyclerViewAdapter.value
-            )
-        )
-    }
-
-    private val statusObserver = Observer<Int> { status ->
-        when (status) {
-            R.id.radio_defcon1 -> checkItemsStatus = 1
-            R.id.radio_defcon2 -> checkItemsStatus = 2
-            R.id.radio_defcon3 -> checkItemsStatus = 3
-            R.id.radio_defcon4 -> checkItemsStatus = 4
-            R.id.radio_defcon5 -> checkItemsStatus = 5
+            }
+            return _checkItemsObserver ?: throw AssertionError("Set to null by another thread")
         }
-        if (::checkItems.isInitialized) checkItems.removeObserver(checkItemsObserver)
-        checkItems = data.repository.checkItems.getAllMutableLive(checkItemsStatus).getDistinct()
-        checkItems.observeForever(checkItemsObserver)
-    }
 
-    private val allCheckItemsObserver = Observer<MutableList<CheckItem>> {
-        val defcon1CheckedItemsCount = it.getCount(1, true).size
-        val defcon2CheckedItemsCount = it.getCount(2, true).size
-        val defcon3CheckedItemsCount = it.getCount(3, true).size
-        val defcon4CheckedItemsCount = it.getCount(4, true).size
-        val defcon5CheckedItemsCount = it.getCount(5, true).size
-        val defcon1UncheckedItemsCount = it.getCount(1, false).size
-        val defcon2UncheckedItemsCount = it.getCount(2, false).size
-        val defcon3UncheckedItemsCount = it.getCount(3, false).size
-        val defcon4UncheckedItemsCount = it.getCount(4, false).size
-        val defcon5UncheckedItemsCount = it.getCount(5, false).size
-        when (core.preferences.status) {
-            1 -> {
-                _defcon1ItemsCount.value = defcon1UncheckedItemsCount.toString()
-                _defcon2ItemsCount.value = defcon2UncheckedItemsCount.toString()
-                _defcon3ItemsCount.value = defcon3UncheckedItemsCount.toString()
-                _defcon4ItemsCount.value = defcon4UncheckedItemsCount.toString()
-                _defcon1ItemsCountBackgroundColorResource.value = when {
-                    defcon1UncheckedItemsCount == 0 -> R.color.green_700_O85
-                    defcon1UncheckedItemsCount > 0 && defcon1CheckedItemsCount > 0 -> R.color.yellow_900_085
-                    else -> R.color.red_700_085
-                }
-                _defcon2ItemsCountBackgroundColorResource.value = when {
-                    defcon2UncheckedItemsCount == 0 -> R.color.green_700_O85
-                    defcon2UncheckedItemsCount > 0 && defcon2CheckedItemsCount > 0 -> R.color.yellow_900_085
-                    else -> R.color.red_700_085
-                }
-                _defcon3ItemsCountBackgroundColorResource.value = when {
-                    defcon3UncheckedItemsCount == 0 -> R.color.green_700_O85
-                    defcon3UncheckedItemsCount > 0 && defcon3CheckedItemsCount > 0 -> R.color.yellow_900_085
-                    else -> R.color.red_700_085
-                }
-                _defcon4ItemsCountBackgroundColorResource.value = when {
-                    defcon4UncheckedItemsCount == 0 -> R.color.green_700_O85
-                    defcon4UncheckedItemsCount > 0 && defcon4CheckedItemsCount > 0 -> R.color.yellow_900_085
-                    else -> R.color.red_700_085
+    private var _statusObserver: Observer<Int>? = null
+    private val statusObserver: Observer<Int>
+        get() {
+            if (_statusObserver == null) {
+                _statusObserver = Observer { status ->
+                    when (status) {
+                        R.id.radio_defcon1 -> checkItemsStatus = 1
+                        R.id.radio_defcon2 -> checkItemsStatus = 2
+                        R.id.radio_defcon3 -> checkItemsStatus = 3
+                        R.id.radio_defcon4 -> checkItemsStatus = 4
+                        R.id.radio_defcon5 -> checkItemsStatus = 5
+                    }
+                    if (::checkItems.isInitialized){
+                        checkItems.value?.clear()
+
+                            data.repository.checkItems.getAllMutableLive(checkItemsStatus)
+                                .getDistinct().observeForeverOnce {
+                                    checkItemsObserver.onChanged(it)
+                                }
+
+                    } else {
+                        checkItems =
+                            data.repository.checkItems.getAllMutableLive(checkItemsStatus)
+                                .getDistinct()
+                        checkItems.observeForever(checkItemsObserver)
+                    }
                 }
             }
-
-            2 -> {
-                _defcon1ItemsCount.value = "0"
-                _defcon2ItemsCount.value = defcon2UncheckedItemsCount.toString()
-                _defcon3ItemsCount.value = defcon3UncheckedItemsCount.toString()
-                _defcon4ItemsCount.value = defcon4UncheckedItemsCount.toString()
-                _defcon1ItemsCountBackgroundColorResource.value = R.color.green_700_O85
-                _defcon2ItemsCountBackgroundColorResource.value = when {
-                    defcon2UncheckedItemsCount == 0 -> R.color.green_700_O85
-                    defcon2UncheckedItemsCount > 0 && defcon2CheckedItemsCount > 0 -> R.color.yellow_900_085
-                    else -> R.color.red_700_085
-                }
-                _defcon3ItemsCountBackgroundColorResource.value = when {
-                    defcon3UncheckedItemsCount == 0 -> R.color.green_700_O85
-                    defcon3UncheckedItemsCount > 0 && defcon3CheckedItemsCount > 0 -> R.color.yellow_900_085
-                    else -> R.color.red_700_085
-                }
-                _defcon4ItemsCountBackgroundColorResource.value = when {
-                    defcon4UncheckedItemsCount == 0 -> R.color.green_700_O85
-                    defcon4UncheckedItemsCount > 0 && defcon4CheckedItemsCount > 0 -> R.color.yellow_900_085
-                    else -> R.color.red_700_085
-                }
-            }
-
-            3 -> {
-                _defcon1ItemsCount.value = "0"
-                _defcon2ItemsCount.value = "0"
-                _defcon3ItemsCount.value = defcon3UncheckedItemsCount.toString()
-                _defcon4ItemsCount.value = defcon4UncheckedItemsCount.toString()
-                _defcon1ItemsCountBackgroundColorResource.value = R.color.green_700_O85
-                _defcon2ItemsCountBackgroundColorResource.value = R.color.green_700_O85
-                _defcon3ItemsCountBackgroundColorResource.value = when {
-                    defcon3UncheckedItemsCount == 0 -> R.color.green_700_O85
-                    defcon3UncheckedItemsCount > 0 && defcon3CheckedItemsCount > 0 -> R.color.yellow_900_085
-                    else -> R.color.red_700_085
-                }
-                _defcon4ItemsCountBackgroundColorResource.value = when {
-                    defcon4UncheckedItemsCount == 0 -> R.color.green_700_O85
-                    defcon4UncheckedItemsCount > 0 && defcon4CheckedItemsCount > 0 -> R.color.yellow_900_085
-                    else -> R.color.red_700_085
-                }
-            }
-
-            4 -> {
-                _defcon1ItemsCount.value = "0"
-                _defcon2ItemsCount.value = "0"
-                _defcon3ItemsCount.value = "0"
-                _defcon4ItemsCount.value = defcon4UncheckedItemsCount.toString()
-                _defcon1ItemsCountBackgroundColorResource.value = R.color.green_700_O85
-                _defcon2ItemsCountBackgroundColorResource.value = R.color.green_700_O85
-                _defcon3ItemsCountBackgroundColorResource.value = R.color.green_700_O85
-                _defcon4ItemsCountBackgroundColorResource.value = when {
-                    defcon4UncheckedItemsCount == 0 -> R.color.green_700_O85
-                    defcon4UncheckedItemsCount > 0 && defcon4CheckedItemsCount > 0 -> R.color.yellow_900_085
-                    else -> R.color.red_700_085
-                }
-            }
-
-            5 -> {
-                _defcon1ItemsCount.value = "0"
-                _defcon2ItemsCount.value = "0"
-                _defcon3ItemsCount.value = "0"
-                _defcon4ItemsCount.value = "0"
-                _defcon1ItemsCountBackgroundColorResource.value = R.color.green_700_O85
-                _defcon2ItemsCountBackgroundColorResource.value = R.color.green_700_O85
-                _defcon3ItemsCountBackgroundColorResource.value = R.color.green_700_O85
-                _defcon4ItemsCountBackgroundColorResource.value = R.color.green_700_O85
-            }
+            return _statusObserver ?: throw AssertionError("Set to null by another thread")
         }
-        _defcon5ItemsCount.value = defcon5UncheckedItemsCount.toString()
-        _defcon5ItemsCountBackgroundColorResource.value = when {
-            defcon5UncheckedItemsCount == 0 -> R.color.green_700_O85
-            defcon5UncheckedItemsCount > 0 && defcon5CheckedItemsCount > 0 -> R.color.yellow_900_085
-            else -> R.color.red_700_085
+
+    private var _allCheckItemsObserver: Observer<MutableList<CheckItem>>? = null
+    private val allCheckItemsObserver: Observer<MutableList<CheckItem>>
+        get() {
+            if (_allCheckItemsObserver == null) {
+                _allCheckItemsObserver = Observer {
+                    val defcon1CheckedItemsCount = it.getCount(1, true).size
+                    val defcon2CheckedItemsCount = it.getCount(2, true).size
+                    val defcon3CheckedItemsCount = it.getCount(3, true).size
+                    val defcon4CheckedItemsCount = it.getCount(4, true).size
+                    val defcon5CheckedItemsCount = it.getCount(5, true).size
+                    val defcon1UncheckedItemsCount = it.getCount(1, false).size
+                    val defcon2UncheckedItemsCount = it.getCount(2, false).size
+                    val defcon3UncheckedItemsCount = it.getCount(3, false).size
+                    val defcon4UncheckedItemsCount = it.getCount(4, false).size
+                    val defcon5UncheckedItemsCount = it.getCount(5, false).size
+                    when (core.preferences.status) {
+                        1 -> {
+                            _defcon1ItemsCount.value = defcon1UncheckedItemsCount.toString()
+                            _defcon2ItemsCount.value = defcon2UncheckedItemsCount.toString()
+                            _defcon3ItemsCount.value = defcon3UncheckedItemsCount.toString()
+                            _defcon4ItemsCount.value = defcon4UncheckedItemsCount.toString()
+                            _defcon1ItemsCountBackgroundColorResource.value = when {
+                                defcon1UncheckedItemsCount == 0 -> R.color.green_700_O85
+                                defcon1UncheckedItemsCount > 0 && defcon1CheckedItemsCount > 0 -> R.color.yellow_900_085
+                                else -> R.color.red_700_085
+                            }
+                            _defcon2ItemsCountBackgroundColorResource.value = when {
+                                defcon2UncheckedItemsCount == 0 -> R.color.green_700_O85
+                                defcon2UncheckedItemsCount > 0 && defcon2CheckedItemsCount > 0 -> R.color.yellow_900_085
+                                else -> R.color.red_700_085
+                            }
+                            _defcon3ItemsCountBackgroundColorResource.value = when {
+                                defcon3UncheckedItemsCount == 0 -> R.color.green_700_O85
+                                defcon3UncheckedItemsCount > 0 && defcon3CheckedItemsCount > 0 -> R.color.yellow_900_085
+                                else -> R.color.red_700_085
+                            }
+                            _defcon4ItemsCountBackgroundColorResource.value = when {
+                                defcon4UncheckedItemsCount == 0 -> R.color.green_700_O85
+                                defcon4UncheckedItemsCount > 0 && defcon4CheckedItemsCount > 0 -> R.color.yellow_900_085
+                                else -> R.color.red_700_085
+                            }
+                        }
+
+                        2 -> {
+                            _defcon1ItemsCount.value = "0"
+                            _defcon2ItemsCount.value = defcon2UncheckedItemsCount.toString()
+                            _defcon3ItemsCount.value = defcon3UncheckedItemsCount.toString()
+                            _defcon4ItemsCount.value = defcon4UncheckedItemsCount.toString()
+                            _defcon1ItemsCountBackgroundColorResource.value = R.color.green_700_O85
+                            _defcon2ItemsCountBackgroundColorResource.value = when {
+                                defcon2UncheckedItemsCount == 0 -> R.color.green_700_O85
+                                defcon2UncheckedItemsCount > 0 && defcon2CheckedItemsCount > 0 -> R.color.yellow_900_085
+                                else -> R.color.red_700_085
+                            }
+                            _defcon3ItemsCountBackgroundColorResource.value = when {
+                                defcon3UncheckedItemsCount == 0 -> R.color.green_700_O85
+                                defcon3UncheckedItemsCount > 0 && defcon3CheckedItemsCount > 0 -> R.color.yellow_900_085
+                                else -> R.color.red_700_085
+                            }
+                            _defcon4ItemsCountBackgroundColorResource.value = when {
+                                defcon4UncheckedItemsCount == 0 -> R.color.green_700_O85
+                                defcon4UncheckedItemsCount > 0 && defcon4CheckedItemsCount > 0 -> R.color.yellow_900_085
+                                else -> R.color.red_700_085
+                            }
+                        }
+
+                        3 -> {
+                            _defcon1ItemsCount.value = "0"
+                            _defcon2ItemsCount.value = "0"
+                            _defcon3ItemsCount.value = defcon3UncheckedItemsCount.toString()
+                            _defcon4ItemsCount.value = defcon4UncheckedItemsCount.toString()
+                            _defcon1ItemsCountBackgroundColorResource.value = R.color.green_700_O85
+                            _defcon2ItemsCountBackgroundColorResource.value = R.color.green_700_O85
+                            _defcon3ItemsCountBackgroundColorResource.value = when {
+                                defcon3UncheckedItemsCount == 0 -> R.color.green_700_O85
+                                defcon3UncheckedItemsCount > 0 && defcon3CheckedItemsCount > 0 -> R.color.yellow_900_085
+                                else -> R.color.red_700_085
+                            }
+                            _defcon4ItemsCountBackgroundColorResource.value = when {
+                                defcon4UncheckedItemsCount == 0 -> R.color.green_700_O85
+                                defcon4UncheckedItemsCount > 0 && defcon4CheckedItemsCount > 0 -> R.color.yellow_900_085
+                                else -> R.color.red_700_085
+                            }
+                        }
+
+                        4 -> {
+                            _defcon1ItemsCount.value = "0"
+                            _defcon2ItemsCount.value = "0"
+                            _defcon3ItemsCount.value = "0"
+                            _defcon4ItemsCount.value = defcon4UncheckedItemsCount.toString()
+                            _defcon1ItemsCountBackgroundColorResource.value = R.color.green_700_O85
+                            _defcon2ItemsCountBackgroundColorResource.value = R.color.green_700_O85
+                            _defcon3ItemsCountBackgroundColorResource.value = R.color.green_700_O85
+                            _defcon4ItemsCountBackgroundColorResource.value = when {
+                                defcon4UncheckedItemsCount == 0 -> R.color.green_700_O85
+                                defcon4UncheckedItemsCount > 0 && defcon4CheckedItemsCount > 0 -> R.color.yellow_900_085
+                                else -> R.color.red_700_085
+                            }
+                        }
+
+                        5 -> {
+                            _defcon1ItemsCount.value = "0"
+                            _defcon2ItemsCount.value = "0"
+                            _defcon3ItemsCount.value = "0"
+                            _defcon4ItemsCount.value = "0"
+                            _defcon1ItemsCountBackgroundColorResource.value = R.color.green_700_O85
+                            _defcon2ItemsCountBackgroundColorResource.value = R.color.green_700_O85
+                            _defcon3ItemsCountBackgroundColorResource.value = R.color.green_700_O85
+                            _defcon4ItemsCountBackgroundColorResource.value = R.color.green_700_O85
+                        }
+                    }
+                    _defcon5ItemsCount.value = defcon5UncheckedItemsCount.toString()
+                    _defcon5ItemsCountBackgroundColorResource.value = when {
+                        defcon5UncheckedItemsCount == 0 -> R.color.green_700_O85
+                        defcon5UncheckedItemsCount > 0 && defcon5CheckedItemsCount > 0 -> R.color.yellow_900_085
+                        else -> R.color.red_700_085
+                    }
+                }
+            }
+            return _allCheckItemsObserver ?: throw AssertionError("Set to null by another thread")
         }
-    }
 
     private var checkItemsStatus: Int = 5
     private var _itemTouchHelper = MutableLiveData<ItemTouchHelper>()
