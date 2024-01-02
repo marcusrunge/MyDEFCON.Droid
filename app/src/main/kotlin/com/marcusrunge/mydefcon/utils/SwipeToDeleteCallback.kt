@@ -53,7 +53,7 @@ class SwipeToDeleteCallback(
         actionState: Int,
         isCurrentlyActive: Boolean
     ) {
-        super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+        //super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
         val itemView: View = viewHolder.itemView
         val isCancelled = dX === 0f && !isCurrentlyActive
         if (isCancelled) {
@@ -112,12 +112,11 @@ class SwipeToDeleteCallback(
 
         background!!.draw(c)
         icon!!.draw(c)
-        icon!!.draw(c)
         delete?.let {
             c.drawText(
                 it,
                 icon!!.bounds.left - textWidth - 16 * metrics.density,
-                viewHolder.itemView.height - ((viewHolder.itemView.height - textHeight) / 2),
+                (textHeight / 2) + iconTop + ((iconBottom - iconTop) / 2),
                 textPaint
             )
         }
