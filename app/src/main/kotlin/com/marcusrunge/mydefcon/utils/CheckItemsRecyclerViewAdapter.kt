@@ -1,5 +1,6 @@
 package com.marcusrunge.mydefcon.utils
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.CheckBox
@@ -41,17 +42,21 @@ class CheckItemsRecyclerViewAdapter(
     fun deleteItem(position: Int) {
         if (checkItems.size - 1 >= position) {
             onDeleted.invoke(checkItems[position])
+            checkItems.removeAt(position)
             notifyItemRemoved(position)
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun setData(checkItems: MutableList<CheckItem>) {
-        //val itemCount=this.checkItems.size
         this.checkItems.clear()
-        //notifyItemRangeRemoved(0,itemCount-1)
         checkItems.forEach { this.checkItems.add(it) }
-        //notifyItemRangeInserted(0, checkItems.size-1)
         notifyDataSetChanged()
+    }
+
+    fun setData(checkItem: CheckItem) {
+        this.checkItems.add(checkItem)
+        notifyItemInserted(this.checkItems.size-1)
     }
 
     class ViewHolder internal constructor(

@@ -1,6 +1,5 @@
 package com.marcusrunge.mydefcon.ui.checklist
 
-import android.annotation.SuppressLint
 import android.app.Application
 import android.content.IntentFilter
 import android.os.Message
@@ -19,7 +18,6 @@ import com.marcusrunge.mydefcon.ui.ObservableViewModel
 import com.marcusrunge.mydefcon.utils.CheckItemsRecyclerViewAdapter
 import com.marcusrunge.mydefcon.utils.SwipeToDeleteCallback
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.OffsetDateTime
@@ -69,7 +67,7 @@ class ChecklistViewModel @Inject constructor(
                     }
                     if (::checkItems.isInitialized){
                         checkItems.value?.clear()
-
+                        checkItems.removeObserver(checkItemsObserver)
                             data.repository.checkItems.getAllMutableLive(checkItemsStatus)
                                 .getDistinct().observeForeverOnce {
                                     checkItemsObserver.onChanged(it)
@@ -288,16 +286,15 @@ class ChecklistViewModel @Inject constructor(
             checkItems.value?.add(checkItem)
             val updateViewMessage = Message()
             updateViewMessage.what = UPDATE_VIEW
-            updateViewMessage.obj = checkItems.value?.size?.minus(1)
+            updateViewMessage.obj = checkItem
             handler.sendMessage(updateViewMessage)
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun updateView(inputMessage: Message) {
         if (inputMessage.what == UPDATE_VIEW) {
-            if (inputMessage.obj is Int) _checkItemsRecyclerViewAdapter.value?.notifyItemInserted(
-                inputMessage.obj as Int
+            if (inputMessage.obj is CheckItem) _checkItemsRecyclerViewAdapter.value?.setData(
+                inputMessage.obj as CheckItem
             )
         } else if (inputMessage.what == RELOAD_CHECKLIST) {
             if (inputMessage.obj is List<*>)
@@ -308,7 +305,6 @@ class ChecklistViewModel @Inject constructor(
                 if ((it as CheckItem).defcon == checkItemsStatus) checkItems.add(it)
             }
             _checkItemsRecyclerViewAdapter.value?.setData(checkItems)
-            _checkItemsRecyclerViewAdapter.value?.notifyDataSetChanged()
         }
     }
 
@@ -337,16 +333,16 @@ class ChecklistViewModel @Inject constructor(
         distinctLiveData.addSource(this, object : Observer<T> {
             private var initialized = false
             private var liveValue: T? = null
-            override fun onChanged(obj: T) {
+            override fun onChanged(value: T) {
                 when {
                     !initialized -> {
                         initialized = true
-                        liveValue = obj
+                        liveValue = value
                         distinctLiveData.postValue(liveValue!!)
                     }
 
-                    obj == null && liveValue != null || obj != liveValue -> {
-                        liveValue = obj
+                    value == null && liveValue != null || value != liveValue -> {
+                        liveValue = value
                         distinctLiveData.postValue(liveValue!!)
                     }
                 }
