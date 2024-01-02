@@ -49,30 +49,7 @@ class ChecklistViewModel @Inject constructor(
         get() {
             if (_checkItemsObserver == null) {
                 _checkItemsObserver = Observer {
-                    _checkItemsRecyclerViewAdapter.value=
-                        CheckItemsRecyclerViewAdapter({
-                            viewModelScope.launch(Dispatchers.IO) {
-                                it.updated = OffsetDateTime.now(ZoneOffset.UTC).toEpochSecond()
-                                data.repository.checkItems.update(it)
-                                allCheckItems =
-                                    data.repository.checkItems.getAllMutableLive().getDistinct()
-                            }
-                        }, {
-                            viewModelScope.launch(Dispatchers.IO) {
-                                it.updated = OffsetDateTime.now(ZoneOffset.UTC).toEpochSecond()
-                                it.isDeleted = true
-                                data.repository.checkItems.update(it)
-                                allCheckItems =
-                                    data.repository.checkItems.getAllMutableLive().getDistinct()
-                            }
-                        })
                     _checkItemsRecyclerViewAdapter.value?.setData(it)
-                    _itemTouchHelper.postValue(ItemTouchHelper(
-                        SwipeToDeleteCallback(
-                            app.applicationContext,
-                            _checkItemsRecyclerViewAdapter.value
-                        )
-                    ))
                 }
             }
             return _checkItemsObserver ?: throw AssertionError("Set to null by another thread")
@@ -97,7 +74,6 @@ class ChecklistViewModel @Inject constructor(
                                 .getDistinct().observeForeverOnce {
                                     checkItemsObserver.onChanged(it)
                                 }
-
                     } else {
                         checkItems =
                             data.repository.checkItems.getAllMutableLive(checkItemsStatus)
@@ -269,10 +245,33 @@ class ChecklistViewModel @Inject constructor(
         receiver.setOnCheckItemsReceivedListener(this)
         val filter = IntentFilter("com.marcusrunge.mydefcon.CHECKITEMS_RECEIVED")
         LocalBroadcastManager.getInstance(app).registerReceiver(receiver, filter)
+        _checkItemsRecyclerViewAdapter.value=
+            CheckItemsRecyclerViewAdapter({
+                viewModelScope.launch(Dispatchers.IO) {
+                    it.updated = OffsetDateTime.now(ZoneOffset.UTC).toEpochSecond()
+                    data.repository.checkItems.update(it)
+                    allCheckItems =
+                        data.repository.checkItems.getAllMutableLive().getDistinct()
+                }
+            }, {
+                viewModelScope.launch(Dispatchers.IO) {
+                    it.updated = OffsetDateTime.now(ZoneOffset.UTC).toEpochSecond()
+                    it.isDeleted = true
+                    data.repository.checkItems.update(it)
+                    allCheckItems =
+                        data.repository.checkItems.getAllMutableLive().getDistinct()
+                }
+            })
+        _itemTouchHelper.postValue(ItemTouchHelper(
+            SwipeToDeleteCallback(
+                app.applicationContext,
+                _checkItemsRecyclerViewAdapter.value
+            )
+        ))
     }
 
     fun onAdd() {
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val now = OffsetDateTime.now(ZoneOffset.UTC)
             val checkItem = CheckItem(
                 id = 0,
