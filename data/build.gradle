@@ -43,11 +43,11 @@ android {
 
 dependencies {
     def room_version = '2.6.1'
-    implementation 'androidx.core:core-ktx:1.13.0'
+    implementation 'androidx.core:core-ktx:1.13.1'
     implementation "androidx.room:room-runtime:$room_version"
     ksp "androidx.room:room-compiler:$room_version"
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.7.0'
-    implementation 'androidx.lifecycle:lifecycle-common-java8:2.7.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.8.0'
+    implementation 'androidx.lifecycle:lifecycle-common-java8:2.8.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
