@@ -4,7 +4,7 @@ buildscript {
         agp_version = '8.0.2'
     }
     dependencies {
-        classpath 'com.google.dagger:hilt-android-gradle-plugin:2.50'
+        classpath 'com.google.dagger:hilt-android-gradle-plugin:2.51.1'
         classpath 'com.google.android.gms:oss-licenses-plugin:0.10.6'
     }
 }
@@ -19,5 +19,5 @@ plugins {
 }
 
 tasks.register('clean', Delete) {
-    delete rootProject.buildDir
+    delete rootProject.layout.buildDirectory
 }
