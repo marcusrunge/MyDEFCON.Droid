@@ -1,5 +1,6 @@
 package com.marcusrunge.mydefcon.utils
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.Shader
 import android.graphics.drawable.Drawable
@@ -20,6 +21,7 @@ import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.ui.main.MainViewModel
 
 object BindingUtils {
+    @SuppressLint("RestrictedApi")
     @BindingAdapter("bindNavController")
     @JvmStatic
     fun bindNavController(view: View, mainViewModel: MainViewModel) {

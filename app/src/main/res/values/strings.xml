@@ -24,4 +24,5 @@
     <string name="notification_channel_name">Socket listening</string>
     <string name="information_intro">Developed by</string>
     <string name="information_projecturl">Project URL:</string>
+    <string name="checkitem_hinttext">Item text</string>
 </resources>
