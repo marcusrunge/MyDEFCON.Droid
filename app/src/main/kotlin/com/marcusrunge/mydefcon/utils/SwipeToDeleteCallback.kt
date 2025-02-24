@@ -55,7 +55,7 @@ class SwipeToDeleteCallback(
     ) {
         //super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
         val itemView: View = viewHolder.itemView
-        val isCancelled = dX === 0f && !isCurrentlyActive
+        val isCancelled = dX == 0f && !isCurrentlyActive
         if (isCancelled) {
             clearCanvas(
                 c,

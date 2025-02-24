@@ -5,11 +5,10 @@ plugins {
 
 android {
     namespace = "com.marcusrunge.mydefcon.notifications"
-    compileSdk = 34
 
     defaultConfig {
-        minSdk = 27
-
+        minSdk = 30
+        compileSdk= 35
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -24,11 +23,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = "21"
     }
 }
 
