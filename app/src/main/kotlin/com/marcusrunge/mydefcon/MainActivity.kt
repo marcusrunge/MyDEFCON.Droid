@@ -21,6 +21,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
@@ -67,7 +68,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         binding.lifecycleOwner = this
         setContentView(binding.root)
         OssLicensesMenuActivity.setActivityTitle(getString(R.string.license_title))
-        navController = findNavController(R.id.nav_host_fragment_activity_main)
+        navController = (supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment).navController
         navController.addOnDestinationChangedListener(this)
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.S_V2) {
             when (PackageManager.PERMISSION_GRANTED) {
