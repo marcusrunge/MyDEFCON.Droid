@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+        <style name="Theme.MyDEFCON" parent="Theme.MaterialComponents.DayNight">
+                <!-- Primary brand color. -->
+                <item name="colorPrimary">@color/yellow_A200</item>
+                <item name="colorPrimaryVariant">@color/yellow_A200V1</item>
+                <item name="colorOnPrimary">@color/red_A700</item>
+                <!-- Secondary brand color. -->
+                <item name="colorSecondary">@color/red_A700</item>
+                <item name="colorSecondaryVariant">@color/red_A700V</item>
+                <item name="colorOnSecondary">@color/black</item>
+                <!-- Status bar color. -->
+                <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+                <item name="android:windowLightStatusBar">true</item>
+                <!-- Customize your theme here. -->
+                <item name="android:windowBackground">#B2000000</item>
+                <item name="actionBarTheme">@style/Theme.MyDEFCON.ActionBar</item>
+                <item name="android:itemBackground">@color/yellow_A200</item>
+                <item name="colorOnSurfaceVariant">@color/red_A700</item>
+                <item name="actionMenuTextColor">@color/red_A700</item>
+                <item name="android:textColor">@color/red_A700</item>
+                <item name="actionOverflowMenuStyle">@style/Widget.App.PopupMenu</item>
+                <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
+        </style>
+</resources>
