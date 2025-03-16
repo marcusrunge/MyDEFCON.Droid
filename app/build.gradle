@@ -11,8 +11,8 @@ android {
     defaultConfig {
         applicationId "com.marcusrunge.MyDEFCON"
         minSdk 30
-        targetSdk 35
-        compileSdk 35
+        targetSdk 36
+        compileSdk 36
         versionCode 300
         versionName "2.1.6"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -53,8 +53,8 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.8.7'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.8.8'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.8.8'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.8.9'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.8.9'
     implementation 'com.google.dagger:hilt-android:2.55'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7'
     implementation 'androidx.preference:preference-ktx:1.2.1'
