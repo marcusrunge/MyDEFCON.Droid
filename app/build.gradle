@@ -13,7 +13,7 @@ android {
         minSdk 30
         targetSdk 35
         compileSdk 35
-        versionCode 300
+        versionCode 301
         versionName "2.1.6"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
