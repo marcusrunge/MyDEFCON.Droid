@@ -6,4 +6,10 @@ interface Data {
      * @see Repository
      */
     val repository: Repository
+
+    /**
+     * Gets the firestore instance.
+     * @see Firestore
+     */
+    val firestore: Firestore
 }
