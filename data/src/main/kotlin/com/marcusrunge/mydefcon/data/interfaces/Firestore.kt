@@ -1,3 +1,8 @@
 package com.marcusrunge.mydefcon.data.interfaces
 
-interface Firestore
+interface Firestore{
+    /**
+     * Test connection to Firestore
+     */
+    suspend fun testConnection(): Boolean
+}
