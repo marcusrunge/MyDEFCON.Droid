@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "221451702430",
+    "project_id": "mydefcon-8471a",
+    "storage_bucket": "mydefcon-8471a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:221451702430:android:ab90914bb6094193dc6b8f",
+        "android_client_info": {
+          "package_name": "com.marcusrunge.MyDEFCON"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAD84WjZGMkKQUKYkyU_QAGDJIZUWYLDyg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
