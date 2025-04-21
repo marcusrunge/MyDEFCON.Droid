@@ -22,7 +22,7 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="com.marcusrunge.MyDEFCON" />
+                  <option name="appId" value="com.marcusrunge.mydefcon" />
                   <option name="mobileSdkAppId" value="1:398155331418:android:5ede24f07978084214e563" />
                   <option name="projectId" value="mydefcon-d37fa" />
                   <option name="projectNumber" value="398155331418" />
