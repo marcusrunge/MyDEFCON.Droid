@@ -12,4 +12,9 @@ interface Firebase {
      * @see Messaging
      */
     val messaging: Messaging
+
+    /**
+     * Test connection to Firestore
+     */
+    suspend fun testConnection(): Boolean
 }
