@@ -14,10 +14,10 @@
             <option value="$PROJECT_DIR$/communication" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/data" />
+            <option value="$PROJECT_DIR$/firebase" />
             <option value="$PROJECT_DIR$/notifications" />
           </set>
         </option>
-        <option name="resolveExternalAnnotations" value="false" />
       </GradleProjectSettings>
     </option>
   </component>
