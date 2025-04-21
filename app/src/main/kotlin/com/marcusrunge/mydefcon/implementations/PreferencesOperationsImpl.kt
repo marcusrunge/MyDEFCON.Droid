@@ -21,10 +21,18 @@ internal class PreferencesOperationsImpl @Inject constructor(context: Context?) 
     }
 
     override fun setBoolean(key: String, value: Boolean) {
-        TODO("Not yet implemented")
+        sharedPref?.edit()?.putBoolean(key, value)?.apply()
     }
 
     override fun getBoolean(key: String): Boolean {
-        TODO("Not yet implemented")
+        return sharedPref?.getBoolean(key, false)!!
+    }
+
+    override fun setString(key: String, value: String) {
+        sharedPref?.edit()?.putString(key, value)?.apply()
+    }
+
+    override fun getString(key: String): String {
+        return sharedPref?.getString(key, null)!!
     }
 }
