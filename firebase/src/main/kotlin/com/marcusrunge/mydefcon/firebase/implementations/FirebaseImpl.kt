@@ -1,22 +1,27 @@
-package com.marcusrunge.mydefcon.data.implementations
+package com.marcusrunge.mydefcon.firebase.implementations
 
+import android.content.Context
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
-import com.marcusrunge.mydefcon.data.bases.DataBase
-import com.marcusrunge.mydefcon.data.interfaces.Firestore
+import com.marcusrunge.mydefcon.firebase.bases.FirebaseBase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 
-internal class FirestoreImpl(dataBase: DataBase) : Firestore {
-    companion object {
-        private var firestore: Firestore? = null
-        fun create(dataBase: DataBase): Firestore = when {
-            firestore != null -> firestore!!
+internal class FirebaseImpl(context: Context?): FirebaseBase(context) {
+    init {
+        _firestore = FirestoreImpl.create(this)
+        _messaging = MessagingImpl.create(this)
+    }
+
+    internal companion object {
+        private var instance: com.marcusrunge.mydefcon.firebase.interfaces.Firebase? = null
+        fun create(base: FirebaseBase): com.marcusrunge.mydefcon.firebase.interfaces.Firebase = when {
+            instance != null -> instance!!
             else -> {
-                firestore = FirestoreImpl(dataBase)
-                firestore!!
+                instance = FirebaseImpl(base.context)
+                instance!!
             }
         }
     }
@@ -33,7 +38,6 @@ internal class FirestoreImpl(dataBase: DataBase) : Firestore {
                     is SocketTimeoutException -> false
                     else -> false
                 }
-
             }
         }
     }
