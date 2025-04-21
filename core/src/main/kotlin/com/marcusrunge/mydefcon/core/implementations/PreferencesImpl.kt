@@ -14,6 +14,11 @@ internal class PreferencesImpl(private val coreBase: CoreBase) : Preferences {
                 value.toString()
             )
         }
+    override var fcmRegistrationToken: String
+        get() = coreBase.preferencesOperations.getString("fcmRegistrationToken")
+        set(value) {
+            coreBase.preferencesOperations.setString("fcmRegistrationToken", value)
+        }
 
     internal companion object {
         private var preferences: Preferences? = null
