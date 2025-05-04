@@ -28,6 +28,7 @@ import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.marcusrunge.mydefcon.communication.interfaces.Communication
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.databinding.ActivityMainBinding
+import com.marcusrunge.mydefcon.firebase.interfaces.Firebase
 import com.marcusrunge.mydefcon.ui.main.MainViewModel
 import com.marcusrunge.mydefcon.utils.BitmapUtils
 import com.marcusrunge.mydefcon.worker.CommunicationWorker
@@ -40,7 +41,8 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedListener {
     @Inject
     lateinit var core: Core
-
+    @Inject
+    lateinit var firebase: Firebase
     @Inject
     lateinit var communication: Communication
     private lateinit var navController: NavController
@@ -91,6 +93,10 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
             WorkManager
                 .getInstance(this)
                 .enqueue(communicationWorkRequest)
+        }
+        lifecycleScope.launch {
+            val defconGroup = firebase.firestore.getDefconGroup()
+            val c =defconGroup.followers.count()
         }
     }
 
