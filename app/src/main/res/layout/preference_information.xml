@@ -51,7 +51,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-light"
         android:includeFontPadding="false"
-        android:text="SOFTWARETECHNIK"
+        android:text="MARCUS RUNGE"
         android:textColor="#606165"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/mr_logo"
@@ -65,7 +65,7 @@
         android:autoLink="email"
         android:gravity="center_vertical"
         android:minHeight="48dp"
-        android:text="mr.software@outlook.de"
+        android:text="flymarcus737@gmail.com"
         android:textColor="@color/white"
         android:textColorLink="@color/white"
         app:layout_constraintStart_toStartOf="parent"
@@ -83,6 +83,7 @@
         app:layout_constraintTop_toBottomOf="@id/mr_email_text" />
 
     <TextView
+        android:id="@+id/projecturlUrl_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:autoLink="web"
@@ -92,4 +93,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/projecturl_text"
         tools:ignore="HardcodedText" />
+
+    <Button
+        android:id="@+id/createDeleteDefconGroup_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/projecturlUrl_text"/>
+
+    <Button
+        android:id="@+id/joinLeaveDefconGroup_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/createDeleteDefconGroup_button"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
