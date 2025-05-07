@@ -7,7 +7,7 @@ plugins {
 android {
     defaultConfig {
         minSdk 30
-        compileSdk 35
+        compileSdk 36
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }
@@ -36,7 +36,7 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.16.0'
     implementation project(path: ':data')
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2'
-    implementation 'androidx.lifecycle:lifecycle-livedata-core-ktx:2.8.7'
+    implementation 'androidx.lifecycle:lifecycle-livedata-core-ktx:2.9.0'
     testImplementation 'junit:junit:4.13.2'
     implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
