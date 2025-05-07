@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.marcusrunge.mydefcon.firebase"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 30
