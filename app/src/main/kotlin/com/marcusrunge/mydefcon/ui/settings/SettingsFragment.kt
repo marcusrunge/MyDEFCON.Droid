@@ -1,5 +1,6 @@
 package com.marcusrunge.mydefcon.ui.settings
 
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,7 +11,8 @@ import com.marcusrunge.mydefcon.R
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class SettingsFragment : PreferenceFragmentCompat() {
+class SettingsFragment : PreferenceFragmentCompat(),
+    SharedPreferences.OnSharedPreferenceChangeListener {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
     }
@@ -23,5 +25,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val view = super.onCreateView(inflater, container, savedInstanceState)
         view.setBackgroundColor(Color.argb(0.698f, 0f, 0f, 0f))
         return view
+    }
+
+    override fun onSharedPreferenceChanged(
+        sharedPreferences: SharedPreferences?,
+        key: String?
+    ) {
+        TODO("Not yet implemented")
     }
 }
