@@ -94,19 +94,4 @@
         app:layout_constraintTop_toBottomOf="@id/projecturl_text"
         tools:ignore="HardcodedText" />
 
-    <Button
-        android:id="@+id/createDeleteDefconGroup_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/projecturlUrl_text"/>
-
-    <Button
-        android:id="@+id/joinLeaveDefconGroup_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/createDeleteDefconGroup_button"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
