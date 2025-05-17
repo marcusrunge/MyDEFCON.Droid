@@ -6,4 +6,7 @@
             android:layout="@layout/preference_information"
             tools:ignore="PrivateResource" />
     </PreferenceCategory>
+    <PreferenceCategory app:title="DEFCON Group">
+
+    </PreferenceCategory>
 </PreferenceScreen>
