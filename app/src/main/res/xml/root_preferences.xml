@@ -1,12 +1,19 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-    <PreferenceCategory app:title="Information">
+    <PreferenceCategory app:title="@string/preferencecategory_title_information">
         <Preference
             android:layout="@layout/preference_information"
             tools:ignore="PrivateResource" />
     </PreferenceCategory>
-    <PreferenceCategory app:title="DEFCON Group">
-
+    <PreferenceCategory app:title="@string/preferencecategory_title_group">
+        <com.marcusrunge.mydefcon.ui.settings.ButtonPreference
+            app:key="create_button"
+            app:title="@string/create_group"
+            android:layout="@layout/preference_as_button"/>
+        <com.marcusrunge.mydefcon.ui.settings.ButtonPreference
+            app:key="join_button"
+            app:title="@string/join_group"
+            android:layout="@layout/preference_as_button"/>
     </PreferenceCategory>
 </PreferenceScreen>

@@ -31,4 +31,6 @@
     <string name="leave_group">Leave Group</string>">
     <string name="join_group">Join Group</string>">"
     <string name="delete_group">Delete Group</string>
+    <string name="preferencecategory_title_information">Information</string>
+    <string name="preferencecategory_title_group">Group</string>>
 </resources>
