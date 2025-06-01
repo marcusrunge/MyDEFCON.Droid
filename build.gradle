@@ -6,13 +6,13 @@ buildscript {
     dependencies {
         classpath 'com.google.dagger:hilt-android-gradle-plugin:2.56'
         classpath 'com.google.android.gms:oss-licenses-plugin:0.10.6'
-        classpath 'com.android.tools.build:gradle:8.10.0'
+        classpath 'com.android.tools.build:gradle:8.10.1'
     }
 }
 
 plugins {
-    id 'com.android.application' version '8.10.0' apply false
-    id 'com.android.library' version '8.10.0' apply false
+    id 'com.android.application' version '8.10.1' apply false
+    id 'com.android.library' version '8.10.1' apply false
     id 'org.jetbrains.kotlin.android' version '2.0.0' apply false
     id 'org.jetbrains.kotlin.jvm' version '2.0.0' apply false
     id 'org.jetbrains.kotlin.plugin.serialization' version '2.0.0' apply false
