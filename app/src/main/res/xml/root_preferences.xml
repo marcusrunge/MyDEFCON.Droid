@@ -7,13 +7,15 @@
             tools:ignore="PrivateResource" />
     </PreferenceCategory>
     <PreferenceCategory app:title="@string/preferencecategory_title_group">
-        <com.marcusrunge.mydefcon.ui.settings.ButtonPreference
+        <com.marcusrunge.mydefcon.ui.settings.GroupPreference
+            android:layout="@layout/group_preference"/>
+        <!--<com.marcusrunge.mydefcon.ui.settings.ButtonPreference
             app:key="create_button"
             app:title="@string/create_group"
             android:layout="@layout/preference_as_button"/>
         <com.marcusrunge.mydefcon.ui.settings.ButtonPreference
             app:key="join_button"
             app:title="@string/join_group"
-            android:layout="@layout/preference_as_button"/>
+            android:layout="@layout/preference_as_button"/>-->
     </PreferenceCategory>
 </PreferenceScreen>

@@ -18,8 +18,8 @@ class SettingsFragment : PreferenceFragmentCompat(),
     SharedPreferences.OnSharedPreferenceChangeListener {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
-        val createButtonPreference: Preference? = findPreference("create_button")
-        val joinButtonPreference: Preference? = findPreference("join_button")
+        val createButtonPreference: Preference? = findPreference("button_group_create")
+        val joinButtonPreference: Preference? = findPreference("button_group_join")
         createButtonPreference?.setOnPreferenceClickListener {
             Log.d("SettingsFragment", "Create Button Clicked!")
             Toast.makeText(context, "Create Button Clicked", Toast.LENGTH_SHORT).show()
