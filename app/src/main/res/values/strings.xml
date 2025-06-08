@@ -32,5 +32,6 @@
     <string name="join_group">Join Group</string>">"
     <string name="delete_group">Delete Group</string>
     <string name="preferencecategory_title_information">Information</string>
-    <string name="preferencecategory_title_group">Group</string>>
+    <string name="preferencecategory_title_group">Group</string>
+    <string name="group_qr_code">Group QR Code</string>>
 </resources>
