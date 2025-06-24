@@ -4,4 +4,5 @@ import com.marcusrunge.mydefcon.firebase.documents.DefconGroup
 
 interface Firestore {
     suspend fun getDefconGroup() : DefconGroup
+    suspend fun createDefconGroup(): String
 }
