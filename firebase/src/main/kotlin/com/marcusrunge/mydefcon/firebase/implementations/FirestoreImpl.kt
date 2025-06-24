@@ -60,6 +60,10 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
         return@withContext defconGroup
     }
 
+    override suspend fun createDefconGroup(): String {
+        TODO("Not yet implemented")
+    }
+
     internal companion object {
         private var instance: Firestore? = null
         fun create(base: FirebaseBase): Firestore = when {
