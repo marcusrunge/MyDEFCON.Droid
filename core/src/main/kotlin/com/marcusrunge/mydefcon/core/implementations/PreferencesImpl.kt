@@ -20,6 +20,18 @@ internal class PreferencesImpl(private val coreBase: CoreBase) : Preferences {
             coreBase.preferencesOperations.setString("fcmRegistrationToken", value)
         }
 
+    override var createdDefconGroupId: String
+        get() = coreBase.preferencesOperations.getString("createdDefconGroupId")
+        set(value) {
+            coreBase.preferencesOperations.setString("createdDefconGroupId", value)
+        }
+
+    override var joinedDefconGroupId: String
+        get() = coreBase.preferencesOperations.getString("joinedDefconGroupId")
+        set(value) {
+            coreBase.preferencesOperations.setString("joinedDefconGroupId", value)
+        }
+
     internal companion object {
         private var preferences: Preferences? = null
         fun create(coreBase: CoreBase): Preferences = when {
