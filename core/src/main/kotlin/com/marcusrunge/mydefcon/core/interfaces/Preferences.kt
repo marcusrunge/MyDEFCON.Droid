@@ -10,4 +10,14 @@ interface Preferences {
      * Gets or sets the FCM registration token.
      */
     var fcmRegistrationToken: String
+
+    /**
+     * Gets or sets the created defcon group id.
+     */
+    var createdDefconGroupId: String
+
+    /**
+     * Gets or sets the joined defcon group id.
+     */
+    var joinedDefconGroupId: String
 }

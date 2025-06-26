@@ -18,6 +18,7 @@ import com.google.zxing.BarcodeFormat
 import com.google.zxing.WriterException
 import com.google.zxing.qrcode.QRCodeWriter
 import com.marcusrunge.mydefcon.R
+import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.firebase.interfaces.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -32,6 +33,9 @@ class GroupPreference @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : Preference(context, attrs, defStyleAttr) {
     @Inject
+    lateinit var core: Core
+
+    @Inject
     lateinit var firebase: Firebase
 
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
@@ -39,6 +43,9 @@ class GroupPreference @JvmOverloads constructor(
         val createGroupButton = holder.findViewById(R.id.button_group_create) as? Button
         val qrCodeImageView = holder.findViewById(R.id.imageview_qrcode) as? ImageView
         val lifecycleOwner = holder.itemView.findViewTreeLifecycleOwner()
+        if(core.preferences.createdDefconGroupId.isNotEmpty() && qrCodeImageView != null){
+            generateAndDisplayQrCode(core.preferences.createdDefconGroupId, qrCodeImageView)
+        }
         createGroupButton?.setOnClickListener {
             lifecycleOwner?.lifecycleScope?.launch {
                 try {
@@ -47,6 +54,7 @@ class GroupPreference @JvmOverloads constructor(
                     }
                     Log.d("GroupPreference", "DEFCON Group ID created: $defconGroupId")
                     if (defconGroupId.isNotEmpty() && qrCodeImageView != null) {
+                        core.preferences.createdDefconGroupId = defconGroupId
                         generateAndDisplayQrCode(defconGroupId, qrCodeImageView)
                     } else if (qrCodeImageView == null) {
                         Log.e("GroupPreference", "QRCode ImageView is null")
