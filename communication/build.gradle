@@ -1,31 +1,29 @@
 plugins {
-    id 'com.android.library'
-    id 'org.jetbrains.kotlin.android'
-    id 'org.jetbrains.kotlin.plugin.serialization'
+    id ("com.android.library")
+    id ("org.jetbrains.kotlin.android")
+    id ("org.jetbrains.kotlin.plugin.serialization")
 }
 
 android {
     defaultConfig {
-        minSdk 30
-        compileSdk 36
+        minSdk = 30
+        compileSdk = 36
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled = false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = '17'
-    }
-    namespace 'com.marcusrunge.mydefcon.communication'
+
+    namespace = 'com.marcusrunge.mydefcon.communication'
     android.sourceSets.configureEach {
         java.srcDir("src/$name/kotlin")
     }
