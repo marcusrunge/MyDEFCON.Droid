@@ -30,7 +30,6 @@ android {
         jvmTarget = "17"
     }
 }
-
 sourceSets.configureEach {
     java.srcDir("src/$name/kotlin")
 }

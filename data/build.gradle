@@ -1,16 +1,15 @@
 plugins {
-    id 'com.android.library'
-    id 'org.jetbrains.kotlin.android'
-    id 'org.jetbrains.kotlin.plugin.serialization'
-    id 'com.google.devtools.ksp'
-    id 'com.google.gms.google-services'
+    id ("com.android.library")
+    id ("org.jetbrains.kotlin.android")
+    id ("org.jetbrains.kotlin.plugin.serialization")
+    id ("com.google.devtools.ksp")
 }
 
 android {
     defaultConfig {
-        minSdk 30
-        compileSdk 36
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        minSdk = 30
+        compileSdk = 36
+        testInstrumentationRunner  "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
         javaCompileOptions {
             annotationProcessorOptions {
@@ -24,18 +23,20 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled = false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
+
     kotlinOptions {
-        jvmTarget = '17'
+        jvmTarget = "17"
     }
-    namespace 'com.marcusrunge.mydefcon.data'
+
+    namespace = 'com.marcusrunge.mydefcon.data'
     android.sourceSets.configureEach {
         java.srcDir("src/$name/kotlin")
     }
