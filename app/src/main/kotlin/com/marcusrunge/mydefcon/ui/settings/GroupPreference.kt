@@ -20,30 +20,32 @@ import com.google.zxing.qrcode.QRCodeWriter
 import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.firebase.interfaces.Firebase
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-@AndroidEntryPoint
 class GroupPreference @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : Preference(context, attrs, defStyleAttr) {
-    @Inject
     lateinit var core: Core
-
-    @Inject
     lateinit var firebase: Firebase
+
+    fun setCore(core: Core) {
+        this.core = core
+    }
+
+    fun setFirebase(firebase: Firebase) {
+        this.firebase = firebase
+    }
 
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
         super.onBindViewHolder(holder)
         val createGroupButton = holder.findViewById(R.id.button_group_create) as? Button
         val qrCodeImageView = holder.findViewById(R.id.imageview_qrcode) as? ImageView
         val lifecycleOwner = holder.itemView.findViewTreeLifecycleOwner()
-        if(core.preferences.createdDefconGroupId.isNotEmpty() && qrCodeImageView != null){
+        if (core.preferences.createdDefconGroupId.isNotEmpty() && qrCodeImageView != null) {
             generateAndDisplayQrCode(core.preferences.createdDefconGroupId, qrCodeImageView)
         }
         createGroupButton?.setOnClickListener {
