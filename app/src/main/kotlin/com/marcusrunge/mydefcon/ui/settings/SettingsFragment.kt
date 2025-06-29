@@ -8,13 +8,26 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.preference.PreferenceFragmentCompat
 import com.marcusrunge.mydefcon.R
+import com.marcusrunge.mydefcon.core.interfaces.Core
+import com.marcusrunge.mydefcon.firebase.interfaces.Firebase
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class SettingsFragment : PreferenceFragmentCompat(),
     SharedPreferences.OnSharedPreferenceChangeListener {
+    @Inject
+    lateinit var core: Core
+
+    @Inject
+    lateinit var firebase: Firebase
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
+        val groupPreference = findPreference<GroupPreference>("group_preference")
+        groupPreference?.apply {
+            setCore(core)
+            setFirebase(firebase)
+        }
     }
 
     override fun onCreateView(

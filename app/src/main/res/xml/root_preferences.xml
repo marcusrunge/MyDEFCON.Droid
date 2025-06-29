@@ -8,7 +8,8 @@
     </PreferenceCategory>
     <PreferenceCategory app:title="@string/preferencecategory_title_group">
         <com.marcusrunge.mydefcon.ui.settings.GroupPreference
-            android:layout="@layout/group_preference"/>
+            android:layout="@layout/group_preference"
+            android:key="group_preference"/>
         <!--<com.marcusrunge.mydefcon.ui.settings.ButtonPreference
             app:key="create_button"
             app:title="@string/create_group"
