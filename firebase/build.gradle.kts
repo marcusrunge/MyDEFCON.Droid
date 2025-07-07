@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
@@ -27,15 +30,17 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "17"
-    }
 }
 
 sourceSets.configureEach {
     java.srcDir("src/$name/kotlin")
 }
-
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_17)
+        freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
+    }
+}
 dependencies {
     implementation("androidx.core:core-ktx:1.16.0")
     implementation("androidx.appcompat:appcompat:1.7.1")

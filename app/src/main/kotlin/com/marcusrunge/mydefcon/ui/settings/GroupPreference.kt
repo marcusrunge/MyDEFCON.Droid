@@ -31,15 +31,6 @@ class GroupPreference @JvmOverloads constructor(
 ) : Preference(context, attrs, defStyleAttr) {
     lateinit var core: Core
     lateinit var firebase: Firebase
-
-    fun setCore(core: Core) {
-        this.core = core
-    }
-
-    fun setFirebase(firebase: Firebase) {
-        this.firebase = firebase
-    }
-
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
         super.onBindViewHolder(holder)
         val createGroupButton = holder.findViewById(R.id.button_group_create) as? Button
