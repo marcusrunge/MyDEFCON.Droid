@@ -21,12 +21,13 @@ class SettingsFragment : PreferenceFragmentCompat(),
 
     @Inject
     lateinit var firebase: Firebase
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
         val groupPreference = findPreference<GroupPreference>("group_preference")
         groupPreference?.apply {
-            setCore(core)
-            setFirebase(firebase)
+            core = this@SettingsFragment.core
+            firebase = this@SettingsFragment.firebase
         }
     }
 
