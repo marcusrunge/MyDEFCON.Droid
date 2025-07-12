@@ -10,8 +10,6 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.set
-import androidx.lifecycle.findViewTreeLifecycleOwner
-import androidx.lifecycle.lifecycleScope
 import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
 import com.google.zxing.BarcodeFormat
@@ -20,7 +18,9 @@ import com.google.zxing.qrcode.QRCodeWriter
 import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.firebase.interfaces.Firebase
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -31,16 +31,16 @@ class GroupPreference @JvmOverloads constructor(
 ) : Preference(context, attrs, defStyleAttr) {
     lateinit var core: Core
     lateinit var firebase: Firebase
+    private val preferenceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
         super.onBindViewHolder(holder)
         val createGroupButton = holder.findViewById(R.id.button_group_create) as? Button
         val qrCodeImageView = holder.findViewById(R.id.imageview_qrcode) as? ImageView
-        val lifecycleOwner = holder.itemView.findViewTreeLifecycleOwner()
         if (core.preferences.createdDefconGroupId.isNotEmpty() && qrCodeImageView != null) {
             generateAndDisplayQrCode(core.preferences.createdDefconGroupId, qrCodeImageView)
         }
         createGroupButton?.setOnClickListener {
-            lifecycleOwner?.lifecycleScope?.launch {
+            preferenceScope.launch {
                 try {
                     val defconGroupId = withContext(Dispatchers.IO) {
                         firebase.firestore.createDefconGroup()

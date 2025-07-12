@@ -65,7 +65,7 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
         val db = FirebaseFirestore.getInstance()
         var fcmToken: String? = null
         try {
-            fcmToken = com.google.firebase.messaging.FirebaseMessaging.getInstance().token.await()
+            fcmToken = FirebaseMessaging.getInstance().token.await()
         } catch (e: Exception) {
             Log.w(TAG, "Fetching FCM registration token failed", e)
             // Handle the error appropriately, e.g., throw, return an error state, or proceed without a token
