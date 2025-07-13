@@ -35,6 +35,9 @@ class GroupPreference @JvmOverloads constructor(
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
         super.onBindViewHolder(holder)
         val createGroupButton = holder.findViewById(R.id.button_group_create) as? Button
+        val deleteGroupButton = holder.findViewById(R.id.button_group_delete) as? Button
+        val joinGroupButton = holder.findViewById(R.id.button_group_join) as? Button
+        val leaveGroupButton = holder.findViewById(R.id.button_group_leave) as? Button
         val qrCodeImageView = holder.findViewById(R.id.imageview_qrcode) as? ImageView
         if (core.preferences.createdDefconGroupId.isNotEmpty() && qrCodeImageView != null) {
             generateAndDisplayQrCode(core.preferences.createdDefconGroupId, qrCodeImageView)
@@ -65,6 +68,54 @@ class GroupPreference @JvmOverloads constructor(
                 } catch (e: Exception) {
                     // Handle exceptions from Firebase or QR code generation
                     Log.e("GroupPreference", "Error during group creation or QR generation", e)
+                    Toast.makeText(context, "Error: ${e.localizedMessage}", Toast.LENGTH_LONG)
+                        .show()
+                }
+            }
+        }
+        deleteGroupButton?.setOnClickListener {
+            preferenceScope.launch {
+                try {
+                    if (core.preferences.createdDefconGroupId.isNotEmpty() && qrCodeImageView != null) {
+                        firebase.firestore.deleteDefconGroup(core.preferences.createdDefconGroupId)
+                        core.preferences.createdDefconGroupId = ""
+                        qrCodeImageView.visibility = ImageView.GONE
+                        Toast.makeText(context, "Group deleted successfully", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                } catch (e: Exception) {
+                    // Handle exceptions from Firebase
+                    Log.e("GroupPreference", "Error during group deletion", e)
+                    Toast.makeText(context, "Error: ${e.localizedMessage}", Toast.LENGTH_LONG)
+                        .show()
+                }
+            }
+        }
+        joinGroupButton?.setOnClickListener {
+            preferenceScope.launch {
+                try {
+                    withContext(Dispatchers.IO) {
+                        firebase.firestore.joinDefconGroup(core.preferences.createdDefconGroupId, "fcmToken")
+                    }
+                    Log.d("GroupPreference", "DEFCON Group ID joined: $core.preferences.createdDefconGroupId")
+                } catch (e: Exception) {
+                    // Handle exceptions from Firebase
+                    Log.e("GroupPreference", "Error during group deletion", e)
+                    Toast.makeText(context, "Error: ${e.localizedMessage}", Toast.LENGTH_LONG)
+                        .show()
+                }
+            }
+        }
+        leaveGroupButton?.setOnClickListener {
+            preferenceScope.launch {
+                try {
+                    withContext(Dispatchers.IO) {
+                        firebase.firestore.leaveDefconGroup(core.preferences.createdDefconGroupId, "fcmToken")
+                        Log.d("GroupPreference", "DEFCON Group ID left: $core.preferences.createdDefconGroupId")
+                    }
+                } catch (e: Exception) {
+                    // Handle exceptions from Firebase
+                    Log.e("GroupPreference", "Error during group deletion", e)
                     Toast.makeText(context, "Error: ${e.localizedMessage}", Toast.LENGTH_LONG)
                         .show()
                 }
