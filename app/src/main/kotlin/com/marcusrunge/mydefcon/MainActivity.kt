@@ -94,10 +94,6 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
                 .getInstance(this)
                 .enqueue(communicationWorkRequest)
         }
-        lifecycleScope.launch {
-            val defconGroup = firebase.firestore.getDefconGroup()
-            val c =defconGroup.followers.count()
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

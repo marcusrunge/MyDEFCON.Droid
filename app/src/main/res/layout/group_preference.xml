@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="72dp"
-    android:layout_marginEnd="18dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_marginEnd="18dp">
+
     <Button
         android:id="@+id/button_group_create"
         android:layout_width="152dp"
@@ -12,10 +13,23 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
-        android:text="@string/create_group"
         android:gravity="center"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        android:text="@string/create_group"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button_group_delete"
+        android:layout_width="152dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:text="@string/delete_group"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/button_group_create" />
+
     <Button
         android:id="@+id/button_group_join"
         android:layout_width="152dp"
@@ -23,17 +37,30 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
-        android:text="@string/join_group"
         android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/button_group_create"
-        app:layout_constraintStart_toStartOf="parent"/>
+        android:text="@string/join_group"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/button_group_delete" />
+
+    <Button
+        android:id="@+id/button_group_leave"
+        android:layout_width="152dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:text="@string/leave_group"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/button_group_join" />
+
     <ImageView
         android:id="@+id/imageview_qrcode"
         android:layout_width="152dp"
         android:layout_height="152dp"
+        android:background="#DDDDDD"
         android:contentDescription="@string/group_qr_code"
         android:scaleType="fitCenter"
-        android:background="#DDDDDD"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/button_group_create"/>
+        app:layout_constraintTop_toTopOf="@id/button_group_create" />
 </androidx.constraintlayout.widget.ConstraintLayout>
