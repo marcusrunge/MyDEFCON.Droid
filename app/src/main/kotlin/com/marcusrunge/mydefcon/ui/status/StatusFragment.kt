@@ -14,7 +14,7 @@ class StatusFragment : Fragment() {
 
     private var _binding: FragmentStatusBinding? = null
     private val binding get() = _binding!!
-    private lateinit var viewModel: StatusViewModel
+    private lateinit var viewModel : StatusViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,

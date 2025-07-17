@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceFragmentCompat
 import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.core.interfaces.Core
@@ -21,13 +22,15 @@ class SettingsFragment : PreferenceFragmentCompat(),
 
     @Inject
     lateinit var firebase: Firebase
-
+    private lateinit var groupPreferenceViewModel: GroupPreferenceViewModel
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
+        groupPreferenceViewModel = ViewModelProvider(this)[GroupPreferenceViewModel::class.java]
         val groupPreference = findPreference<GroupPreference>("group_preference")
         groupPreference?.apply {
             core = this@SettingsFragment.core
             firebase = this@SettingsFragment.firebase
+            initializeViewModel(groupPreferenceViewModel, this@SettingsFragment)
         }
     }
 

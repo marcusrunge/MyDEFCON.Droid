@@ -10,6 +10,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.set
+import androidx.lifecycle.LifecycleOwner
 import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
 import com.google.zxing.BarcodeFormat
@@ -17,6 +18,7 @@ import com.google.zxing.WriterException
 import com.google.zxing.qrcode.QRCodeWriter
 import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.core.interfaces.Core
+import com.marcusrunge.mydefcon.databinding.GroupPreferenceBinding
 import com.marcusrunge.mydefcon.firebase.interfaces.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -32,8 +34,31 @@ class GroupPreference @JvmOverloads constructor(
     lateinit var core: Core
     lateinit var firebase: Firebase
     private val preferenceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+
+    private var _binding: GroupPreferenceBinding? = null // **Adjust binding type**
+    private val binding get() = _binding!!
+    private lateinit var viewModel: GroupPreferenceViewModel
+    private var lifecycleOwner: LifecycleOwner? = null // To observe ViewModel changes
+
+    // Method to set the ViewModel and LifecycleOwner from the Fragment
+    fun initializeViewModel(viewModel: GroupPreferenceViewModel, lifecycleOwner: LifecycleOwner) {
+        this.viewModel = viewModel
+        this.lifecycleOwner = lifecycleOwner // Store the lifecycle owner
+        // You might want to observe LiveData from the ViewModel here
+        // e.g., viewModel.someLiveData.observe(lifecycleOwner, Observer { ... })
+    }
+
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
         super.onBindViewHolder(holder)
+        _binding = GroupPreferenceBinding.bind(holder.itemView)
+        if (::viewModel.isInitialized && lifecycleOwner != null) {
+            binding.viewmodel = viewModel
+            binding.lifecycleOwner = lifecycleOwner // Use the passed lifecycleOwner
+            // If your ViewModel is a LifecycleObserver, you might add it like this:
+            // lifecycleOwner?.lifecycle?.addObserver(viewModel)
+        } else {
+            Log.w("GroupPreference", "ViewModel or LifecycleOwner not initialized for binding.")
+        }
         val createGroupButton = holder.findViewById(R.id.button_group_create) as? Button
         val deleteGroupButton = holder.findViewById(R.id.button_group_delete) as? Button
         val joinGroupButton = holder.findViewById(R.id.button_group_join) as? Button
