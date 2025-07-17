@@ -1,11 +1,11 @@
 package com.marcusrunge.mydefcon.utils
 
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.graphics.Shader
 import android.graphics.drawable.Drawable
 import android.view.View
 import android.webkit.WebView
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.ui.main.MainViewModel
+import androidx.core.graphics.toColorInt
 
 object BindingUtils {
     @SuppressLint("RestrictedApi")
@@ -68,7 +69,7 @@ object BindingUtils {
     @JvmStatic
     fun setEndpointUrl(view: WebView, endpointUrl: String) {
         view.loadUrl(endpointUrl)
-        view.setBackgroundColor(Color.parseColor("#B2000000"))
+        view.setBackgroundColor("#B2000000".toColorInt())
     }
 
     @BindingAdapter("setAdapter")
@@ -86,9 +87,15 @@ object BindingUtils {
 
     @BindingAdapter("setBackgroundDrawableColor")
     @JvmStatic
-    fun bindbackgroundDrawableColor(view: View, resourceId: Int?) {
+    fun bindBackgroundDrawableColor(view: View, resourceId: Int?) {
         if (resourceId != null) {
             view.background.setTint(view.context.resources.getColor(resourceId, view.context.theme))
         }
+    }
+
+    @BindingAdapter("setTextToEncode")
+    @JvmStatic
+    fun bindTextToEncode(view: ImageView, textToEncode: String) {
+        QrCodeUtils.generateAndDisplayQrCode(textToEncode, view)
     }
 }
