@@ -28,8 +28,6 @@ class SettingsFragment : PreferenceFragmentCompat(),
         groupPreferenceViewModel = ViewModelProvider(this)[GroupPreferenceViewModel::class.java]
         val groupPreference = findPreference<GroupPreference>("group_preference")
         groupPreference?.apply {
-            core = this@SettingsFragment.core
-            firebase = this@SettingsFragment.firebase
             initializeViewModel(groupPreferenceViewModel, this@SettingsFragment)
         }
     }
