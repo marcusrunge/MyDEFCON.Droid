@@ -12,6 +12,10 @@ import com.google.zxing.qrcode.QRCodeWriter
 
 object QrCodeUtils {
     fun generateAndDisplayQrCode(textToEncode: String, imageView: ImageView) {
+        if (textToEncode.isEmpty()) {
+            Log.e("QrCodeUtils", "Cannot generate QR code with empty text to encode.")
+            return
+        }
         val writer = QRCodeWriter()
         try {
             val bitMatrix = writer.encode(
