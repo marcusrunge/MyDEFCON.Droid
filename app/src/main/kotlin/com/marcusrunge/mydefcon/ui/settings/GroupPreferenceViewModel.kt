@@ -5,6 +5,8 @@ import android.os.Message
 import android.util.Log
 import androidx.databinding.Bindable
 import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.marcusrunge.mydefcon.BR
 import com.marcusrunge.mydefcon.core.interfaces.Core
@@ -25,7 +27,9 @@ class GroupPreferenceViewModel @Inject constructor(
     private var _isDeleteGroupButtonEnabled: Boolean = false
     private var _isJoinGroupButtonEnabled: Boolean = false
     private var _isLeaveGroupButtonEnabled: Boolean = false
-
+    private val _scanQrCodeEvent = MutableLiveData<Boolean>()
+    val scanQrCodeEvent: LiveData<Boolean>
+        get() = _scanQrCodeEvent
     override fun updateView(inputMessage: Message) {
         TODO("Not yet implemented")
     }
@@ -135,26 +139,42 @@ class GroupPreferenceViewModel @Inject constructor(
     }
 
     fun onJoinGroupClicked() {
-        // This might involve showing a dialog to enter a group ID.
-        // For now, let's assume the ID to join is in 'textToEncode' or from another input.
-        // You'll need a way for the user to input the group ID they want to join.
-        // Let's assume you have a separate EditText for the group ID to join,
-        // or you re-purpose `textToEncode` if that's your design.
+        _scanQrCodeEvent.value = true
+    }
 
-        // val groupIdToJoin = textToEncode // Or from another LiveData bound to an EditText
-        // if (groupIdToJoin.isNotEmpty()) {
-        //     viewModelScope.launch {
-        //         // val success = firebase.joinGroup(groupIdToJoin)
-        //         // if (success) {
-        //         //    core.preferences.joinedDefconGroupId = groupIdToJoin
-        //         //    updateButtonStates()
-        //         // } else {
-        //         //    // Handle error
-        //         // }
-        //     }
-        // } else {
-        //     // Prompt user to enter a group ID
-        // }
+    fun processQrCodeResult(groupIdToJoin: String?) {
+        _scanQrCodeEvent.value = false // Reset the event
+        if (groupIdToJoin.isNullOrEmpty()) {
+            Log.w("GroupPreferenceViewModel", "QR code result was empty or null")
+            // Optionally, show a message to the user
+            return
+        }
+
+        viewModelScope.launch {
+            var joinSuccess = false // Assume failure initially
+            try {
+                withContext(Dispatchers.IO) {
+                    // Since joinDefconGroup returns Unit, successful execution means it didn't throw.
+                    firebase.firestore.joinDefconGroup(groupIdToJoin, core.preferences.fcmRegistrationToken)
+                }
+                // If we reach here, joinDefconGroup completed without throwing an exception.
+                joinSuccess = true
+                core.preferences.joinedDefconGroupId = groupIdToJoin
+                updateButtonStates()
+                Log.d("GroupPreferenceViewModel", "Successfully joined group: $groupIdToJoin")
+
+            } catch (e: Exception) {
+                // An exception occurred during the join operation.
+                joinSuccess = false // Explicitly set to false, though already initialized so.
+                Log.e("GroupPreferenceViewModel", "Error or failure joining group: $groupIdToJoin", e)
+                // Here, you should inform the user that joining failed.
+                // For example, using a LiveData event to show a Toast/Snackbar from the Fragment:
+                // _showToastEvent.value = "Failed to join group: ${e.localizedMessage}"
+            }
+
+            // If you need to do something specific based on joinSuccess outside the try-catch
+            // for example, analytics, you can use the 'joinSuccess' variable here.
+        }
     }
 
     fun onLeaveGroupClicked() {
