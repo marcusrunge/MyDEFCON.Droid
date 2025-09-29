@@ -40,7 +40,7 @@ tasks.withType<KotlinJvmCompile>().configureEach {
     }
 }
 dependencies {
-    implementation("androidx.core:core-ktx:1.16.0")
+    implementation("androidx.core:core-ktx:1.17.0")
     implementation(project(":core"))
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.3.0")
