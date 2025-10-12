@@ -6,7 +6,6 @@ import android.content.IntentFilter
 import androidx.hilt.work.HiltWorker
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ProcessLifecycleOwner
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.marcusrunge.mydefcon.communication.interfaces.Communication
@@ -20,6 +19,7 @@ import com.marcusrunge.mydefcon.notifications.interfaces.Notifications
 import com.marcusrunge.mydefcon.receiver.CheckItemsReceiver
 import com.marcusrunge.mydefcon.receiver.DefconStatusReceiver
 import com.marcusrunge.mydefcon.ui.status.StatusFragment
+import com.marcusrunge.mydefcon.utils.LiveDataManager
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
@@ -35,7 +35,8 @@ class CommunicationWorker @AssistedInject constructor(
     private val core: Core,
     private val communication: Communication,
     private val data: Data,
-    private val notifications: Notifications
+    private val notifications: Notifications,
+    private val lifeDataManager: LiveDataManager
 ) :
     CoroutineWorker(context, parameters), OnDefconStatusReceivedListener,
     OnCheckItemsReceivedListener, com.marcusrunge.mydefcon.receiver.OnDefconStatusReceivedListener {
@@ -61,7 +62,7 @@ class CommunicationWorker @AssistedInject constructor(
         showNotification()
         receiver.setOnDefconStatusReceivedListener(this)
         val filter = IntentFilter("com.marcusrunge.mydefcon.DEFCONSTATUS_SELECTED")
-        LocalBroadcastManager.getInstance(applicationContext).registerReceiver(receiver, filter)
+        //LocalBroadcastManager.getInstance(applicationContext).registerReceiver(receiver, filter)
         return Result.success()
     }
 
@@ -128,7 +129,7 @@ class CommunicationWorker @AssistedInject constructor(
             intent.putExtra("data", status)
             intent.putExtra("source", CommunicationWorker::class.java.canonicalName)
             //Send to StatusViewModel
-            LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
+            //LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
         }
         if (items != null) if (status != null) Intent(
             applicationContext,
@@ -137,7 +138,7 @@ class CommunicationWorker @AssistedInject constructor(
             intent.action = "com.marcusrunge.mydefcon.CHECKITEMS_RECEIVED"
             intent.putExtra("data", items as Serializable)
             intent.putExtra("source", CommunicationWorker::class.java.canonicalName)
-            LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
+            //LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
         }
     }
 }
