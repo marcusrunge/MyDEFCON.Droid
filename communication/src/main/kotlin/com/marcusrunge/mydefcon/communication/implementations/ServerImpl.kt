@@ -26,6 +26,7 @@ import java.lang.ref.WeakReference
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
+import java.net.InetSocketAddress
 import java.net.ServerSocket
 import java.util.concurrent.locks.ReentrantLock
 
@@ -120,8 +121,9 @@ internal class ServerImpl(private val base: NetworkBase) : Server, OnReceived {
         withContext(Dispatchers.IO) {
             tcpServerLock.withLock(this) {
                 tcpServerJob = launch {
-                    val serverSocket = ServerSocket(11001)
+                    val serverSocket = ServerSocket()
                     serverSocket.reuseAddress = true
+                    serverSocket.bind(InetSocketAddress(11001));
                     val whileLock = ReentrantLock()
                     try {
                         while (true) {
