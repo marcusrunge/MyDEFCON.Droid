@@ -9,12 +9,12 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.viewModelScope
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.marcusrunge.mydefcon.communication.interfaces.Communication
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.receiver.DefconStatusReceiver
 import com.marcusrunge.mydefcon.receiver.OnDefconStatusReceivedListener
 import com.marcusrunge.mydefcon.ui.ObservableViewModel
+import com.marcusrunge.mydefcon.utils.LiveDataManager
 import com.marcusrunge.mydefcon.worker.CommunicationWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -22,7 +22,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StatusViewModel @Inject constructor(
-    private val app: Application, val core: Core, val communication: Communication
+    private val app: Application, val core: Core, val communication: Communication, private val lifeDataManager: LiveDataManager
 ) : ObservableViewModel(app), DefaultLifecycleObserver, OnDefconStatusReceivedListener {
     private var receiver: DefconStatusReceiver = DefconStatusReceiver()
     private lateinit var statusViewModelOwner: LifecycleOwner
@@ -52,7 +52,7 @@ class StatusViewModel @Inject constructor(
     init {
         receiver.setOnDefconStatusReceivedListener(this)
         val filter = IntentFilter("com.marcusrunge.mydefcon.DEFCONSTATUS_RECEIVED")
-        LocalBroadcastManager.getInstance(app).registerReceiver(receiver, filter)
+        //LocalBroadcastManager.getInstance(app).registerReceiver(receiver, filter)
     }
 
     override fun updateView(inputMessage: Message) {
@@ -74,7 +74,7 @@ class StatusViewModel @Inject constructor(
 
     override fun onDestroy(owner: LifecycleOwner) {
         receiver.removeOnDefconStatusReceivedListener()
-        LocalBroadcastManager.getInstance(app).unregisterReceiver(receiver)
+        //LocalBroadcastManager.getInstance(app).unregisterReceiver(receiver)
         isDefcon1ButtonChecked.removeObservers(owner)
         isDefcon2ButtonChecked.removeObservers(owner)
         isDefcon3ButtonChecked.removeObservers(owner)
@@ -109,7 +109,7 @@ class StatusViewModel @Inject constructor(
             intent.putExtra("data", status)
             intent.putExtra("source", StatusFragment::class.java.canonicalName)
             app.applicationContext?.let { ctx ->
-                LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent)
+                //LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent)
             }
         }
         viewModelScope.launch { communication.network.client.sendDefconStatus(status) }
