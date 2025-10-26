@@ -3,8 +3,13 @@ package com.marcusrunge.mydefcon.ui.checklist
 import android.app.Application
 import android.content.IntentFilter
 import android.os.Message
-import androidx.lifecycle.*
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.communication.implementations.observeForeverOnce
@@ -22,13 +27,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
 class ChecklistViewModel @Inject constructor(
-    private val app: Application, private val core: Core, private val data: Data, private val lifeDataManager: LiveDataManager
+    private val app: Application,
+    private val core: Core,
+    private val data: Data,
+    private val lifeDataManager: LiveDataManager
 ) : ObservableViewModel(app), DefaultLifecycleObserver, OnCheckItemsReceivedListener {
+    private lateinit var checklistViewModelOwner: LifecycleOwner
     private val _checkedRadioButtonId = MutableLiveData<Int>()
     private val _defcon1ItemsCount = MutableLiveData("0")
     private val _defcon2ItemsCount = MutableLiveData("0")
@@ -65,13 +74,13 @@ class ChecklistViewModel @Inject constructor(
                         R.id.radio_defcon4 -> checkItemsStatus = 4
                         R.id.radio_defcon5 -> checkItemsStatus = 5
                     }
-                    if (::checkItems.isInitialized){
+                    if (::checkItems.isInitialized) {
                         checkItems.value?.clear()
                         checkItems.removeObserver(checkItemsObserver)
-                            data.repository.checkItems.getAllMutableLive(checkItemsStatus)
-                                .getDistinct().observeForeverOnce {
-                                    checkItemsObserver.onChanged(it)
-                                }
+                        data.repository.checkItems.getAllMutableLive(checkItemsStatus)
+                            .getDistinct().observeForeverOnce {
+                                checkItemsObserver.onChanged(it)
+                            }
                     } else {
                         checkItems =
                             data.repository.checkItems.getAllMutableLive(checkItemsStatus)
@@ -210,6 +219,10 @@ class ChecklistViewModel @Inject constructor(
     private var _checkItemsRecyclerViewAdapter = MutableLiveData<CheckItemsRecyclerViewAdapter>()
     private lateinit var checkItems: LiveData<MutableList<CheckItem>>
     private lateinit var allCheckItems: LiveData<MutableList<CheckItem>>
+    override fun onCreate(owner: LifecycleOwner) {
+        super.onCreate(owner)
+        checklistViewModelOwner = owner
+    }
 
     val checkedRadioButtonId: MutableLiveData<Int> = _checkedRadioButtonId
     val checkItemsRecyclerViewAdapter: LiveData<CheckItemsRecyclerViewAdapter> =
@@ -243,7 +256,7 @@ class ChecklistViewModel @Inject constructor(
         receiver.setOnCheckItemsReceivedListener(this)
         val filter = IntentFilter("com.marcusrunge.mydefcon.CHECKITEMS_RECEIVED")
         //LocalBroadcastManager.getInstance(app).registerReceiver(receiver, filter)
-        _checkItemsRecyclerViewAdapter.value=
+        _checkItemsRecyclerViewAdapter.value =
             CheckItemsRecyclerViewAdapter({
                 viewModelScope.launch(Dispatchers.IO) {
                     it.updated = OffsetDateTime.now(ZoneOffset.UTC).toEpochSecond()
@@ -260,12 +273,14 @@ class ChecklistViewModel @Inject constructor(
                         data.repository.checkItems.getAllMutableLive().getDistinct()
                 }
             })
-        _itemTouchHelper.postValue(ItemTouchHelper(
-            SwipeToDeleteCallback(
-                app.applicationContext,
-                _checkItemsRecyclerViewAdapter.value
+        _itemTouchHelper.postValue(
+            ItemTouchHelper(
+                SwipeToDeleteCallback(
+                    app.applicationContext,
+                    _checkItemsRecyclerViewAdapter.value
+                )
             )
-        ))
+        )
     }
 
     fun onAdd() {
