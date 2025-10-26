@@ -22,9 +22,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StatusViewModel @Inject constructor(
-    private val app: Application, val core: Core, val communication: Communication, private val lifeDataManager: LiveDataManager
+    private val app: Application, val core: Core, val communication: Communication,  val lifeDataManager: LiveDataManager
 ) : ObservableViewModel(app), DefaultLifecycleObserver, OnDefconStatusReceivedListener {
-    private var receiver: DefconStatusReceiver = DefconStatusReceiver()
     private lateinit var statusViewModelOwner: LifecycleOwner
     private val isDefcon1ButtonCheckedObserver =
         Observer<Boolean> { if (it) distributeDefconStatus(1) }
@@ -48,11 +47,15 @@ class StatusViewModel @Inject constructor(
     val isDefcon3ButtonChecked = _isDefcon3ButtonChecked
     val isDefcon4ButtonChecked = _isDefcon4ButtonChecked
     val isDefcon5ButtonChecked = _isDefcon5ButtonChecked
-
+    val intentObserver = Observer<Intent> { intent ->
+        if (intent.action == "com.marcusrunge.mydefcon.DEFCONSTATUS_RECEIVED") {
+                val data= intent.getIntExtra("data", 5)
+                val source = intent.getStringExtra("source")
+            onDefconStatusReceived(data, source)
+        }
+    }
     init {
-        receiver.setOnDefconStatusReceivedListener(this)
-        val filter = IntentFilter("com.marcusrunge.mydefcon.DEFCONSTATUS_RECEIVED")
-        //LocalBroadcastManager.getInstance(app).registerReceiver(receiver, filter)
+        lifeDataManager.intent.observe(statusViewModelOwner, intentObserver )
     }
 
     override fun updateView(inputMessage: Message) {
@@ -73,8 +76,7 @@ class StatusViewModel @Inject constructor(
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
-        receiver.removeOnDefconStatusReceivedListener()
-        //LocalBroadcastManager.getInstance(app).unregisterReceiver(receiver)
+        lifeDataManager.intent.removeObservers(owner)
         isDefcon1ButtonChecked.removeObservers(owner)
         isDefcon2ButtonChecked.removeObservers(owner)
         isDefcon3ButtonChecked.removeObservers(owner)
@@ -108,9 +110,7 @@ class StatusViewModel @Inject constructor(
             intent.action = "com.marcusrunge.mydefcon.DEFCONSTATUS_SELECTED"
             intent.putExtra("data", status)
             intent.putExtra("source", StatusFragment::class.java.canonicalName)
-            app.applicationContext?.let { ctx ->
-                //LocalBroadcastManager.getInstance(ctx).sendBroadcast(intent)
-            }
+            lifeDataManager.sendIntent(intent)
         }
         viewModelScope.launch { communication.network.client.sendDefconStatus(status) }
     }
