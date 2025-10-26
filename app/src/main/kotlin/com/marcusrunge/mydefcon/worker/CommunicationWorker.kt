@@ -4,6 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import androidx.hilt.work.HiltWorker
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.work.CoroutineWorker
@@ -39,15 +42,24 @@ class CommunicationWorker @AssistedInject constructor(
     private val lifeDataManager: LiveDataManager
 ) :
     CoroutineWorker(context, parameters), OnDefconStatusReceivedListener,
-    OnCheckItemsReceivedListener, com.marcusrunge.mydefcon.receiver.OnDefconStatusReceivedListener {
+    OnCheckItemsReceivedListener, com.marcusrunge.mydefcon.receiver.OnDefconStatusReceivedListener,
+    LifecycleOwner {
 
     private var started = false
     private var udpServerJob: Job? = null
     private var tcpServerJob: Job? = null
     private var receiver: DefconStatusReceiver = DefconStatusReceiver()
     private var _workerDefconStatus: Int? = null
+    private lateinit var lifecycleRegistry: LifecycleRegistry
+    override val lifecycle: Lifecycle
+        get() = lifecycleRegistry
+
+
     override suspend fun doWork(): Result {
+        lifecycleRegistry = LifecycleRegistry(this)
+        lifecycleRegistry.currentState = Lifecycle.State.CREATED
         if (!started) {
+            lifecycleRegistry.currentState = Lifecycle.State.STARTED
             started = true
             _workerDefconStatus = core.preferences.status
             udpServerJob = CoroutineScope(Dispatchers.IO).launch {
@@ -61,8 +73,9 @@ class CommunicationWorker @AssistedInject constructor(
         }
         showNotification()
         receiver.setOnDefconStatusReceivedListener(this)
-        val filter = IntentFilter("com.marcusrunge.mydefcon.DEFCONSTATUS_SELECTED")
+        IntentFilter("com.marcusrunge.mydefcon.DEFCONSTATUS_SELECTED")
         //LocalBroadcastManager.getInstance(applicationContext).registerReceiver(receiver, filter)
+        lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
         return Result.success()
     }
 
