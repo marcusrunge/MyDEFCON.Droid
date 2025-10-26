@@ -15,6 +15,6 @@ import javax.inject.Singleton
 object LiveDataManagerModule {
     @Provides
     @Singleton
-    fun provideFirebase(@ApplicationContext context: Context?): LiveDataManager =
+    fun provideLiveDataManager(@ApplicationContext context: Context?): LiveDataManager =
         LiveDataManagerUtil.create(context)
 }
