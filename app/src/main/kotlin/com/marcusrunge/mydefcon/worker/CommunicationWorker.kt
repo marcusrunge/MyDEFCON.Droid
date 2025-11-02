@@ -42,13 +42,12 @@ class CommunicationWorker @AssistedInject constructor(
     private val lifeDataManager: LiveDataManager
 ) :
     CoroutineWorker(context, parameters), OnDefconStatusReceivedListener,
-    OnCheckItemsReceivedListener, com.marcusrunge.mydefcon.receiver.OnDefconStatusReceivedListener,
+    OnCheckItemsReceivedListener,
     LifecycleOwner {
 
     private var started = false
     private var udpServerJob: Job? = null
     private var tcpServerJob: Job? = null
-    private var receiver: DefconStatusReceiver = DefconStatusReceiver()
     private var _workerDefconStatus: Int? = null
     private lateinit var lifecycleRegistry: LifecycleRegistry
     override val lifecycle: Lifecycle
@@ -72,14 +71,21 @@ class CommunicationWorker @AssistedInject constructor(
             communication.network.client.addOnCheckItemsReceivedListener(this)
         }
         showNotification()
-        receiver.setOnDefconStatusReceivedListener(this)
         IntentFilter("com.marcusrunge.mydefcon.DEFCONSTATUS_SELECTED")
-        //LocalBroadcastManager.getInstance(applicationContext).registerReceiver(receiver, filter)
+        lifeDataManager.intent.observe(this, intentObserver)
         lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
         return Result.success()
     }
 
-    override fun onDefconStatusReceived(status: Int, source: String?) {
+    val intentObserver = Observer<Intent> { intent ->
+        if (intent.action == "com.marcusrunge.mydefcon.DEFCONSTATUS_SELECTED") {
+            val data = intent.getIntExtra("data", 5)
+            val source = intent.getStringExtra("source")
+            onDefconStatusReceived(data, source)
+        }
+    }
+
+    private fun onDefconStatusReceived(status: Int, source: String?) {
         if (source == StatusFragment::class.java.canonicalName && _workerDefconStatus != status) {
             _workerDefconStatus = status
             showNotification()
@@ -141,8 +147,7 @@ class CommunicationWorker @AssistedInject constructor(
             intent.action = "com.marcusrunge.mydefcon.DEFCONSTATUS_RECEIVED"
             intent.putExtra("data", status)
             intent.putExtra("source", CommunicationWorker::class.java.canonicalName)
-            //Send to StatusViewModel
-            //LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
+            lifeDataManager.sendIntent(intent)
         }
         if (items != null) if (status != null) Intent(
             applicationContext,
@@ -151,7 +156,7 @@ class CommunicationWorker @AssistedInject constructor(
             intent.action = "com.marcusrunge.mydefcon.CHECKITEMS_RECEIVED"
             intent.putExtra("data", items as Serializable)
             intent.putExtra("source", CommunicationWorker::class.java.canonicalName)
-            //LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
+            lifeDataManager.sendIntent(intent)
         }
     }
 }
