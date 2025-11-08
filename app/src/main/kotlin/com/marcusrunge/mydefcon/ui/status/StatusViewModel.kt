@@ -7,21 +7,16 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.viewModelScope
-import com.marcusrunge.mydefcon.communication.interfaces.Communication
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.ui.ObservableViewModel
 import com.marcusrunge.mydefcon.utils.LiveDataManager
-import com.marcusrunge.mydefcon.worker.CommunicationWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class StatusViewModel @Inject constructor(
-    private val app: Application,
+    val app: Application,
     val core: Core,
-    val communication: Communication,
     val lifeDataManager: LiveDataManager
 ) : ObservableViewModel(app), DefaultLifecycleObserver {
     private lateinit var statusViewModelOwner: LifecycleOwner
@@ -50,13 +45,12 @@ class StatusViewModel @Inject constructor(
     val intentObserver = Observer<Intent> { intent ->
         if (intent.action == "com.marcusrunge.mydefcon.DEFCONSTATUS_RECEIVED") {
             val data = intent.getIntExtra("data", 5)
-            val source = intent.getStringExtra("source")
-            onDefconStatusReceived(data, source)
+            //val source = intent.getStringExtra("source")
+            val setDefconStatusMessage = Message()
+            setDefconStatusMessage.what = UPDATE_VIEW
+            setDefconStatusMessage.obj = data
+            handler.sendMessage(setDefconStatusMessage)
         }
-    }
-
-    init {
-        lifeDataManager.intent.observe(statusViewModelOwner, intentObserver)
     }
 
     override fun updateView(inputMessage: Message) {
@@ -68,6 +62,7 @@ class StatusViewModel @Inject constructor(
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
         statusViewModelOwner = owner
+        lifeDataManager.intent.observe(statusViewModelOwner, intentObserver)
         setDefconStatusButton(core.preferences.status)
         isDefcon1ButtonChecked.observe(statusViewModelOwner, isDefcon1ButtonCheckedObserver)
         isDefcon2ButtonChecked.observe(statusViewModelOwner, isDefcon2ButtonCheckedObserver)
@@ -84,15 +79,6 @@ class StatusViewModel @Inject constructor(
         isDefcon4ButtonChecked.removeObservers(owner)
         isDefcon5ButtonChecked.removeObservers(owner)
         super.onDestroy(owner)
-    }
-
-    private fun onDefconStatusReceived(status: Int, source: String?) {
-        if (source == CommunicationWorker::class.java.canonicalName) {
-            val setDefconStatusMessage = Message()
-            setDefconStatusMessage.what = UPDATE_VIEW
-            setDefconStatusMessage.obj = status
-            handler.sendMessage(setDefconStatusMessage)
-        }
     }
 
     private fun setDefconStatusButton(status: Int) {
@@ -112,6 +98,6 @@ class StatusViewModel @Inject constructor(
         intent.putExtra("data", status)
         intent.putExtra("source", StatusFragment::class.java.canonicalName)
         lifeDataManager.sendIntent(intent)
-        viewModelScope.launch { communication.network.client.sendDefconStatus(status) }
+        //viewModelScope.launch { communication.network.client.sendDefconStatus(status) }
     }
 }

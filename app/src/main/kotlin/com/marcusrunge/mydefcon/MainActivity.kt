@@ -17,7 +17,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
@@ -25,7 +24,6 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
-import com.marcusrunge.mydefcon.communication.interfaces.Communication
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.databinding.ActivityMainBinding
 import com.marcusrunge.mydefcon.firebase.interfaces.Firebase
@@ -33,7 +31,6 @@ import com.marcusrunge.mydefcon.ui.main.MainViewModel
 import com.marcusrunge.mydefcon.utils.BitmapUtils
 import com.marcusrunge.mydefcon.worker.CommunicationWorker
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -43,8 +40,6 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     lateinit var core: Core
     @Inject
     lateinit var firebase: Firebase
-    @Inject
-    lateinit var communication: Communication
     private lateinit var navController: NavController
     private lateinit var binding: ActivityMainBinding
     private var optionsMenu: Menu? = null
@@ -111,11 +106,6 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
                     true
                 }
 
-                R.id.action_listsync -> {
-                    lifecycleScope.launch { communication.network.client.requestSyncCheckItems() }
-                    true
-                }
-
                 R.id.navigation_settings -> {
                     navController.navigate(R.id.navigation_settings)
                     true
@@ -167,17 +157,14 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     ) {
         when (destination.id) {
             R.id.navigation_checklist -> {
-                optionsMenu?.findItem(R.id.action_listsync)?.isVisible = true
                 optionsMenu?.findItem(R.id.action_statusshare)?.isVisible = false
             }
 
             R.id.navigation_status -> {
-                optionsMenu?.findItem(R.id.action_listsync)?.isVisible = false
                 optionsMenu?.findItem(R.id.action_statusshare)?.isVisible = true
             }
 
             else -> {
-                optionsMenu?.findItem(R.id.action_listsync)?.isVisible = false
                 optionsMenu?.findItem(R.id.action_statusshare)?.isVisible = false
             }
         }
