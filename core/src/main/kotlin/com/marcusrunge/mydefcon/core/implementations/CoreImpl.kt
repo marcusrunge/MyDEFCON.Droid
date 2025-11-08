@@ -1,16 +1,14 @@
 package com.marcusrunge.mydefcon.core.implementations
 
 import com.marcusrunge.mydefcon.core.bases.CoreBase
-import com.marcusrunge.mydefcon.core.interfaces.BroadcastOperations
 import com.marcusrunge.mydefcon.core.interfaces.PreferencesOperations
 
 internal class CoreImpl(
-    preferencesOperations: PreferencesOperations,
-    broadcastOperations: BroadcastOperations
+    preferencesOperations: PreferencesOperations
+
 ) :
-    CoreBase(preferencesOperations, broadcastOperations) {
+    CoreBase(preferencesOperations) {
     init {
         _preferences = PreferencesImpl.create(this)
-        _broadcast = BroadcastImpl.create(this)
     }
 }
