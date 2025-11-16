@@ -12,11 +12,11 @@ import kotlinx.coroutines.launch
 
 internal class LiveDataManagerImpl(private val coreBase: CoreBase) : LiveDataManager {
     private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
-    private val _defconStatusFlow = MutableSharedFlow<Pair<Int, String>>()
-    override val defconStatusFlow: SharedFlow<Pair<Int, String>>
+    private val _defconStatusFlow = MutableSharedFlow<Pair<Int, Class<*>>>()
+    override val defconStatusFlow: SharedFlow<Pair<Int, Class<*>>>
         get() =_defconStatusFlow.asSharedFlow()
 
-    override fun emitDefconStatus(status: Int, source: String) {
+    override fun emitDefconStatus(status: Int, source: Class<*>) {
         scope.launch {
             _defconStatusFlow.emit( Pair(status, source))
         }
@@ -25,7 +25,12 @@ internal class LiveDataManagerImpl(private val coreBase: CoreBase) : LiveDataMan
     internal companion object {
         private var liveDataManager: LiveDataManager? = null
         fun create(coreBase: CoreBase): LiveDataManager = when {
-            liveDataManager != null -> liveDataManager!!
+            liveDataManager != null ->
+            {
+                coreBase.defconStatusManager?.initialize()
+                liveDataManager!!
+            }
+
             else -> {
                 liveDataManager = LiveDataManagerImpl(coreBase)
                 liveDataManager!!

@@ -12,11 +12,11 @@ import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.core.interfaces.Core
+import com.marcusrunge.mydefcon.core.interfaces.LiveDataManager
 import com.marcusrunge.mydefcon.data.entities.CheckItem
 import com.marcusrunge.mydefcon.data.interfaces.Data
 import com.marcusrunge.mydefcon.ui.ObservableViewModel
 import com.marcusrunge.mydefcon.utils.CheckItemsRecyclerViewAdapter
-import com.marcusrunge.mydefcon.utils.LiveDataManager
 import com.marcusrunge.mydefcon.utils.SwipeToDeleteCallback
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -100,7 +100,7 @@ class ChecklistViewModel @Inject constructor(
                     val defcon3UncheckedItemsCount = it.getCount(3, false).size
                     val defcon4UncheckedItemsCount = it.getCount(4, false).size
                     val defcon5UncheckedItemsCount = it.getCount(5, false).size
-                    when (core.preferences.status) {
+                    when (core.preferences?.status) {
                         1 -> {
                             _defcon1ItemsCount.value = defcon1UncheckedItemsCount.toString()
                             _defcon2ItemsCount.value = defcon2UncheckedItemsCount.toString()
@@ -315,7 +315,7 @@ class ChecklistViewModel @Inject constructor(
 
     override fun onResume(owner: LifecycleOwner) {
         super.onResume(owner)
-        when (core.preferences.status) {
+        when (core.preferences?.status) {
             1 -> _checkedRadioButtonId.value = R.id.radio_defcon1
             2 -> _checkedRadioButtonId.value = R.id.radio_defcon2
             3 -> _checkedRadioButtonId.value = R.id.radio_defcon3
