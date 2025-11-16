@@ -30,9 +30,6 @@ class StatusViewModel @Inject constructor(
     private val _isDefcon5ButtonChecked = MutableStateFlow(false)
     val isDefcon5ButtonChecked = _isDefcon5ButtonChecked.asStateFlow()
 
-    private val _checkedButtonId = MutableStateFlow<Int?>(null)
-    val checkedButtonId = _checkedButtonId.asStateFlow()
-
     init {
         setDefconStatusButton(core.preferences?.status ?: 5)
     }
@@ -49,7 +46,6 @@ class StatusViewModel @Inject constructor(
         _isDefcon3ButtonChecked.value = status == 3
         _isDefcon4ButtonChecked.value = status == 4
         _isDefcon5ButtonChecked.value = status == 5 || status !in 1..4
-        // Consider updating _checkedButtonId here if needed by your UI
     }
 
     /**

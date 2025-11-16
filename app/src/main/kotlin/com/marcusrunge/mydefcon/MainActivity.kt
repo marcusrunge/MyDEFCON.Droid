@@ -13,23 +13,18 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.WorkRequest
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.databinding.ActivityMainBinding
 import com.marcusrunge.mydefcon.firebase.interfaces.Firebase
 import com.marcusrunge.mydefcon.ui.main.MainViewModel
 import com.marcusrunge.mydefcon.utils.BitmapUtils
-import com.marcusrunge.mydefcon.worker.CommunicationWorker
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -44,18 +39,6 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     private lateinit var binding: ActivityMainBinding
     private var optionsMenu: Menu? = null
     private val viewModel by viewModels<MainViewModel>()
-    private val communicationWorkRequest: WorkRequest =
-        OneTimeWorkRequestBuilder<CommunicationWorker>().build()
-    private val requestPermissionLauncher =
-        registerForActivityResult(
-            ActivityResultContracts.RequestPermission()
-        ) { isGranted: Boolean ->
-            if (isGranted) {
-                WorkManager
-                    .getInstance(this)
-                    .enqueue(communicationWorkRequest)
-            }
-        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,21 +56,11 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
                     this,
                     Manifest.permission.POST_NOTIFICATIONS
                 ) -> {
-                    WorkManager
-                        .getInstance(this)
-                        .enqueue(communicationWorkRequest)
                 }
-
                 else -> {
-                    requestPermissionLauncher.launch(
-                        Manifest.permission.POST_NOTIFICATIONS
-                    )
                 }
             }
         } else {
-            WorkManager
-                .getInstance(this)
-                .enqueue(communicationWorkRequest)
         }
     }
 
@@ -136,7 +109,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 
     private fun shareStatus() {
         val bitmap = BitmapUtils.createBitmapFromDrawableResource(
-            applicationContext, when (core.preferences.status) {
+            applicationContext, when (core.preferences?.status) {
                 1 -> R.drawable.ic_defcon1
                 2 -> R.drawable.ic_defcon2
                 3 -> R.drawable.ic_defcon3

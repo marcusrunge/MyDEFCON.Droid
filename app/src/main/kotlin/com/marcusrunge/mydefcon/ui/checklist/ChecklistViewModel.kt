@@ -30,8 +30,7 @@ import javax.inject.Inject
 class ChecklistViewModel @Inject constructor(
     app: Application,
     private val core: Core,
-    private val data: Data,
-    private val lifeDataManager: LiveDataManager
+    private val data: Data
 ) : ObservableViewModel(app), DefaultLifecycleObserver {
     private lateinit var checklistViewModelOwner: LifecycleOwner
     private val _checkedRadioButtonId = MutableLiveData<Int>()
