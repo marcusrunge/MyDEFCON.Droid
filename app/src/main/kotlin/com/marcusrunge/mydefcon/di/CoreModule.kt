@@ -1,6 +1,7 @@
 package com.marcusrunge.mydefcon.di
 
 import com.marcusrunge.mydefcon.core.CoreFactoryImpl
+import com.marcusrunge.mydefcon.core.interfaces.BroadcastOperations
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.core.interfaces.PreferencesOperations
 import dagger.Module
@@ -15,7 +16,8 @@ object CoreModule {
     @Provides
     @Singleton
     fun provideCore(
-        preferencesOperations: PreferencesOperations
+        preferencesOperations: PreferencesOperations,
+        broadcastOperations: BroadcastOperations
     ): Core =
-        CoreFactoryImpl.create(preferencesOperations)
+        CoreFactoryImpl.create(preferencesOperations, broadcastOperations)
 }
