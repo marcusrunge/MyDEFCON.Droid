@@ -56,8 +56,8 @@ class MyDefconWidget : AppWidgetProvider() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         views.apply {
-            views.setTextViewText(R.id.appwidget_text, core.preferences.status.toString())
-            when (core.preferences.status) {
+            views.setTextViewText(R.id.appwidget_text, core.preferences?.status.toString())
+            when (core.preferences?.status) {
                 1 -> {
                     views.setTextColor(R.id.appwidget_text, context.getColor(R.color.grey_700))
                     views.setInt(

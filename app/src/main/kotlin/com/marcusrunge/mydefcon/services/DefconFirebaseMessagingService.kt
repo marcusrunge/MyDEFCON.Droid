@@ -21,6 +21,6 @@ class DefconFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        core.preferences.fcmRegistrationToken = token
+        core.preferences?.fcmRegistrationToken = token
     }
 }

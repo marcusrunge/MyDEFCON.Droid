@@ -35,7 +35,7 @@ class MyDefconApplication : Application(), Configuration.Provider {
             val msg ="FCM Registration token: $token"
             Log.d(TAG, msg)
             Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
-            core.preferences.fcmRegistrationToken = token
+            core.preferences?.fcmRegistrationToken = token
         })
     }
 
