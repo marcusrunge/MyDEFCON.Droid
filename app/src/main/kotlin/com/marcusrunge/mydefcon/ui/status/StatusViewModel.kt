@@ -34,7 +34,7 @@ class StatusViewModel @Inject constructor(
     val checkedButtonId = _checkedButtonId.asStateFlow()
 
     init {
-        setDefconStatusButton(core.preferences.status)
+        setDefconStatusButton(core.preferences?.status ?: 5)
     }
 
     override fun updateView(inputMessage: Message) {
@@ -56,7 +56,7 @@ class StatusViewModel @Inject constructor(
      * This method should be called by the UI when the user selects a DEFCON status.
      */
     fun onDefconStatusSelected(status: Int) {
-        if (core.preferences.status == status) {
+        if (core.preferences?.status == status) {
             return // No change
         }
         setDefconStatusButton(status) // Update UI immediately
@@ -64,7 +64,7 @@ class StatusViewModel @Inject constructor(
     }
 
     private fun distributeDefconStatus(status: Int) {
-        core.preferences.status = status
-        core.liveDataManager.emitDefconStatus(status, StatusViewModel::class.java.simpleName)
+        core.preferences?.status = status
+        core.liveDataManager?.emitDefconStatus(status, StatusViewModel::class.java)
     }
 }

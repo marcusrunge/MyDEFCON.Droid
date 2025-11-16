@@ -15,6 +15,7 @@ abstract class ObservableViewModel(application: Application) : AndroidViewModel(
         const val UPDATE_VIEW: Int = 1
     }
 
+    lateinit var defconStatusButton: Int?
     private val callbacks: PropertyChangeRegistry by lazy { PropertyChangeRegistry() }
     protected val handler: Handler = object : Handler(Looper.getMainLooper()) {
         override fun handleMessage(inputMessage: Message) {

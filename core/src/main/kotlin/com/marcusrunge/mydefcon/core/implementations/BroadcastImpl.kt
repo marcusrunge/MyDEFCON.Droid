@@ -15,10 +15,11 @@ internal class BroadcastImpl(private val coreBase: CoreBase) : Broadcast {
         }
     }
 
-    override fun sendDefconBroadcast(defcon: Int) {
+    override fun sendDefconBroadcast(defcon: Int, source: Class<*>) {
         coreBase.broadcastOperations.sendBroadcast(
             "com.marcusrunge.mydefcon.DEFCON_UPDATE",
-            defcon.toString()
+            defcon.toString(),
+            source
         )
     }
 }

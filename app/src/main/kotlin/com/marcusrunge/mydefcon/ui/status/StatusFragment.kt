@@ -25,13 +25,11 @@ class StatusFragment : Fragment() {
         _binding = FragmentStatusBinding.inflate(inflater, container, false)
         binding.viewmodel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
-        lifecycle.addObserver(viewModel)
         return binding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        lifecycle.removeObserver(viewModel)
         _binding = null
     }
 }
