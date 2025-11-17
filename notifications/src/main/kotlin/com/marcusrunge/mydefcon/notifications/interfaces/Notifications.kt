@@ -12,4 +12,9 @@ interface Notifications {
      * @see PopUp
      */
     val popUp: PopUp
+
+    /**
+     * Initializes the notifications.
+     */
+    fun initialize()
 }
