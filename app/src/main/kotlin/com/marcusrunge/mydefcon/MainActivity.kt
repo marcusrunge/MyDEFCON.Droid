@@ -23,6 +23,7 @@ import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.databinding.ActivityMainBinding
 import com.marcusrunge.mydefcon.firebase.interfaces.Firebase
+import com.marcusrunge.mydefcon.notifications.interfaces.Notifications
 import com.marcusrunge.mydefcon.ui.main.MainViewModel
 import com.marcusrunge.mydefcon.utils.BitmapUtils
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,6 +36,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     lateinit var core: Core
     @Inject
     lateinit var firebase: Firebase
+
     private lateinit var navController: NavController
     private lateinit var binding: ActivityMainBinding
     private var optionsMenu: Menu? = null

@@ -9,16 +9,17 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.FirebaseApp
 import com.google.firebase.messaging.FirebaseMessaging
 import com.marcusrunge.mydefcon.core.interfaces.Core
+import com.marcusrunge.mydefcon.notifications.interfaces.Notifications
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
 @HiltAndroidApp
-class MyDefconApplication : Application(), Configuration.Provider {
+class MyDefconApplication : Application() {
     val TAG: String = "MyDefconApplication"
     @Inject
-    lateinit var workerFactory: HiltWorkerFactory
-    @Inject
     lateinit var core: Core
+    @Inject
+    lateinit var notifications: Notifications
     override fun onCreate() {
         super.onCreate()
         FirebaseApp.initializeApp(this)
@@ -37,8 +38,6 @@ class MyDefconApplication : Application(), Configuration.Provider {
             Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
             core.preferences?.fcmRegistrationToken = token
         })
+        notifications.initialize()
     }
-
-    override val workManagerConfiguration: Configuration
-        get() = Configuration.Builder().setWorkerFactory(workerFactory).build()
 }

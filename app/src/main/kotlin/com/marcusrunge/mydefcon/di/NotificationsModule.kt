@@ -1,6 +1,7 @@
 package com.marcusrunge.mydefcon.di
 
 import android.content.Context
+import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.notifications.NotificationsFactoryImpl
 import com.marcusrunge.mydefcon.notifications.interfaces.Notifications
 import dagger.Module
@@ -15,6 +16,6 @@ import javax.inject.Singleton
 object NotificationsModule {
     @Provides
     @Singleton
-    fun providePNotifications(@ApplicationContext context: Context?): Notifications =
-        NotificationsFactoryImpl.create(context)
+    fun provideNotifications(@ApplicationContext context: Context?, core: Core?): Notifications =
+        NotificationsFactoryImpl.create(context, core)
 }
