@@ -6,5 +6,5 @@ interface BroadcastOperations {
      * @param action The action
      * @param data The extra data
      */
-    fun sendBroadcast(action: String?, data: String?, cls: Class<*>?)
+    fun sendBroadcastToMyDefconWidget(action: String?, data: String?)
 }

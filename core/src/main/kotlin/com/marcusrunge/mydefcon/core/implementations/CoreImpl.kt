@@ -18,5 +18,6 @@ internal class CoreImpl(
         _defconStatusManager = DefconStatusManagerImpl.create(this)
         _liveDataManager = LiveDataManagerImpl.create(this)
         _preferences = PreferencesImpl.create(this)
+        _defconStatusManager.initialize()
     }
 }

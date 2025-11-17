@@ -25,12 +25,7 @@ internal class LiveDataManagerImpl(private val coreBase: CoreBase) : LiveDataMan
     internal companion object {
         private var liveDataManager: LiveDataManager? = null
         fun create(coreBase: CoreBase): LiveDataManager = when {
-            liveDataManager != null ->
-            {
-                coreBase.defconStatusManager?.initialize()
-                liveDataManager!!
-            }
-
+            liveDataManager != null -> liveDataManager!!
             else -> {
                 liveDataManager = LiveDataManagerImpl(coreBase)
                 liveDataManager!!
