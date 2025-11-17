@@ -5,24 +5,15 @@ import com.marcusrunge.mydefcon.core.interfaces.DefconStatusManager
 import kotlinx.coroutines.launch
 
 internal class DefconStatusManagerImpl(private val coreBase: CoreBase) : DefconStatusManager {
-    private var isInitialized: Boolean = false
-
-    init {
-        initialize()
-    }
 
     override fun initialize() {
-        if (!isInitialized) {
-            coreBase.coroutineScope?.launch {
-                coreBase.liveDataManager?.defconStatusFlow?.collect { pair ->
-                    coreBase.broadcastOperations.sendBroadcast(
-                        "com.marcusrunge.mydefcon.DEFCON_UPDATE",
-                        pair.first.toString(),
-                        pair.second
-                    )
-                }
+        coreBase.coroutineScope?.launch {
+            coreBase.liveDataManager?.defconStatusFlow?.collect { pair ->
+                coreBase.broadCast?.sendDefconBroadcast(
+                    pair.first,
+                    pair.second
+                )
             }
-            isInitialized = true
         }
     }
 
