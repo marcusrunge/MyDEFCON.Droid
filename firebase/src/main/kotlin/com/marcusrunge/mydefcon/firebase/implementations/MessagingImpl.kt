@@ -4,6 +4,10 @@ import com.marcusrunge.mydefcon.firebase.bases.FirebaseBase
 import com.marcusrunge.mydefcon.firebase.interfaces.Messaging
 
 internal class MessagingImpl(private val base: FirebaseBase) : Messaging {
+    override fun sendDefconStatusToFollower(status: Int, fcmToken: String) {
+
+    }
+
     internal companion object {
         private var instance: Messaging? = null
         fun create(base: FirebaseBase): Messaging = when {
