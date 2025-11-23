@@ -155,7 +155,7 @@ class GroupPreferenceViewModel @Inject constructor(
             try {
                 withContext(Dispatchers.IO) {
                     // Since joinDefconGroup returns Unit, successful execution means it didn't throw.
-                    firebase.firestore.joinDefconGroup(groupIdToJoin, core.preferences!!.fcmRegistrationToken)
+                    //firebase.firestore.joinDefconGroup(groupIdToJoin, core.preferences!!.fcmRegistrationToken)
                 }
                 // If we reach here, joinDefconGroup completed without throwing an exception.
                 joinSuccess = true
@@ -181,10 +181,10 @@ class GroupPreferenceViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 withContext(Dispatchers.IO) {
-                    firebase.firestore.leaveDefconGroup(
-                        core.preferences!!.createdDefconGroupId,
-                        core.preferences!!.fcmRegistrationToken
-                    )
+                    //firebase.firestore.leaveDefconGroup(
+                        //core.preferences!!.createdDefconGroupId,
+                        //core.preferences!!.fcmRegistrationToken
+                    //)
                     core.preferences!!.joinedDefconGroupId = ""
                     updateButtonStates()
                     Log.d(

@@ -34,9 +34,6 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedListener {
     @Inject
     lateinit var core: Core
-    @Inject
-    lateinit var firebase: Firebase
-
     private lateinit var navController: NavController
     private lateinit var binding: ActivityMainBinding
     private var optionsMenu: Menu? = null

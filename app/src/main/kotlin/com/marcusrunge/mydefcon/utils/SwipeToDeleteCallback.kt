@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.marcusrunge.mydefcon.R
+import androidx.core.graphics.drawable.toDrawable
 
 
 class SwipeToDeleteCallback(
@@ -36,11 +37,11 @@ class SwipeToDeleteCallback(
     init {
         icon = context?.let { ContextCompat.getDrawable(it, R.drawable.ic_delete_outline) }
         delete = context?.getString(R.string.delete)
-        background = ColorDrawable(context!!.getColor(R.color.red_A700_O35))
+        background = context!!.getColor(R.color.red_A700_O35).toDrawable()
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        val position = viewHolder.adapterPosition
+        val position = viewHolder.bindingAdapterPosition
         checkItemsRecyclerViewAdapter?.deleteItem(position)
     }
 

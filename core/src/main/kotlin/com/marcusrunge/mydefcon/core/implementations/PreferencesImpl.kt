@@ -10,11 +10,6 @@ internal class PreferencesImpl(private val coreBase: CoreBase) : Preferences {
         set(value) {
             coreBase.preferencesOperations.setInt("status", value)
         }
-    override var fcmRegistrationToken: String
-        get() = coreBase.preferencesOperations.getString("fcmRegistrationToken")
-        set(value) {
-            coreBase.preferencesOperations.setString("fcmRegistrationToken", value)
-        }
 
     override var createdDefconGroupId: String
         get() = coreBase.preferencesOperations.getString("createdDefconGroupId")

@@ -7,11 +7,6 @@ interface Preferences {
     var status: Int
 
     /**
-     * Gets or sets the FCM registration token.
-     */
-    var fcmRegistrationToken: String
-
-    /**
      * Gets or sets the created defcon group id.
      */
     var createdDefconGroupId: String
