@@ -8,10 +8,10 @@ interface Firebase {
     val firestore: Firestore
 
     /**
-     * Gets the messaging instance.
-     * @see Messaging
+     * Gets the realtime instance.
+     * @see Realtime
      */
-    val messaging: Messaging
+    val realtime: Realtime
 
     /**
      * Test connection to Firestore
