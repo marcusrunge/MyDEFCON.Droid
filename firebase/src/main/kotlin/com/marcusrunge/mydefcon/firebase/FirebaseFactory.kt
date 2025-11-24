@@ -10,16 +10,16 @@ interface FirebaseFactory {
      * @see Firebase
      * @param context The application context
      */
-    fun create(context: Context?): Firebase
+    fun create(context: Context?, core: Core?): Firebase
 }
 
 class FirebaseFactoryImpl {
     companion object : FirebaseFactory {
         private var instance: Firebase? = null
-        override fun create(context: Context?): Firebase = when {
+        override fun create(context: Context?, core: Core?): Firebase = when {
             instance != null -> instance!!
             else -> {
-                instance = FirebaseImpl(context)
+                instance = FirebaseImpl(context, core)
                 instance!!
             }
         }

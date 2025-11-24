@@ -3,16 +3,17 @@ package com.marcusrunge.mydefcon.firebase.implementations
 import android.content.Context
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
+import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.firebase.bases.FirebaseBase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 
-internal class FirebaseImpl(context: Context?): FirebaseBase(context) {
+internal class FirebaseImpl(context: Context?, core: Core?): FirebaseBase(context, core) {
     init {
         _firestore = FirestoreImpl.create(this)
-        _messaging = MessagingImpl.create(this)
+        _realtime = RealtimeImpl.create(this)
     }
 
     internal companion object {
@@ -20,7 +21,7 @@ internal class FirebaseImpl(context: Context?): FirebaseBase(context) {
         fun create(base: FirebaseBase): com.marcusrunge.mydefcon.firebase.interfaces.Firebase = when {
             instance != null -> instance!!
             else -> {
-                instance = FirebaseImpl(base.context)
+                instance = FirebaseImpl(base.context, base.core)
                 instance!!
             }
         }
