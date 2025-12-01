@@ -1,6 +1,7 @@
 package com.marcusrunge.mydefcon.firebase
 
 import android.content.Context
+import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.firebase.implementations.FirebaseImpl
 import com.marcusrunge.mydefcon.firebase.interfaces.Firebase
 
