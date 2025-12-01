@@ -3,6 +3,7 @@ package com.marcusrunge.mydefcon.firebase.implementations
 import android.util.Log
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.installations.FirebaseInstallations
 import com.marcusrunge.mydefcon.firebase.bases.FirebaseBase
 import com.marcusrunge.mydefcon.firebase.documents.DefconGroup
 import com.marcusrunge.mydefcon.firebase.documents.Follower
@@ -79,16 +80,15 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
 
     override suspend fun createDefconGroup(): String = withContext(Dispatchers.IO) {
         val db = FirebaseFirestore.getInstance()
-
+        var installationId: String? = null
         try {
-
+            installationId = FirebaseInstallations.getInstance().id.await()
         } catch (e: Exception) {
         }
 
         val defconGroupData = hashMapOf(
-            "Leader" to "fcmToken", // Set Leader to the fetched FCM token
+            "Leader" to installationId, // Set Leader to the fetched FCM token
             "TimeStamp" to Timestamp.now()
-            // Add other fields of DefconGroup here if necessary
         )
 
         try {
@@ -99,7 +99,7 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
             return@withContext documentReference.id
         } catch (e: Exception) {
             Log.w(tag, "Error creating DefconGroup document", e)
-            throw e // Or handle the error as appropriate for your application
+            throw e
         }
     }
 
