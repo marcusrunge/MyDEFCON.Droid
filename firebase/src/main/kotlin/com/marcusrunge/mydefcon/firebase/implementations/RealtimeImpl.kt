@@ -27,8 +27,8 @@ internal class RealtimeImpl(private val base: FirebaseBase) : Realtime, ValueEve
         base.core?.coroutineScope?.launch {
             base.core.liveDataManager?.defconStatusFlow?.collect {
                 val groupId = base.core.preferences?.createdDefconGroupId
-                if (!groupId.isNullOrEmpty() && it.second != this.javaClass) {
-                    reference.child(groupId).setValue(it.second)
+                if (!groupId.isNullOrEmpty() && it.second != RealtimeImpl::class.java) {
+                    reference.child(groupId).setValue(it.first)
                 }
             }
         }
