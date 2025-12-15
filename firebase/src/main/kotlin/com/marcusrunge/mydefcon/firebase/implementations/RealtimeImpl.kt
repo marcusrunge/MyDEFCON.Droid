@@ -13,10 +13,17 @@ import kotlinx.coroutines.launch
 
 internal class RealtimeImpl(private val base: FirebaseBase) : Realtime, ValueEventListener {
     private val tag: String = "RealtimeImpl"
-    val database = Firebase.database
+    val database = Firebase.database("https://mydefcon-d37fa-default-rtdb.europe-west1.firebasedatabase.app")
     var reference: DatabaseReference = database.reference
     override fun onDataChange(snapshot: DataSnapshot) {
-        base.core?.liveDataManager?.emitDefconStatus(snapshot.getValue<Int>()!!, this.javaClass)
+        val createdGroupId = base.core?.preferences?.createdDefconGroupId
+        val joinedGroupId = base.core?.preferences?.joinedDefconGroupId
+        val groupId = if (!createdGroupId.isNullOrEmpty()) createdGroupId else joinedGroupId
+        if (!groupId.isNullOrEmpty() && snapshot.hasChild(groupId)) {
+            snapshot.child(groupId).getValue<Int>()?.let {
+                base.core?.liveDataManager?.emitDefconStatus(it, this.javaClass)
+            }
+        }
     }
 
     override fun onCancelled(error: DatabaseError) {
@@ -26,9 +33,11 @@ internal class RealtimeImpl(private val base: FirebaseBase) : Realtime, ValueEve
         reference.addValueEventListener(this)
         base.core?.coroutineScope?.launch {
             base.core.liveDataManager?.defconStatusFlow?.collect {
-                val groupId = base.core.preferences?.createdDefconGroupId
+                val createdGroupId = base.core.preferences?.createdDefconGroupId
+                val joinedGroupId = base.core.preferences?.joinedDefconGroupId
+                val groupId = if (!createdGroupId.isNullOrEmpty()) createdGroupId else joinedGroupId
                 if (!groupId.isNullOrEmpty() && it.second != RealtimeImpl::class.java) {
-                    reference.child(groupId).setValue(it.first)
+                    database.getReference(groupId).setValue(it.first)
                 }
             }
         }
