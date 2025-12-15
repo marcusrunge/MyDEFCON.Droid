@@ -2,11 +2,13 @@ package com.marcusrunge.mydefcon.ui.status
 
 import android.app.Application
 import android.os.Message
+import androidx.lifecycle.viewModelScope
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.ui.ObservableViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,6 +34,12 @@ class StatusViewModel @Inject constructor(
 
     init {
         setDefconStatusButton(core.preferences?.status ?: 5)
+        viewModelScope.launch {
+            core.liveDataManager?.defconStatusFlow?.collect {
+                if(it.second!= StatusViewModel::class.java)
+                    setDefconStatusButton(it.first)
+            }
+        }
     }
 
     override fun updateView(inputMessage: Message) {
