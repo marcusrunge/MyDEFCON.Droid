@@ -135,11 +135,11 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
         }
     }
 
-    override suspend fun joinDefconGroup(documentId: String, fcmToken: String) {
+    override suspend fun joinDefconGroup(documentId: String, installationId: String) {
         withContext(Dispatchers.IO) {
             val db = FirebaseFirestore.getInstance()
             val followerData = hashMapOf(
-                "Token" to fcmToken,
+                "Token" to installationId,
                 "TimeStamp" to Timestamp.now()
             )
             try {
@@ -147,7 +147,7 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
                     .collection("Followers")
                     .add(followerData) // Firestore will auto-generate an ID for the follower
                     .await()
-                Log.d(tag, "Follower with token $fcmToken added to DefconGroup ID: $documentId")
+                Log.d(tag, "Follower with token $installationId added to DefconGroup ID: $documentId")
             } catch (e: Exception) {
                 Log.w(tag, "Error adding follower to DefconGroup ID: $documentId", e)
                 throw e
@@ -155,7 +155,7 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
         }
     }
 
-    override suspend fun leaveDefconGroup(documentId: String, fcmToken: String) {
+    override suspend fun leaveDefconGroup(documentId: String, installationId: String) {
         withContext(Dispatchers.IO) {
             val db = FirebaseFirestore.getInstance()
             try {
@@ -164,12 +164,12 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
 
                 // Query for the follower document with the matching FCM token
                 val querySnapshot =
-                    followersCollection.whereEqualTo("Token", fcmToken).get().await()
+                    followersCollection.whereEqualTo("Token", installationId).get().await()
 
                 if (querySnapshot.isEmpty) {
                     Log.d(
                         tag,
-                        "No follower found with token $fcmToken in DefconGroup ID: $documentId to remove."
+                        "No follower found with token $installationId in DefconGroup ID: $documentId to remove."
                     )
                     return@withContext // Or throw an exception if this case is an error
                 }
@@ -180,13 +180,28 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
                     batch.delete(document.reference)
                 }
                 batch.commit().await()
-                Log.d(tag, "Follower with token $fcmToken removed from DefconGroup ID: $documentId")
+                Log.d(tag, "Follower with token $installationId removed from DefconGroup ID: $documentId")
 
             } catch (e: Exception) {
                 Log.w(tag, "Error removing follower from DefconGroup ID: $documentId", e)
                 throw e
             }
         }
+    }
+
+    override suspend fun checkIfDefconGroupExists(documentId: String): Boolean {
+        withContext(Dispatchers.IO) {
+            val db = FirebaseFirestore.getInstance()
+            try {
+                val documentSnapshot = db.collection("DefconGroup").document(documentId).get().await()
+                return@withContext documentSnapshot.exists()
+            }
+            catch (e: Exception) {
+                Log.w(tag, "Error checking if DefconGroup ID: $documentId exists", e)
+                throw e
+            }
+        }
+        return false
     }
 
     internal companion object {
