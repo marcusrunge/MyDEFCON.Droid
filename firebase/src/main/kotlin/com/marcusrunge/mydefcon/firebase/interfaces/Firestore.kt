@@ -9,4 +9,8 @@ interface Firestore {
     suspend fun joinDefconGroup(documentId: String, installationId: String)
     suspend fun leaveDefconGroup(documentId: String, installationId: String)
     suspend fun checkIfDefconGroupExists(documentId: String): Boolean
+    suspend fun checkIfFollowerInDefconGroupExists(
+        documentId: String,
+        installationId: String
+    ): Boolean
 }
