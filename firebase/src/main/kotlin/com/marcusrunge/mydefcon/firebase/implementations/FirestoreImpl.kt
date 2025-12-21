@@ -147,7 +147,10 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
                     .collection("Followers")
                     .add(followerData) // Firestore will auto-generate an ID for the follower
                     .await()
-                Log.d(tag, "Follower with token $installationId added to DefconGroup ID: $documentId")
+                Log.d(
+                    tag,
+                    "Follower with token $installationId added to DefconGroup ID: $documentId"
+                )
             } catch (e: Exception) {
                 Log.w(tag, "Error adding follower to DefconGroup ID: $documentId", e)
                 throw e
@@ -180,7 +183,10 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
                     batch.delete(document.reference)
                 }
                 batch.commit().await()
-                Log.d(tag, "Follower with token $installationId removed from DefconGroup ID: $documentId")
+                Log.d(
+                    tag,
+                    "Follower with token $installationId removed from DefconGroup ID: $documentId"
+                )
 
             } catch (e: Exception) {
                 Log.w(tag, "Error removing follower from DefconGroup ID: $documentId", e)
@@ -193,10 +199,30 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
         withContext(Dispatchers.IO) {
             val db = FirebaseFirestore.getInstance()
             try {
-                val documentSnapshot = db.collection("DefconGroup").document(documentId).get().await()
+                val documentSnapshot =
+                    db.collection("DefconGroup").document(documentId).get().await()
                 return@withContext documentSnapshot.exists()
+            } catch (e: Exception) {
+                Log.w(tag, "Error checking if DefconGroup ID: $documentId exists", e)
+                throw e
             }
-            catch (e: Exception) {
+        }
+        return false
+    }
+
+    override suspend fun checkIfFollowerInDefconGroupExists(
+        documentId: String,
+        installationId: String
+    ): Boolean {
+        withContext(Dispatchers.IO) {
+            val db = FirebaseFirestore.getInstance()
+            try {
+                val documentSnapshot =
+                    db.collection("DefconGroup").document(documentId).get().await()
+                val querySnapshot = documentSnapshot.reference.collection("Followers")
+                    .whereEqualTo("installationId", installationId).get().await()
+                return@withContext !querySnapshot.isEmpty
+            } catch (e: Exception) {
                 Log.w(tag, "Error checking if DefconGroup ID: $documentId exists", e)
                 throw e
             }
