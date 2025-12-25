@@ -1,6 +1,6 @@
 # Add project specific ProGuard rules here.
 # You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
+# proguardFiles setting in build.gradle.kts.
 #
 # For more details, see
 #   http://developer.android.com/guide/developing/tools/proguard.html
@@ -12,10 +12,31 @@
 #   public *;
 #}
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Preserve line number information for debugging stack traces.
+-keepattributes SourceFile,LineNumberTable
 
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Hilt and Dagger
+-keep @dagger.hilt.android.HiltAndroidApp class * { *; }
+-keep class * extends androidx.work.ListenableWorker
+-keepclassmembers class * extends androidx.work.ListenableWorker {
+    public <init>(android.content.Context, androidx.work.WorkerParameters);
+}
+
+# Kotlin
+-keepattributes Signature
+-keepattributes InnerClasses
+-keepattributes EnclosingMethod
+-keepattributes KotlinMetaData
+-keepclassmembers,allowshrinking class **$WhenMappings { <fields>; }
+-keepclassmembers class * {
+    @kotlin.jvm.JvmField <fields>;
+    @kotlin.jvm.JvmStatic <methods>;
+}
+-keepclassmembers class kotlin.coroutines.Continuation {
+    <init>(...);
+    void resumeWith(java.lang.Object);
+}

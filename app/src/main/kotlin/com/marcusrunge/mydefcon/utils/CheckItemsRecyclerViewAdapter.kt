@@ -8,8 +8,8 @@ import android.widget.EditText
 import androidx.core.widget.doAfterTextChanged
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import androidx.databinding.library.baseAdapters.BR
 import androidx.recyclerview.widget.RecyclerView
+import com.marcusrunge.mydefcon.BR
 import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.data.entities.CheckItem
 

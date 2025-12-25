@@ -2,23 +2,26 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
-    id ("java-library")
-    id ("org.jetbrains.kotlin.jvm")
+    id("java-library")
+    id("org.jetbrains.kotlin.jvm")
 }
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
 }
-tasks.withType(KotlinJvmCompile).configureEach {
+
+tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_17)
         freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
     }
 }
+
 sourceSets.configureEach {
     java.srcDir("src/$name/kotlin")
 }
+
 dependencies {
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2"
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
 }
