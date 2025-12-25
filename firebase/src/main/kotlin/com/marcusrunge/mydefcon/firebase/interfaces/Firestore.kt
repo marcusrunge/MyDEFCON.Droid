@@ -1,6 +1,7 @@
 package com.marcusrunge.mydefcon.firebase.interfaces
 
 import com.marcusrunge.mydefcon.firebase.documents.DefconGroup
+import com.marcusrunge.mydefcon.firebase.documents.Follower
 
 interface Firestore {
     suspend fun getDefconGroup(documentId: String): DefconGroup
@@ -13,4 +14,5 @@ interface Firestore {
         documentId: String,
         installationId: String
     ): Boolean
+    suspend fun getDefconGroupFollowers(documentId: String): List<Follower>
 }
