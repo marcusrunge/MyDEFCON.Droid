@@ -1,21 +1,11 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
+# Firebase Realtime Database
+# This is necessary because the Realtime Database uses reflection to work with your model objects.
+-keepclassmembers class com.google.firebase.database.** { *; }
+
+# Cloud Firestore & Realtime Database Model Classes
+# If you use custom model classes with Firestore or Realtime Database, you need to
+# prevent them from being obfuscated or removed. You can do this by adding the
+# @Keep annotation to your model classes, or by adding keep rules here.
 #
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
-
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
-
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
-
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# For example:
+# -keep class com.yourpackage.YourModelClass { *; }
