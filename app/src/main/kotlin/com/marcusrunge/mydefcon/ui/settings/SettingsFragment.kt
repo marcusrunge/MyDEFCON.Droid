@@ -23,31 +23,41 @@ class SettingsFragment : PreferenceFragmentCompat(),
     SharedPreferences.OnSharedPreferenceChangeListener {
     @Inject
     lateinit var core: Core
-
     @Inject
     lateinit var firebase: Firebase
     private lateinit var groupPreferenceViewModel: GroupPreferenceViewModel
-
+    private lateinit var followersPreferenceViewModel: FollowersPreferenceViewModel
     private lateinit var qrCodeScannerLauncher: ActivityResultLauncher<ScanOptions>
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
         groupPreferenceViewModel = ViewModelProvider(this)[GroupPreferenceViewModel::class.java]
+        followersPreferenceViewModel =
+            ViewModelProvider(this)[FollowersPreferenceViewModel::class.java]
         qrCodeScannerLauncher = registerForActivityResult(ScanContract()) { scanResult ->
             if (scanResult.contents == null) {
-                Toast.makeText(requireContext(),
-                    getString(R.string.scan_cancelled), Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.scan_cancelled), Toast.LENGTH_LONG
+                ).show()
                 groupPreferenceViewModel.processQrCodeResult(null)
             } else {
                 val scannedGroupId = scanResult.contents
-                Toast.makeText(requireContext(),
-                    getString(R.string.scanned, scannedGroupId), Toast.LENGTH_LONG).show() // Optional: for debugging
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.scanned, scannedGroupId), Toast.LENGTH_LONG
+                ).show() // Optional: for debugging
                 groupPreferenceViewModel.processQrCodeResult(scannedGroupId)
             }
         }
         val groupPreference = findPreference<GroupPreference>("group_preference")
+        val followersPreference = findPreference<FollowersPreference>("followers_preference")
+
         groupPreference?.apply {
             initializeViewModel(groupPreferenceViewModel, this@SettingsFragment)
+        }
+        followersPreference?.apply {
+            initializeViewModel(followersPreferenceViewModel, this@SettingsFragment)
         }
     }
 
