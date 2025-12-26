@@ -15,7 +15,6 @@ import com.marcusrunge.mydefcon.firebase.interfaces.Firebase
 import com.marcusrunge.mydefcon.ui.ObservableViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
