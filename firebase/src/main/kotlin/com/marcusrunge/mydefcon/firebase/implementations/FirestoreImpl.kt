@@ -54,9 +54,9 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
                             defconGroup.followers.add(
                                 Follower(
                                     followerDocument.id,
-                                    followerDocument.getString("InstallationId").toString(),
-                                    followerDocument.getTimestamp("TimeStamp")?.toDate()?.time
-                                        ?: 0L // Default to 0 or handle
+                                    installationId = followerDocument.getString("InstallationId").toString(),
+                                    isActive = followerDocument.getBoolean("IsActive")?: false,
+                                    timestamp = followerDocument.getTimestamp("TimeStamp")?.toDate()?.time ?: 0L
                                 )
                             )
                         } else {
@@ -133,6 +133,7 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
             val db = FirebaseFirestore.getInstance()
             val followerData = hashMapOf(
                 "InstallationId" to installationId,
+                "IsActive" to true,
                 "TimeStamp" to Timestamp.now()
             )
             try {
@@ -238,9 +239,9 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
                             followers.add(
                                 Follower(
                                     followerDocument.id,
-                                    followerDocument.getString("InstallationId").toString(),
-                                    followerDocument.getTimestamp("TimeStamp")?.toDate()?.time
-                                        ?: 0L
+                                    installationId = followerDocument.getString("InstallationId").toString(),
+                                    isActive = followerDocument.getBoolean("IsActive") ?: false,
+                                    timestamp = followerDocument.getTimestamp("TimeStamp")?.toDate()?.time ?: 0L
                                 )
                             )
                         } else {
@@ -255,6 +256,48 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
                 throw e
             }
         }
+
+    override suspend fun updateFollowerStatus(
+        documentId: String,
+        installationId: String,
+        isActive: Boolean
+    ) {
+        withContext(Dispatchers.IO) {
+            val db = FirebaseFirestore.getInstance()
+            try {
+                val followersCollection = db.collection("DefconGroup").document(documentId)
+                    .collection("Followers")
+
+                val querySnapshot =
+                    followersCollection.whereEqualTo("InstallationId", installationId).get().await()
+
+                if (querySnapshot.isEmpty) {
+                    Log.d(
+                        tag,
+                        "No follower found with installation ID $installationId in DefconGroup ID: $documentId to update."
+                    )
+                    return@withContext
+                }
+                val data = mapOf(
+                    "IsActive" to isActive,
+                    "TimeStamp" to Timestamp.now()
+                )
+                val batch = db.batch()
+                for (document in querySnapshot.documents) {
+                    batch.update(document.reference, data)
+                }
+                batch.commit().await()
+                Log.d(
+                    tag,
+                    "Follower status updated for installation ID $installationId in DefconGroup ID: $documentId"
+                )
+
+            } catch (e: Exception) {
+                Log.w(tag, "Error updating follower status in DefconGroup ID: $documentId", e)
+                throw e
+            }
+        }
+    }
 
     internal companion object {
         private var instance: Firestore? = null

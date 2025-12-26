@@ -8,13 +8,16 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.installations.FirebaseInstallations
 import com.marcusrunge.mydefcon.BR
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.firebase.interfaces.Firebase
 import com.marcusrunge.mydefcon.ui.ObservableViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -154,26 +157,17 @@ class GroupPreferenceViewModel @Inject constructor(
             var joinSuccess = false // Assume failure initially
             try {
                 withContext(Dispatchers.IO) {
-                    // Since joinDefconGroup returns Unit, successful execution means it didn't throw.
-                    //firebase.firestore.joinDefconGroup(groupIdToJoin, core.preferences!!.fcmRegistrationToken)
+                    firebase.firestore.joinDefconGroup(groupIdToJoin,FirebaseInstallations.getInstance().id.await())
                 }
-                // If we reach here, joinDefconGroup completed without throwing an exception.
                 joinSuccess = true
                 core.preferences!!.joinedDefconGroupId = groupIdToJoin
                 updateButtonStates()
                 Log.d("GroupPreferenceViewModel", "Successfully joined group: $groupIdToJoin")
 
             } catch (e: Exception) {
-                // An exception occurred during the join operation.
-                joinSuccess = false // Explicitly set to false, though already initialized so.
+                joinSuccess = false
                 Log.e("GroupPreferenceViewModel", "Error or failure joining group: $groupIdToJoin", e)
-                // Here, you should inform the user that joining failed.
-                // For example, using a LiveData event to show a Toast/Snackbar from the Fragment:
-                // _showToastEvent.value = "Failed to join group: ${e.localizedMessage}"
             }
-
-            // If you need to do something specific based on joinSuccess outside the try-catch
-            // for example, analytics, you can use the 'joinSuccess' variable here.
         }
     }
 
@@ -181,10 +175,6 @@ class GroupPreferenceViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 withContext(Dispatchers.IO) {
-                    //firebase.firestore.leaveDefconGroup(
-                        //core.preferences!!.createdDefconGroupId,
-                        //core.preferences!!.fcmRegistrationToken
-                    //)
                     core.preferences!!.joinedDefconGroupId = ""
                     updateButtonStates()
                     Log.d(
@@ -193,7 +183,6 @@ class GroupPreferenceViewModel @Inject constructor(
                     )
                 }
             } catch (e: Exception) {
-                // Handle exceptions from Firebase
                 Log.e("GroupPreference", "Error during group deletion", e)
             }
         }
