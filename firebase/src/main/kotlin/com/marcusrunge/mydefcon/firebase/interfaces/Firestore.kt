@@ -15,4 +15,5 @@ interface Firestore {
         installationId: String
     ): Boolean
     suspend fun getDefconGroupFollowers(documentId: String): List<Follower>
+    suspend fun updateFollowerStatus(documentId: String, installationId: String, isActive: Boolean)
 }
