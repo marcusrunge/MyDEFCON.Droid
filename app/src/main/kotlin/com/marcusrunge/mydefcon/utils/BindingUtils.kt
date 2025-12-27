@@ -3,11 +3,14 @@ package com.marcusrunge.mydefcon.utils
 import android.annotation.SuppressLint
 import android.graphics.Shader
 import android.graphics.drawable.Drawable
+import android.text.format.DateFormat
 import android.view.View
 import android.webkit.WebView
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.graphics.toColorInt
 import androidx.databinding.BindingAdapter
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -19,7 +22,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.ui.main.MainViewModel
-import androidx.core.graphics.toColorInt
+import java.util.Date
 
 object BindingUtils {
     @SuppressLint("RestrictedApi")
@@ -97,5 +100,11 @@ object BindingUtils {
     @JvmStatic
     fun bindTextToEncode(view: ImageView, textToEncode: String) {
         QrCodeUtils.generateAndDisplayQrCode(textToEncode, view)
+    }
+
+    @BindingAdapter("setTimeStamp")
+    @JvmStatic
+    fun bindTimeStamp(view: TextView, timeStamp: Long) {
+        view.text = DateFormat.getDateFormat(view.context).format(Date(timeStamp * 1000))
     }
 }

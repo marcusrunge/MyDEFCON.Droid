@@ -65,7 +65,7 @@ class SwipeToDeleteCallback(
                 itemView.right.toFloat(),
                 itemView.bottom.toFloat()
             )
-            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, false)
             return
         }
 
@@ -134,6 +134,6 @@ class SwipeToDeleteCallback(
             top,
             right,
             bottom,
-            Paint().also { it.setXfermode(PorterDuffXfermode(PorterDuff.Mode.CLEAR)) })
+            Paint().also { it.xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR) })
     }
 }
