@@ -17,6 +17,7 @@
             android:id="@+id/installationId"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:text="@{follower.installationId}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -24,6 +25,7 @@
             android:id="@+id/timeStamp"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            app:setTimeStamp="@{follower.timestamp}"
             app:layout_constraintStart_toEndOf="@+id/installationId"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -31,6 +33,7 @@
             android:id="@+id/isActive"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:checked="@{follower.isActive}"
             app:layout_constraintStart_toEndOf="@+id/timeStamp"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
