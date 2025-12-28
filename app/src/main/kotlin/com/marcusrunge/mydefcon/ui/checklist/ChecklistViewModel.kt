@@ -12,12 +12,11 @@ import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.core.interfaces.Core
-import com.marcusrunge.mydefcon.core.interfaces.LiveDataManager
 import com.marcusrunge.mydefcon.data.entities.CheckItem
 import com.marcusrunge.mydefcon.data.interfaces.Data
 import com.marcusrunge.mydefcon.ui.ObservableViewModel
 import com.marcusrunge.mydefcon.utils.CheckItemsRecyclerViewAdapter
-import com.marcusrunge.mydefcon.utils.SwipeToDeleteCallback
+import com.marcusrunge.mydefcon.utils.CheckItemsSwipeToDeleteCallback
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -264,7 +263,7 @@ class ChecklistViewModel @Inject constructor(
             })
         _itemTouchHelper.postValue(
             ItemTouchHelper(
-                SwipeToDeleteCallback(
+                CheckItemsSwipeToDeleteCallback(
                     app.applicationContext,
                     _checkItemsRecyclerViewAdapter.value
                 )
