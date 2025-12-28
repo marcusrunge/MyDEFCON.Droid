@@ -33,5 +33,6 @@
     <string name="group_qr_code">Group QR Code</string>
     <string name="scan_qr_code">Scan QR Code</string>
     <string name="scanned">Scanned: %1$s</string>
-    <string name="scan_cancelled">Scan cancelled</string>>
+    <string name="scan_cancelled">Scan cancelled</string>
+    <string name="followers">Follower</string>>
 </resources>

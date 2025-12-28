@@ -6,41 +6,68 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.marcusrunge.mydefcon.core.interfaces.Core
+import com.marcusrunge.mydefcon.firebase.documents.Follower
 import com.marcusrunge.mydefcon.firebase.interfaces.Firebase
 import com.marcusrunge.mydefcon.ui.ObservableViewModel
 import com.marcusrunge.mydefcon.utils.FollowersRecyclerViewAdapter
-import com.marcusrunge.mydefcon.utils.CheckItemsSwipeToDeleteCallback
 import com.marcusrunge.mydefcon.utils.FollowersSwipeToDeleteCallback
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 @HiltViewModel
 class FollowersPreferenceViewModel @Inject constructor(
-    private val app: Application, private val core: Core, private val firebase: Firebase
+    private val app: Application,
+    private val core: Core,
+    private val firebase: Firebase
 ) : ObservableViewModel(app), DefaultLifecycleObserver {
-    private lateinit var followersPreferenceViewModelOwner: LifecycleOwner
-    private var _followersRecyclerViewAdapter = MutableLiveData<FollowersRecyclerViewAdapter>()
-    private var _itemTouchHelper = MutableLiveData<ItemTouchHelper>()
 
+    private val _followersRecyclerViewAdapter = MutableLiveData<FollowersRecyclerViewAdapter>()
     val followersRecyclerViewAdapter: LiveData<FollowersRecyclerViewAdapter> =
         _followersRecyclerViewAdapter
-    val itemTouchHelper: LiveData<ItemTouchHelper> =
-        _itemTouchHelper
+
+    private val _itemTouchHelper = MutableLiveData<ItemTouchHelper>()
+    val itemTouchHelper: LiveData<ItemTouchHelper> = _itemTouchHelper
+
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
-        followersPreferenceViewModelOwner = owner
-        _itemTouchHelper.postValue(
-            ItemTouchHelper(
-                FollowersSwipeToDeleteCallback(
-                    app.applicationContext,
-                    _followersRecyclerViewAdapter.value
+        initFollowers()
+    }
+
+    private fun initFollowers() {
+        val createdDefconGroupId = core.preferences?.createdDefconGroupId
+        if (!createdDefconGroupId.isNullOrEmpty()) {
+            viewModelScope.launch(Dispatchers.IO) {
+                val followers = firebase.firestore.getDefconGroupFollowers(createdDefconGroupId)
+                val adapter = FollowersRecyclerViewAdapter(
+                    onChanged = { follower -> updateFollower(follower) },
+                    onDeleted = { follower -> deleteFollower(follower) })
+                adapter.setData(followers.toMutableList())
+                _followersRecyclerViewAdapter.postValue(adapter)
+                val itemTouchHelper = ItemTouchHelper(
+                    FollowersSwipeToDeleteCallback(
+                        app.applicationContext,
+                        adapter
+                    )
                 )
-            )
-        )
+                _itemTouchHelper.postValue(itemTouchHelper)
+            }
+        }
+    }
+
+    private fun deleteFollower(follower: Follower) {
+        // TODO: Implement follower deletion in Firestore
+    }
+
+    private fun updateFollower(follower: Follower) {
+        // TODO: Implement follower update in Firestore
     }
 
     override fun updateView(inputMessage: Message) {
-        TODO("Not yet implemented")
+        // Nothing to do here yet
     }
 }
