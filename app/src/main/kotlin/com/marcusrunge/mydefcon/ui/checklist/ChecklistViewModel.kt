@@ -70,8 +70,10 @@ class ChecklistViewModel @Inject constructor(
                     if (::checkItems.isInitialized) {
                         checkItems.value?.clear()
                         checkItems.removeObserver(checkItemsObserver)
-                        data.repository.checkItems.getAllMutableLive(checkItemsStatus)
-                            .getDistinct()
+                            data.repository.checkItems.getAllMutableLive(checkItemsStatus)
+                                .getDistinct().observe(checklistViewModelOwner) {
+                                    checkItemsObserver.onChanged(it)
+                                }
                     } else {
                         checkItems =
                             data.repository.checkItems.getAllMutableLive(checkItemsStatus)
@@ -296,7 +298,8 @@ class ChecklistViewModel @Inject constructor(
 
     override fun updateView(inputMessage: Message) {
         if (inputMessage.what == UPDATE_VIEW) {
-            if (inputMessage.obj is CheckItem) _checkItemsRecyclerViewAdapter.value?.setData(
+            if (inputMessage.obj is CheckItem)
+                _checkItemsRecyclerViewAdapter.value?.setData(
                 inputMessage.obj as CheckItem
             )
         } else if (inputMessage.what == RELOAD_CHECKLIST) {

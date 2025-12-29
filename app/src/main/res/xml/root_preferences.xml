@@ -11,8 +11,7 @@
             android:layout="@layout/preference_group"
             android:key="group_preference"/>
         <com.marcusrunge.mydefcon.ui.settings.FollowersPreference
-            app:key="create_button"
-            app:title="@string/followers"
+            android:key="followers_preference"
             android:layout="@layout/preference_followers"/>
     </PreferenceCategory>
 </PreferenceScreen>
