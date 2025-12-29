@@ -291,18 +291,19 @@ class ChecklistViewModel @Inject constructor(
             checkItems.value?.add(checkItem)
             val updateViewMessage = Message()
             updateViewMessage.what = UPDATE_VIEW
+            updateViewMessage.arg1 = LOAD_CHECKLIST
             updateViewMessage.obj = checkItem
             handler.sendMessage(updateViewMessage)
         }
     }
 
     override fun updateView(inputMessage: Message) {
-        if (inputMessage.what == UPDATE_VIEW) {
+        if (inputMessage.arg1 == LOAD_CHECKLIST) {
             if (inputMessage.obj is CheckItem)
                 _checkItemsRecyclerViewAdapter.value?.setData(
                 inputMessage.obj as CheckItem
             )
-        } else if (inputMessage.what == RELOAD_CHECKLIST) {
+        } else if (inputMessage.arg1 == RELOAD_CHECKLIST) {
             if (inputMessage.obj is List<*>)
                 allCheckItems.value?.clear()
             val checkItems: MutableList<CheckItem> = mutableListOf()
@@ -362,6 +363,7 @@ class ChecklistViewModel @Inject constructor(
     }
 
     companion object {
+        const val LOAD_CHECKLIST: Int = 1
         const val RELOAD_CHECKLIST: Int = 2
     }
 }

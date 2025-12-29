@@ -9,6 +9,7 @@ import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.marcusrunge.mydefcon.BR
 import com.marcusrunge.mydefcon.R
+import com.marcusrunge.mydefcon.data.entities.CheckItem
 import com.marcusrunge.mydefcon.firebase.documents.Follower
 
 class FollowersRecyclerViewAdapter(
@@ -49,7 +50,16 @@ class FollowersRecyclerViewAdapter(
             notifyItemRemoved(position)
         }
     }
+    fun setData(follower: Follower) {
+        this.followers.add(follower)
+        notifyItemInserted(this.followers.size-1)
+    }
 
+    @SuppressLint("NotifyDataSetChanged")
+    fun clearItems(){
+        followers.clear()
+        notifyDataSetChanged()
+    }
     class ViewHolder  internal constructor(
         private val binding: ViewDataBinding,
         private val onChanged: (follower: Follower) -> Unit
