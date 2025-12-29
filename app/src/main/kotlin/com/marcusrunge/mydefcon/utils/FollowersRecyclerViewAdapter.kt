@@ -50,18 +50,18 @@ class FollowersRecyclerViewAdapter(
         }
     }
 
-    class ViewHolder(
+    class ViewHolder  internal constructor(
         private val binding: ViewDataBinding,
         private val onChanged: (follower: Follower) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(follower: Follower) {
-            binding.setVariable(BR.follower, follower)
+        fun bind(`object`: Any?) {
+            binding.setVariable(BR.follower, `object`)
             binding.executePendingBindings()
             itemView.findViewById<CheckBox>(R.id.isActive)
                 .setOnCheckedChangeListener { _, isChecked ->
-                    if (follower.isActive != isChecked) {
-                        follower.isActive = isChecked
-                        onChanged(follower)
+                    if ((`object` as Follower).isActive != isChecked) {
+                        `object`.isActive = isChecked
+                        onChanged(`object`)
                     }
                 }
         }

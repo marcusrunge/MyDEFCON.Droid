@@ -31,11 +31,28 @@ class FollowersPreferenceViewModel @Inject constructor(
         _followersRecyclerViewAdapter
 
     private val _itemTouchHelper = MutableLiveData<ItemTouchHelper>()
-    val itemTouchHelper: LiveData<ItemTouchHelper> = _itemTouchHelper
+    val itemTouchHelper: LiveData<ItemTouchHelper> =
+        _itemTouchHelper
 
-    override fun onCreate(owner: LifecycleOwner) {
-        super.onCreate(owner)
-        initFollowers()
+    init {
+        _followersRecyclerViewAdapter.value = FollowersRecyclerViewAdapter(
+            onChanged = { follower -> updateFollower(follower) },
+            onDeleted = { follower -> deleteFollower(follower) })
+        val createdDefconGroupId = core.preferences?.createdDefconGroupId
+        if (!createdDefconGroupId.isNullOrEmpty())
+            viewModelScope.launch(Dispatchers.IO) {
+                val followers = firebase.firestore.getDefconGroupFollowers(createdDefconGroupId)
+                _followersRecyclerViewAdapter.value!!.setData(followers)
+            }
+
+        _itemTouchHelper.postValue(
+            ItemTouchHelper(
+                FollowersSwipeToDeleteCallback(
+                    app.applicationContext,
+                    followersRecyclerViewAdapter.value
+                )
+            )
+        )
     }
 
     private fun initFollowers() {
