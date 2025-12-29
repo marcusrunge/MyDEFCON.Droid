@@ -187,7 +187,7 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
         }
     }
 
-    override suspend fun checkIfDefconGroupExists(documentId: String): Boolean {
+    override suspend fun checkIfDefconGroupExists(documentId: String): Boolean =
         withContext(Dispatchers.IO) {
             val db = FirebaseFirestore.getInstance()
             try {
@@ -196,30 +196,25 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
                 return@withContext documentSnapshot.exists()
             } catch (e: Exception) {
                 Log.w(tag, "Error checking if DefconGroup ID: $documentId exists", e)
-                throw e
+                return@withContext false
             }
         }
-        return false
-    }
 
     override suspend fun checkIfFollowerInDefconGroupExists(
         documentId: String,
         installationId: String
-    ): Boolean {
-        withContext(Dispatchers.IO) {
-            val db = FirebaseFirestore.getInstance()
-            try {
-                val documentSnapshot =
-                    db.collection("DefconGroup").document(documentId).get().await()
-                val querySnapshot = documentSnapshot.reference.collection("Followers")
-                    .whereEqualTo("InstallationId", installationId).get().await()
-                return@withContext !querySnapshot.isEmpty
-            } catch (e: Exception) {
-                Log.w(tag, "Error checking if DefconGroup ID: $documentId exists", e)
-                throw e
-            }
+    ): Boolean = withContext(Dispatchers.IO) {
+        val db = FirebaseFirestore.getInstance()
+        try {
+            val documentSnapshot =
+                db.collection("DefconGroup").document(documentId).get().await()
+            val querySnapshot = documentSnapshot.reference.collection("Followers")
+                .whereEqualTo("InstallationId", installationId).get().await()
+            return@withContext !querySnapshot.isEmpty
+        } catch (e: Exception) {
+            Log.w(tag, "Error checking if follower in DefconGroup ID: $documentId exists", e)
+            return@withContext false
         }
-        return false
     }
 
     override suspend fun getDefconGroupFollowers(documentId: String): List<Follower> =

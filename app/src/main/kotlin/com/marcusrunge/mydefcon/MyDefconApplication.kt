@@ -45,6 +45,7 @@ class MyDefconApplication : Application() {
                     if(!exists) {
                         core.preferences!!.createdDefconGroupId = ""
                     }
+                    //firebase.firestore.joinDefconGroup(core.preferences!!.createdDefconGroupId, FirebaseInstallations.getInstance().id.await())
                 }
             }
         }
