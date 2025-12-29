@@ -3,7 +3,6 @@ package com.marcusrunge.mydefcon.ui.settings
 import android.app.Application
 import android.os.Message
 import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -42,7 +41,12 @@ class FollowersPreferenceViewModel @Inject constructor(
         if (!createdDefconGroupId.isNullOrEmpty())
             viewModelScope.launch(Dispatchers.IO) {
                 val followers = firebase.firestore.getDefconGroupFollowers(createdDefconGroupId)
-                _followersRecyclerViewAdapter.value!!.setData(followers)
+                val updateViewMessage = Message()
+                updateViewMessage.what = UPDATE_VIEW
+                updateViewMessage.arg1 = LOAD_FOLLOWERS
+                updateViewMessage.obj = followers
+                handler.sendMessage(updateViewMessage)
+                //_followersRecyclerViewAdapter.value!!.setData(followers)
             }
 
         _itemTouchHelper.postValue(
@@ -55,27 +59,6 @@ class FollowersPreferenceViewModel @Inject constructor(
         )
     }
 
-    private fun initFollowers() {
-        val createdDefconGroupId = core.preferences?.createdDefconGroupId
-        if (!createdDefconGroupId.isNullOrEmpty()) {
-            viewModelScope.launch(Dispatchers.IO) {
-                val followers = firebase.firestore.getDefconGroupFollowers(createdDefconGroupId)
-                val adapter = FollowersRecyclerViewAdapter(
-                    onChanged = { follower -> updateFollower(follower) },
-                    onDeleted = { follower -> deleteFollower(follower) })
-                adapter.setData(followers.toMutableList())
-                _followersRecyclerViewAdapter.postValue(adapter)
-                val itemTouchHelper = ItemTouchHelper(
-                    FollowersSwipeToDeleteCallback(
-                        app.applicationContext,
-                        adapter
-                    )
-                )
-                _itemTouchHelper.postValue(itemTouchHelper)
-            }
-        }
-    }
-
     private fun deleteFollower(follower: Follower) {
         // TODO: Implement follower deletion in Firestore
     }
@@ -85,6 +68,17 @@ class FollowersPreferenceViewModel @Inject constructor(
     }
 
     override fun updateView(inputMessage: Message) {
-        // Nothing to do here yet
+        if (inputMessage.arg1 == LOAD_FOLLOWERS && inputMessage.obj is List<*>) {
+            _followersRecyclerViewAdapter.value?.clearItems()
+            (inputMessage.obj as List<*>).forEach {
+                if(it is Follower){
+                    followersRecyclerViewAdapter.value?.setData(it)
+                }
+            }
+        }
+    }
+
+    companion object {
+        const val LOAD_FOLLOWERS: Int = 1
     }
 }
