@@ -46,7 +46,6 @@ class FollowersPreferenceViewModel @Inject constructor(
                 updateViewMessage.arg1 = LOAD_FOLLOWERS
                 updateViewMessage.obj = followers
                 handler.sendMessage(updateViewMessage)
-                //_followersRecyclerViewAdapter.value!!.setData(followers)
             }
 
         _itemTouchHelper.postValue(
@@ -69,11 +68,8 @@ class FollowersPreferenceViewModel @Inject constructor(
 
     override fun updateView(inputMessage: Message) {
         if (inputMessage.arg1 == LOAD_FOLLOWERS && inputMessage.obj is List<*>) {
-            _followersRecyclerViewAdapter.value?.clearItems()
-            (inputMessage.obj as List<*>).forEach {
-                if(it is Follower){
-                    followersRecyclerViewAdapter.value?.setData(it)
-                }
+            (inputMessage.obj as? List<*>)?.filterIsInstance<Follower>()?.let {
+                _followersRecyclerViewAdapter.value?.setData(it)
             }
         }
     }
