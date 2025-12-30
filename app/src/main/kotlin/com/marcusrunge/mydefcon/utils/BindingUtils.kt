@@ -105,6 +105,6 @@ object BindingUtils {
     @BindingAdapter("setTimeStamp")
     @JvmStatic
     fun bindTimeStamp(view: TextView, timeStamp: Long) {
-        view.text = DateFormat.getDateFormat(view.context).format(Date(timeStamp * 1000))
+        view.text = DateFormat.getDateFormat(view.context).format(Date(timeStamp))
     }
 }
