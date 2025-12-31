@@ -23,10 +23,10 @@
     <string name="information_intro">Developed by</string>
     <string name="information_projecturl">Project URL:</string>
     <string name="checkitem_hinttext">Item text</string>
-    <string name="defcon12345_image_description">DEFCON 1&#8211;2&#8211;3&#8211;4&#8211;5</string>
-    <string name="create_group">Create Group</string>">
-    <string name="leave_group">Leave Group</string>">
-    <string name="join_group">Join Group</string>">"
+    <string name="defcon12345_image_description">DEFCON 1–2–3–4–5</string>
+    <string name="create_group">Create Group</string>
+    <string name="leave_group">Leave Group</string>
+    <string name="join_group">Join Group</string>
     <string name="delete_group">Delete Group</string>
     <string name="preferencecategory_title_information">Information</string>
     <string name="preferencecategory_title_group">Group</string>
@@ -34,5 +34,8 @@
     <string name="scan_qr_code">Scan QR Code</string>
     <string name="scanned">Scanned: %1$s</string>
     <string name="scan_cancelled">Scan cancelled</string>
-    <string name="followers">Follower</string>>
+    <string name="followers">Follower</string>
+    <string name="installation_id">Installation-ID:</string>
+    <string name="could_not_retrieve_installation_id">Could not retrieve Installation ID</string>
+    <string name="loading_installation_id">Loading...</string>
 </resources>

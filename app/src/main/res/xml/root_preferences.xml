@@ -2,8 +2,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <PreferenceCategory app:title="@string/preferencecategory_title_information">
-        <Preference
-            android:layout="@layout/preference_information"
+        <com.marcusrunge.mydefcon.ui.settings.InstallationIdPreference
+            android:key="information_preference"
             tools:ignore="PrivateResource" />
     </PreferenceCategory>
     <PreferenceCategory app:title="@string/preferencecategory_title_group">

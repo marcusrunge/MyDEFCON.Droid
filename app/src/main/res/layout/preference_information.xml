@@ -94,4 +94,22 @@
         app:layout_constraintTop_toBottomOf="@id/projecturl_text"
         tools:ignore="HardcodedText" />
 
+    <TextView
+        android:id="@+id/installationIdHeaderTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/installation_id"
+        android:textColor="@android:color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/projecturlUrl_text"/>
+
+    <TextView
+        android:id="@+id/installationIdTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/installationIdHeaderTextView"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
