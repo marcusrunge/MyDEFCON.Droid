@@ -23,6 +23,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
     SharedPreferences.OnSharedPreferenceChangeListener {
     @Inject
     lateinit var core: Core
+
     @Inject
     lateinit var firebase: Firebase
     private lateinit var groupPreferenceViewModel: GroupPreferenceViewModel
