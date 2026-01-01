@@ -18,7 +18,8 @@ android {
     defaultConfig {
         applicationId = "com.marcusrunge.MyDEFCON"
         minSdk = 30
-        versionCode = 302
+        targetSdk = 36
+        versionCode = 304
         versionName = "2.1.7"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
