@@ -9,9 +9,26 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
+/**
+ * ViewModel for the privacy policy screen.
+ *
+ * This class provides the URL for the privacy policy to be displayed in a WebView.
+ * It is injected with the application context to access string resources.
+ *
+ * @param context The application context provided by Hilt.
+ */
 @HiltViewModel
 class PrivacyViewModel @Inject constructor(@ApplicationContext context: Context) : ViewModel() {
+
+    /**
+     * Backing property for the privacy policy URL.
+     * It is initialized with the URL string from the resources.
+     */
     private val _endpointUrl = MutableLiveData(context.getString(R.string.html_privacy))
 
+    /**
+     * The [LiveData] holding the URL of the privacy policy.
+     * The UI observes this property to load the correct web page.
+     */
     val endpointUrl: LiveData<String> = _endpointUrl
 }
