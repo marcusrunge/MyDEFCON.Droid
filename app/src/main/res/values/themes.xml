@@ -10,11 +10,11 @@
         <item name="colorSecondaryVariant">@color/red_A700V</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">true</item>
         <!-- Customize your theme here. -->
-        <item name="android:windowBackground">#B2000000</item>
-        <item name="actionBarTheme">@style/Theme.MyDEFCON.ActionBar</item>
+        <item name="actionBarTheme">@style/Theme.MyDEFCON.ActionBar</item>ain/res/values/themes.xml
         <item name="android:itemBackground">@color/yellow_A200</item>
         <item name="colorOnSurfaceVariant">@color/red_A700</item>
         <item name="actionMenuTextColor">@color/red_A700</item>
