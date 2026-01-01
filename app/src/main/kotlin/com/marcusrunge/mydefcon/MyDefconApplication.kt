@@ -14,8 +14,6 @@ import javax.inject.Inject
 
 @HiltAndroidApp
 class MyDefconApplication : Application() {
-    val tag: String = "MyDefconApplication"
-
     @Inject
     lateinit var core: Core
 
@@ -24,28 +22,45 @@ class MyDefconApplication : Application() {
 
     @Inject
     lateinit var notifications: Notifications
+
+    /**
+     * Called when the application is starting, before any other application objects have been created.
+     *
+     * Use this method to perform initializations that must happen before the UI is displayed,
+     * such as initializing notifications and verifying the integrity of stored DEFCON group data.
+     */
     override fun onCreate() {
         super.onCreate()
+        // Initialize the notification channels.
         notifications.initialize()
-        if (core.preferences != null) {
-            if (core.preferences!!.joinedDefconGroupId.isNotEmpty()) {
+
+        // Check for stored preferences and validate them.
+        core.preferences?.let { preferences ->
+            // Check if the user has joined a DEFCON group.
+            if (preferences.joinedDefconGroupId.isNotEmpty()) {
                 CoroutineScope(Dispatchers.IO).launch {
-                    val exists = firebase.firestore.checkIfDefconGroupExists(core.preferences!!.joinedDefconGroupId)
-                    if(!exists) {
-                        core.preferences!!.joinedDefconGroupId = ""
-                    }
-                    else if(!firebase.firestore.checkIfFollowerInDefconGroupExists(core.preferences!!.joinedDefconGroupId, FirebaseInstallations.getInstance().id.await())){
-                        core.preferences!!.joinedDefconGroupId = ""
+                    val exists = firebase.firestore.checkIfDefconGroupExists(preferences.joinedDefconGroupId)
+                    // If the group does not exist, clear the stored group ID.
+                    if (!exists) {
+                        preferences.joinedDefconGroupId = ""
+                    } else if (!firebase.firestore.checkIfFollowerInDefconGroupExists( // Check if the user is a follower of the group.
+                            preferences.joinedDefconGroupId,
+                            FirebaseInstallations.getInstance().id.await()
+                        )
+                    ) {
+                        // If the user is not a follower, clear the stored group ID.
+                        preferences.joinedDefconGroupId = ""
                     }
                 }
             }
-            if (core.preferences!!.createdDefconGroupId.isNotEmpty()) {
+            // Check if the user has created a DEFCON group.
+            if (preferences.createdDefconGroupId.isNotEmpty()) {
                 CoroutineScope(Dispatchers.IO).launch {
-                    val exists = firebase.firestore.checkIfDefconGroupExists(core.preferences!!.createdDefconGroupId)
-                    if(!exists) {
-                        core.preferences!!.createdDefconGroupId = ""
+                    val exists = firebase.firestore.checkIfDefconGroupExists(preferences.createdDefconGroupId)
+                    // If the group does not exist, clear the stored group ID.
+                    if (!exists) {
+                        preferences.createdDefconGroupId = ""
                     }
-                    //firebase.firestore.joinDefconGroup(core.preferences!!.createdDefconGroupId, FirebaseInstallations.getInstance().id.await())
                 }
             }
         }

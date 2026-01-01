@@ -22,14 +22,19 @@ import androidx.navigation.fragment.NavHostFragment
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.databinding.ActivityMainBinding
-import com.marcusrunge.mydefcon.firebase.interfaces.Firebase
-import com.marcusrunge.mydefcon.notifications.interfaces.Notifications
 import com.marcusrunge.mydefcon.ui.main.MainViewModel
 import com.marcusrunge.mydefcon.utils.BitmapUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 
+/**
+ * The main and only activity of the application.
+ *
+ * This activity hosts the navigation graph and handles shared UI elements like the options menu.
+ * It also implements [NavController.OnDestinationChangedListener] to adapt the UI based on the
+ * current navigation destination.
+ */
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedListener {
     @Inject
@@ -39,30 +44,44 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     private var optionsMenu: Menu? = null
     private val viewModel by viewModels<MainViewModel>()
 
+    /**
+     * Initializes the activity, sets up data binding, the navigation controller, and
+     * requests notification permissions on newer Android versions.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Inflate and set up data binding
         binding = ActivityMainBinding.inflate(layoutInflater)
         binding.viewmodel = viewModel
         binding.lifecycleOwner = this
         setContentView(binding.root)
+
+        // Set the title for the open source licenses activity
         OssLicensesMenuActivity.setActivityTitle(getString(R.string.license_title))
-        navController =
-            (supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment).navController
+
+        // Set up the NavController
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
+        navController = navHostFragment.navController
         navController.addOnDestinationChangedListener(this)
+
+        // Request notification permission on Android Tiramisu (API 33) and above
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.S_V2) {
-            when (PackageManager.PERMISSION_GRANTED) {
-                ContextCompat.checkSelfPermission(
+            if (ContextCompat.checkSelfPermission(
                     this,
                     Manifest.permission.POST_NOTIFICATIONS
-                ) -> {
-                }
-                else -> {
-                }
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                // You should implement a proper permission request flow here.
             }
-        } else {
         }
     }
 
+    /**
+     * Inflates the options menu from the resource file.
+     * @param menu The options menu in which you place your items.
+     * @return You must return true for the menu to be displayed.
+     */
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater: MenuInflater = menuInflater
         inflater.inflate(R.menu.options_menu, menu)
@@ -70,43 +89,50 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         return true
     }
 
+    /**
+     * Handles clicks on the options menu items.
+     * @param item The menu item that was selected.
+     * @return boolean Return false to allow normal menu processing to proceed, true to consume it here.
+     */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            else -> return when (item.itemId) {
-                R.id.action_statusshare -> {
-                    shareStatus()
-                    true
-                }
-
-                R.id.navigation_settings -> {
-                    navController.navigate(R.id.navigation_settings)
-                    true
-                }
-
-                R.id.navigation_privacy -> {
-                    navController.navigate(R.id.navigation_privacy)
-                    true
-                }
-                /*R.id.navigation_licenses -> {
-                    startActivity(Intent(this, OssLicensesMenuActivity::class.java))
-                    true
-                }*/
-                R.id.navigation_terms -> {
-                    navController.navigate(R.id.navigation_terms)
-                    true
-                }
-
-                android.R.id.home -> {
-                    navController.popBackStack()
-                    true
-                }
-
-                else -> super.onOptionsItemSelected(item)
+        return when (item.itemId) {
+            R.id.action_statusshare -> {
+                shareStatus()
+                true
             }
+
+            R.id.navigation_settings -> {
+                navController.navigate(R.id.navigation_settings)
+                true
+            }
+
+            R.id.navigation_privacy -> {
+                navController.navigate(R.id.navigation_privacy)
+                true
+            }
+            /*R.id.navigation_licenses -> {
+                startActivity(Intent(this, OssLicensesMenuActivity::class.java))
+                true
+            }*/
+            R.id.navigation_terms -> {
+                navController.navigate(R.id.navigation_terms)
+                true
+            }
+            // Handle the Up button
+            android.R.id.home -> {
+                navController.popBackStack()
+                true
+            }
+
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
+    /**
+     * Creates and shares a bitmap of the current DEFCON status.
+     */
     private fun shareStatus() {
+        // Create a bitmap from the appropriate DEFCON status drawable
         val bitmap = BitmapUtils.createBitmapFromDrawableResource(
             applicationContext, when (core.preferences?.status) {
                 1 -> R.drawable.ic_defcon1
@@ -117,21 +143,25 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
                 else -> null
             }
         )
+        // Create a content URI for the bitmap
         val uri = BitmapUtils.createUriForBitmap(applicationContext, externalCacheDir, bitmap)
+        // Create an intent to share the image
         val intent = BitmapUtils.createImagePngIntent(uri)
+        // Start the chooser activity to let the user pick an app for sharing
         startActivity(Intent.createChooser(intent, "Share with"))
     }
 
+    /**
+     * Called when the current [NavDestination] changes.
+     * This is used to show or hide the "Share" action button based on the current screen.
+     */
     override fun onDestinationChanged(
         controller: NavController,
         destination: NavDestination,
         arguments: Bundle?
     ) {
+        // The "Share" button should only be visible on the Status screen.
         when (destination.id) {
-            R.id.navigation_checklist -> {
-                optionsMenu?.findItem(R.id.action_statusshare)?.isVisible = false
-            }
-
             R.id.navigation_status -> {
                 optionsMenu?.findItem(R.id.action_statusshare)?.isVisible = true
             }
@@ -142,12 +172,17 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         }
     }
 
+    /**
+     * Hides the soft keyboard when the user touches outside of an EditText.
+     */
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
         if (ev?.action == MotionEvent.ACTION_DOWN) {
             val view: View? = currentFocus
+            // Check if the focused view is an EditText
             if (view is EditText) {
                 val outRect = Rect()
                 view.getGlobalVisibleRect(outRect)
+                // If the touch event is outside the bounds of the EditText, hide the keyboard
                 if (!outRect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
                     view.clearFocus()
                     val inputMethodManager =
