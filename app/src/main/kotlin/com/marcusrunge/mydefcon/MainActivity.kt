@@ -53,16 +53,19 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Set up edge-to-edge display
         enableEdgeToEdge()
+
         // Inflate and set up data binding
         binding = ActivityMainBinding.inflate(layoutInflater)
         binding.viewmodel = viewModel
         binding.lifecycleOwner = this
         setContentView(binding.root)
 
+        // Set up the window insets to handle system bars
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right,0)
             insets
         }
 
