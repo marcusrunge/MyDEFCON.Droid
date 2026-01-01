@@ -16,7 +16,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.marcusrunge.mydefcon"
+        applicationId = "com.marcusrunge.MyDEFCON"
         minSdk = 30
         versionCode = 302
         versionName = "2.1.7"
