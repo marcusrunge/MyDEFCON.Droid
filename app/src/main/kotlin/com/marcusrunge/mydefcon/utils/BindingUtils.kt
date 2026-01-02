@@ -31,7 +31,7 @@ import java.util.Date
 object BindingUtils {
 
     /**
-     * Binds a [NavController] to a [BottomNavigationView], setting up the ActionBar and
+     * Binds a [androidx.navigation.NavController] to a [BottomNavigationView], setting up the ActionBar and
      * handling navigation events.
      *
      * @param view The [BottomNavigationView] to bind.
@@ -88,10 +88,26 @@ object BindingUtils {
      * @param layout The [ConstraintLayout] to modify.
      * @param drawable The [Drawable] to be tiled as the background.
      */
-    @BindingAdapter("setBackground")
+    @BindingAdapter("setConstraintLayoutBackground")
     @JvmStatic
-    fun bindSetBackground(layout: ConstraintLayout, drawable: Drawable) {
-        layout.background = TileUtil(drawable, Shader.TileMode.REPEAT)
+    fun setConstraintLayoutBackground(layout: ConstraintLayout, drawable: Drawable) {
+        layout.post {
+            layout.background = TileUtil(drawable, Shader.TileMode.REPEAT)
+        }
+    }
+
+    /**
+     * Sets a tiled background drawable on a [View].
+     *
+     * @param view The [View] to modify.
+     * @param drawable The [Drawable] to be tiled as the background.
+     */
+    @BindingAdapter("setViewBackground")
+    @JvmStatic
+    fun setViewBackground(view: View, drawable: Drawable) {
+        view.post {
+            view.background = TileUtil(drawable, Shader.TileMode.REPEAT)
+        }
     }
 
     /**
