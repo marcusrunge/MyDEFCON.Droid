@@ -36,8 +36,8 @@ class TileUtil(drawable: Drawable, tileMode: Shader.TileMode) : Drawable() {
      * @param canvas The canvas to draw on.
      */
     override fun draw(canvas: Canvas) {
-        // Draw the paint (which contains the tiled shader) onto the entire canvas.
-        canvas.drawPaint(paint)
+        // Draw a rectangle covering the drawable's bounds, using the paint with the tiling shader.
+        canvas.drawRect(bounds, paint)
     }
 
     /**
