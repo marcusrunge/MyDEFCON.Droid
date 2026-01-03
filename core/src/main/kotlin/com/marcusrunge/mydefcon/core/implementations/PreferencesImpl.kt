@@ -23,6 +23,18 @@ internal class PreferencesImpl(private val coreBase: CoreBase) : Preferences {
             coreBase.preferencesOperations.setString("joinedDefconGroupId", value)
         }
 
+    override var isPostNotificationPermissionGranted: Boolean
+        get() = coreBase.preferencesOperations.getBoolean("isPostNotificationPermissionGranted")
+        set(value) {
+            coreBase.preferencesOperations.setBoolean("isPostNotificationPermissionGranted", value)
+        }
+
+    override var isPostNotificationSelfPermissionChecked: Boolean
+        get() = coreBase.preferencesOperations.getBoolean("isPostNotificationSelfPermissionChecked")
+        set(value) {
+            coreBase.preferencesOperations.setBoolean("isPostNotificationSelfPermissionChecked", value)
+        }
+
     internal companion object {
         private var preferences: Preferences? = null
         fun create(coreBase: CoreBase): Preferences = when {

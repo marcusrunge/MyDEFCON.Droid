@@ -14,6 +14,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -47,6 +48,21 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     private lateinit var binding: ActivityMainBinding
     private var optionsMenu: Menu? = null
     private val viewModel by viewModels<MainViewModel>()
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                core.preferences?.isPostNotificationPermissionGranted = true
+                core.liveDataManager?.emitDefconStatus(
+                    core.preferences?.status!!,
+                    MainActivity::class.java
+                )
+            } else {
+                core.preferences?.isPostNotificationPermissionGranted = false
+            }
+            core.preferences?.isPostNotificationSelfPermissionChecked = true
+        }
 
     /**
      * Initializes the activity, sets up data binding, the navigation controller, and
@@ -66,7 +82,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         // Set up the window insets to handle system bars
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right,0)
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
             insets
         }
 
@@ -80,14 +96,17 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         navController.addOnDestinationChangedListener(this)
 
         // Request notification permission on Android Tiramisu (API 33) and above
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.S_V2) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(
                     this,
                     Manifest.permission.POST_NOTIFICATIONS
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-                // You should implement a proper permission request flow here.
-            }
+                core.preferences?.isPostNotificationPermissionGranted = false
+                if (!core.preferences?.isPostNotificationSelfPermissionChecked!!) requestPermissionLauncher.launch(
+                    Manifest.permission.POST_NOTIFICATIONS
+                )
+            } else core.preferences?.isPostNotificationPermissionGranted = true
         }
 
         // Set the status bar color and appearance

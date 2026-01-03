@@ -12,7 +12,7 @@ internal class NotificationsImpl(context: Context?, core: Core?) :
         _headsUp = HeadsUpImpl.create(this)
         _popUp = PopUpImpl.create(this)
         _onInitialize = { onInitialize() }
-        collectDefconStatusFlow()
+        //collectDefconStatusFlow()
     }
 
     private fun onInitialize() {
