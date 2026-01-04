@@ -23,7 +23,8 @@ internal class NotificationsImpl(context: Context?, core: Core?) :
     private fun collectDefconStatusFlow() {
         core?.coroutineScope?.launch {
             core.liveDataManager?.defconStatusFlow?.collect { pair ->
-                showNotification(pair.first)
+                if(core.preferences?.isPostNotificationPermissionGranted!!)
+                    showNotification(pair.first)
             }
         }
     }
