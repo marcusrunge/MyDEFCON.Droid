@@ -24,7 +24,7 @@ internal class RepositoryImpl private constructor(dataBase: DataBase) : Reposito
         // The `myDefconDatabase` property is inherited from RepositoryBase, providing access
         // to the Room database instance. The `checkItems()` method returns the DAO.
         // The `_checkItems` backing field is defined in the RepositoryBase class.
-        _checkItems = myDefconDatabase?.checkItems()!!
+        _checkItems = myDefconDatabase.checkItems()
     }
 
     /**

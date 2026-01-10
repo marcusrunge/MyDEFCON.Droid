@@ -23,7 +23,7 @@ import java.io.Serializable
 @Entity(tableName = "checkitem")
 @kotlinx.serialization.Serializable
 data class CheckItem(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    @PrimaryKey(autoGenerate = true) var id: Long = 0,
     @ColumnInfo(name = "uuid") val uuid: String,
     @ColumnInfo(name = "text") var text: String?,
     @ColumnInfo(name = "is_checked") var isChecked: Boolean,
