@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.marcusrunge.mydefcon.R
@@ -145,7 +146,7 @@ class ChecklistViewModel @Inject constructor(
             else -> R.id.radio_defcon5
         }
         checkedRadioButtonId.observeForever(statusObserver)
-        allCheckItems = data.repository.checkItems.getAllMutableLive().getDistinct()
+        allCheckItems = data.repository.checkItems.getAllLive().map { it.toMutableList() }.getDistinct()
         allCheckItems.observeForever(allCheckItemsObserver)
     }
 
@@ -230,7 +231,7 @@ class ChecklistViewModel @Inject constructor(
                 item.updated = OffsetDateTime.now(ZoneOffset.UTC).toEpochSecond()
                 data.repository.checkItems.update(item)
                 // Refresh all items to recalculate counts.
-                allCheckItems = data.repository.checkItems.getAllMutableLive().getDistinct()
+                allCheckItems = data.repository.checkItems.getAllLive().map { it.toMutableList() }.getDistinct()
             }
         }, { item ->
             // On item deleted (swiped away)
@@ -239,7 +240,7 @@ class ChecklistViewModel @Inject constructor(
                 item.isDeleted = true
                 data.repository.checkItems.update(item)
                 // Refresh all items to recalculate counts.
-                allCheckItems = data.repository.checkItems.getAllMutableLive().getDistinct()
+                allCheckItems = data.repository.checkItems.getAllLive().map { it.toMutableList() }.getDistinct()
             }
         })
     }
@@ -263,7 +264,7 @@ class ChecklistViewModel @Inject constructor(
         if (::checkItems.isInitialized) {
             checkItems.removeObserver(checkItemsObserver)
         }
-        checkItems = data.repository.checkItems.getAllMutableLive(checkItemsStatus).getDistinct()
+        checkItems = data.repository.checkItems.getAllLive(checkItemsStatus).map { it.toMutableList() }.getDistinct()
         checkItems.observe(checklistViewModelOwner, checkItemsObserver)
     }
 
