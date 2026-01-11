@@ -1,5 +1,7 @@
 package com.marcusrunge.mydefcon.firebase.documents
 
+import androidx.annotation.Keep
+
 /**
  * Represents a follower document within a DEFCON group in Firestore.
  *
@@ -11,6 +13,7 @@ package com.marcusrunge.mydefcon.firebase.documents
  * @property isActive A boolean indicating whether the follower is currently active in the group.
  * @property timestamp The timestamp of the last modification to this follower's status, typically in milliseconds.
  */
+@Keep
 data class Follower(
     var id: String = "",
     var installationId: String = "",

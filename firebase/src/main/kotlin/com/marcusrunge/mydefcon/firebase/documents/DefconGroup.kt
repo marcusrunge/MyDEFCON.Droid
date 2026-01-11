@@ -1,5 +1,7 @@
 package com.marcusrunge.mydefcon.firebase.documents
 
+import androidx.annotation.Keep
+
 /**
  * Represents a DEFCON group document stored in Firestore.
  *
@@ -11,6 +13,7 @@ package com.marcusrunge.mydefcon.firebase.documents
  * @property followers A mutable list of [Follower] objects who are part of this group.
  * @property timestamp The timestamp of the last modification to this group, typically in milliseconds.
  */
+@Keep
 data class DefconGroup(
     var id: String = "",
     var leader: String = "",
