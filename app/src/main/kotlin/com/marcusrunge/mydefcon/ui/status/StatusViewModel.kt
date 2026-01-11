@@ -28,27 +28,28 @@ class StatusViewModel @Inject constructor(
 ) : ObservableViewModel(app) {
 
     private val _isDefcon1ButtonChecked = MutableStateFlow(false)
-    /** A state flow representing whether the DEFCON 1 button is checked. */
     val isDefcon1ButtonChecked = _isDefcon1ButtonChecked.asStateFlow()
 
     private val _isDefcon2ButtonChecked = MutableStateFlow(false)
-    /** A state flow representing whether the DEFCON 2 button is checked. */
     val isDefcon2ButtonChecked = _isDefcon2ButtonChecked.asStateFlow()
 
     private val _isDefcon3ButtonChecked = MutableStateFlow(false)
-    /** A state flow representing whether the DEFCON 3 button is checked. */
     val isDefcon3ButtonChecked = _isDefcon3ButtonChecked.asStateFlow()
 
     private val _isDefcon4ButtonChecked = MutableStateFlow(false)
-    /** A state flow representing whether the DEFCON 4 button is checked. */
     val isDefcon4ButtonChecked = _isDefcon4ButtonChecked.asStateFlow()
 
     private val _isDefcon5ButtonChecked = MutableStateFlow(false)
-    /** A state flow representing whether the DEFCON 5 button is checked. */
     val isDefcon5ButtonChecked = _isDefcon5ButtonChecked.asStateFlow()
 
+    private val _isDefconStateChangeAllowed = MutableStateFlow(false)
+    val isDefconStateChangeAllowed = _isDefconStateChangeAllowed.asStateFlow()
+
     init {
-        // Initialize button states from persisted preferences.
+        // A user is not allowed to change the DEFCON status if they have joined a group.
+        _isDefconStateChangeAllowed.value = core.preferences?.joinedDefconGroupId.isNullOrEmpty()
+
+        // Set the initial DEFCON status from preferences.
         setDefconStatusButton(core.preferences?.status ?: 5)
 
         // Observe changes to the DEFCON status from other sources.
@@ -60,6 +61,29 @@ class StatusViewModel @Inject constructor(
                 }
             }
         }
+        // Observe changes to the DEFCON group from other sources.
+        viewModelScope.launch {
+            core.liveDataManager?.defconGroupChangeFlow?.collect { (_, joinedGroupId, _) ->
+                // Update the state change allowance based on the joined group ID.
+                _isDefconStateChangeAllowed.value = joinedGroupId.isNullOrEmpty()
+            }
+        }
+    }
+
+    /**
+     * Handles the user selecting a new DEFCON status from the UI.
+     *
+     * @param status The newly selected DEFCON status.
+     */
+    fun onDefconStatusSelected(status: Int) {
+        // Do nothing if the status has not changed.
+        if (core.preferences?.status == status) {
+            return
+        }
+        // Update the UI immediately for a responsive feel.
+        setDefconStatusButton(status)
+        // Persist and distribute the new status.
+        distributeDefconStatus(status)
     }
 
     /**
@@ -83,22 +107,6 @@ class StatusViewModel @Inject constructor(
         _isDefcon4ButtonChecked.value = status == 4
         // Default to DEFCON 5 if status is invalid.
         _isDefcon5ButtonChecked.value = status == 5 || status !in 1..4
-    }
-
-    /**
-     * Handles the user selecting a new DEFCON status from the UI.
-     *
-     * @param status The newly selected DEFCON status.
-     */
-    fun onDefconStatusSelected(status: Int) {
-        // Do nothing if the status has not changed.
-        if (core.preferences?.status == status) {
-            return
-        }
-        // Update the UI immediately for a responsive feel.
-        setDefconStatusButton(status)
-        // Persist and distribute the new status.
-        distributeDefconStatus(status)
     }
 
     /**

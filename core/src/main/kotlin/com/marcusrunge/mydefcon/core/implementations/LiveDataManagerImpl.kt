@@ -11,9 +11,9 @@ import kotlinx.coroutines.launch
  * An implementation of the [LiveDataManager] interface.
  *
  * This class is responsible for managing the app's live data streams, specifically the
- * DEFCON status. It provides a mechanism to emit new statuses and allows other components
- * to observe these changes in real-time. It is implemented as a singleton to ensure a
- * single, consistent source of live data.
+ * DEFCON status and group changes. It provides a mechanism to emit new statuses and allows
+ * other components to observe these changes in real-time. It is implemented as a singleton
+ * to ensure a single, consistent source of live data.
  *
  * @param coreBase The core base dependency providing access to the application's coroutine scope.
  */
@@ -26,11 +26,25 @@ internal class LiveDataManagerImpl(private val coreBase: CoreBase) : LiveDataMan
     private val _defconStatusFlow = MutableSharedFlow<Pair<Int, Class<*>>>()
 
     /**
+     * A private, mutable shared flow that is used to emit DEFCON group changes internally.
+     * The triple consists of the created DEFCON group ID (a [String]), the joined DEFCON group
+     * ID (a [String]) and the [Class] of the component that initiated the change.
+     */
+    private val _defconGroupChangeFlow = MutableSharedFlow<Triple<String, String, Class<*>>>()
+
+    /**
      * A public, immutable shared flow that exposes the DEFCON status updates to observers.
      * This follows the best practice of exposing only immutable flows to consumers.
      */
     override val defconStatusFlow: SharedFlow<Pair<Int, Class<*>>>
         get() = _defconStatusFlow.asSharedFlow()
+
+    /**
+     * A public, immutable shared flow that exposes the DEFCON group changes to observers.
+     * This follows the best practice of exposing only immutable flows to consumers.
+     */
+    override val defconGroupChangeFlow: SharedFlow<Triple<String, String, Class<*>>>
+        get() = _defconGroupChangeFlow.asSharedFlow()
 
     /**
      * Emits a new DEFCON status to the shared flow.
@@ -45,6 +59,27 @@ internal class LiveDataManagerImpl(private val coreBase: CoreBase) : LiveDataMan
     override fun emitDefconStatus(status: Int, source: Class<*>) {
         coreBase.coroutineScope?.launch {
             _defconStatusFlow.emit(Pair(status, source))
+        }
+    }
+
+    /**
+     * Emits a new DEFCON group change to the shared flow.
+     *
+     * This function is called by other components when they need to update the global
+     * DEFCON group. It launches a coroutine in the core's coroutine scope to emit
+     * the new status to the [_defconGroupChangeFlow].
+     *
+     * @param createdGroupId The created DEFCON group ID.
+     * @param joinedGroupId The joined DEFCON group ID.
+     * @param source The class that is emitting the new status.
+     */
+    override fun emitDefconGroupChange(
+        createdGroupId: String,
+        joinedGroupId: String,
+        source: Class<*>
+    ) {
+        coreBase.coroutineScope?.launch {
+            _defconGroupChangeFlow.emit(Triple(createdGroupId, joinedGroupId, source))
         }
     }
 
