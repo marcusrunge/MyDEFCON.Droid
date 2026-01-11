@@ -1,5 +1,6 @@
 package com.marcusrunge.mydefcon.firebase.implementations
 
+import androidx.annotation.Keep
 import com.google.firebase.Firebase
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -10,7 +11,7 @@ import com.google.firebase.database.getValue
 import com.marcusrunge.mydefcon.firebase.bases.FirebaseBase
 import com.marcusrunge.mydefcon.firebase.interfaces.Realtime
 import kotlinx.coroutines.launch
-
+@Keep
 internal class RealtimeImpl(private val base: FirebaseBase) : Realtime, ValueEventListener {
     private val tag: String = "RealtimeImpl"
     val database =
