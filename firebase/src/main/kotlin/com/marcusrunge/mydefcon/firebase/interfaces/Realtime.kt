@@ -6,4 +6,10 @@ package com.marcusrunge.mydefcon.firebase.interfaces
  * This interface will provide methods for managing and synchronizing data in real-time.
  */
 interface Realtime {
+    /**
+     * Fetches the current DEFCON status for a specific group.
+     *
+     * This function retrieves the current DEFCON status for a group identified by its ID.
+     */
+    fun fetchDefconStatus(joinedDefconGroupId: String)
 }

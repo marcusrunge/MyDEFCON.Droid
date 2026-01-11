@@ -51,6 +51,10 @@ class MyDefconApplication : Application() {
                         // If the user is not a follower, clear the stored group ID.
                         preferences.joinedDefconGroupId = ""
                     }
+                    // If the user is a follower, fetch the DEFCON status.
+                    if(exists){
+                        firebase.realtime.fetchDefconStatus(preferences.joinedDefconGroupId)
+                    }
                 }
             }
             // Check if the user has created a DEFCON group.

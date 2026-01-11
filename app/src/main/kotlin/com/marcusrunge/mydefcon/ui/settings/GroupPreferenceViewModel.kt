@@ -115,6 +115,7 @@ class GroupPreferenceViewModel @Inject constructor(
                 }
                 if (defconGroupId.isNotEmpty()) {
                     core.preferences?.createdDefconGroupId = defconGroupId
+                    core.liveDataManager?.emitDefconGroupChange(defconGroupId,"", GroupPreferenceViewModel::class.java)
                     textToEncode = defconGroupId
                     updateButtonStates()
                     Log.d("GroupPreferenceViewModel", "DEFCON Group ID created: $defconGroupId")
@@ -137,6 +138,7 @@ class GroupPreferenceViewModel @Inject constructor(
                 core.preferences?.createdDefconGroupId?.takeIf { it.isNotEmpty() }?.let {
                     firebase.firestore.deleteDefconGroup(it)
                     core.preferences?.createdDefconGroupId = ""
+                    core.liveDataManager?.emitDefconGroupChange("","", GroupPreferenceViewModel::class.java)
                     updateButtonStates()
                 }
             } catch (e: Exception) {
@@ -163,6 +165,7 @@ class GroupPreferenceViewModel @Inject constructor(
                 withContext(Dispatchers.IO) {
                     val leftGroupId = core.preferences?.joinedDefconGroupId
                     core.preferences?.joinedDefconGroupId = ""
+                    core.liveDataManager?.emitDefconGroupChange("","", GroupPreferenceViewModel::class.java)
                     updateButtonStates()
                     Log.d("GroupPreferenceViewModel", "DEFCON Group ID left: $leftGroupId")
                 }
@@ -191,6 +194,7 @@ class GroupPreferenceViewModel @Inject constructor(
                     firebase.firestore.joinDefconGroup(groupIdToJoin, installationId)
                 }
                 core.preferences?.joinedDefconGroupId = groupIdToJoin
+                core.liveDataManager?.emitDefconGroupChange("",groupIdToJoin, GroupPreferenceViewModel::class.java)
                 updateButtonStates()
                 Log.d("GroupPreferenceViewModel", "Successfully joined group: $groupIdToJoin")
             } catch (e: Exception) {

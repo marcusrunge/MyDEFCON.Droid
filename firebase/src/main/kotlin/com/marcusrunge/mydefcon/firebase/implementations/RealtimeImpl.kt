@@ -30,6 +30,15 @@ internal class RealtimeImpl(private val base: FirebaseBase) : Realtime, ValueEve
     override fun onCancelled(error: DatabaseError) {
     }
 
+    override fun fetchDefconStatus(joinedDefconGroupId: String) {
+        database.getReference(joinedDefconGroupId).get().addOnSuccessListener {
+            it.getValue<Int>()?.let { status ->
+                base.core?.preferences?.status = status
+                base.core?.liveDataManager?.emitDefconStatus(status, this.javaClass)
+            }
+        }
+    }
+
     init {
         reference.addValueEventListener(this)
         base.core?.coroutineScope?.launch {
