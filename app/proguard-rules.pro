@@ -1,42 +1,19 @@
 # Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.kts.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# You can find more information about how to configure ProGuard here:
+# http://d.android.com/tools/building/plugin-for-gradle.html
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Generic rules for Firebase Realtime Database
+-keepclassmembers class com.google.firebase.database.** { *; }
 
-# Preserve line number information for debugging stack traces.
--keepattributes SourceFile,LineNumberTable
+# Keep custom model classes used with Firebase
+-keep class com.marcusrunge.mydefcon.data.models.** { *; }
+-keep class com.marcusrunge.mydefcon.firebase.documents.** { *; }
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Keep annotation classes
+-keep class com.google.firebase.database.IgnoreExtraProperties
+-keep class com.google.firebase.database.PropertyName
+-keep class com.google.firebase.database.Exclude
 
-# Hilt and Dagger
--keep @dagger.hilt.android.HiltAndroidApp class * { *; }
--keep class * extends androidx.work.ListenableWorker
--keepclassmembers class * extends androidx.work.ListenableWorker {
-    public <init>(android.content.Context, androidx.work.WorkerParameters);
-}
-
-# Kotlin
--keepattributes Signature
--keepattributes InnerClasses
--keepattributes EnclosingMethod
--keepattributes KotlinMetaData
--keepclassmembers,allowshrinking class **$WhenMappings { <fields>; }
--keepclassmembers class * {
-    @kotlin.jvm.JvmField <fields>;
-    @kotlin.jvm.JvmStatic <methods>;
-}
--keepclassmembers class kotlin.coroutines.Continuation {
-    <init>(...);
-    void resumeWith(java.lang.Object);
-}
+# Keep GenericTypeIndicator and its subclasses
+-keep class com.google.firebase.database.GenericTypeIndicator { *; }
+-keep class * extends com.google.firebase.database.GenericTypeIndicator { *; }

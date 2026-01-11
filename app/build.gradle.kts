@@ -19,7 +19,7 @@ android {
         applicationId = "com.marcusrunge.MyDEFCON"
         minSdk = 30
         targetSdk = 36
-        versionCode = 309
+        versionCode = 310
         versionName = "2.1.7"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -78,6 +78,7 @@ dependencies {
     implementation("androidx.hilt:hilt-work:1.3.0")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("com.google.firebase:firebase-installations:19.0.1")
+    implementation("com.google.firebase:firebase-database:22.0.1")
     ksp("com.google.dagger:hilt-compiler:2.57.2")
     ksp("androidx.hilt:hilt-compiler:1.3.0")
     testImplementation("junit:junit:4.13.2")
