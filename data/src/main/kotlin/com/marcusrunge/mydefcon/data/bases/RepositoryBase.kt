@@ -37,8 +37,8 @@ internal abstract class RepositoryBase(context: Context?) {
         // A non-null context is required to initialize the database.
         requireNotNull(context) { "Context must not be null for database initialization." }
         myDefconDatabase = Room.databaseBuilder(
-            context,
-            MyDefconDatabase::class.java, "mydefcon_database"
-        ).build()
+                context,
+                MyDefconDatabase::class.java, "mydefcon_database"
+            ).fallbackToDestructiveMigration(false).build()
     }
 }

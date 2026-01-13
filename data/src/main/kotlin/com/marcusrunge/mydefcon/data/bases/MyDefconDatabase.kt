@@ -14,7 +14,7 @@ import com.marcusrunge.mydefcon.data.interfaces.CheckItems
  *
  * @see RoomDatabase
  */
-@Database(entities = [CheckItem::class], version = 1, exportSchema = false)
+@Database(entities = [CheckItem::class], version = 2, exportSchema = false)
 internal abstract class MyDefconDatabase : RoomDatabase() {
     /**
      * Provides the Data Access Object (DAO) for check items.

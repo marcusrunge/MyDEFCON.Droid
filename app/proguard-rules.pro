@@ -17,3 +17,8 @@
 # Keep GenericTypeIndicator and its subclasses
 -keep class com.google.firebase.database.GenericTypeIndicator { *; }
 -keep class * extends com.google.firebase.database.GenericTypeIndicator { *; }
+
+# Keep classes from being shrunk
+-keep class com.marcusrunge.mydefcon.data.bases.RepositoryBase { *; }
+-keep class com.marcusrunge.mydefcon.data.bases.MyDefconDatabase { *; }
+-keep class com.marcusrunge.mydefcon.data.entities.CheckItem { *; }
