@@ -27,8 +27,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 }
 
@@ -37,15 +37,15 @@ sourceSets.configureEach {
 }
 tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_17)
+        jvmTarget.set(JvmTarget.JVM_21)
         freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
     }
 }
 dependencies {
     implementation("androidx.core:core-ktx:1.17.0")
-    implementation(platform("com.google.firebase:firebase-bom:34.7.0"))
+    implementation(platform("com.google.firebase:firebase-bom:34.8.0"))
     implementation("com.google.firebase:firebase-database:22.0.1")
-    implementation("com.google.firebase:firebase-firestore:26.0.2")
+    implementation("com.google.firebase:firebase-firestore:26.1.0")
     implementation("com.google.firebase:firebase-installations:19.0.1")
     implementation(project(":core"))
     testImplementation("junit:junit:4.13.2")
