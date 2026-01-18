@@ -49,7 +49,8 @@ internal class NotificationsImpl(context: Context?, core: Core?) :
             core.liveDataManager?.defconStatusFlow?.collect { pair ->
                 // Only show notification if permission has been granted.
                 if (core.preferences?.isPostNotificationPermissionGranted == true) {
-                    showNotification(pair.first)
+                    if (!headsUp.isNotificationShown(1000 + pair.first))
+                        showNotification(pair.first)
                 }
             }
         }
@@ -74,6 +75,7 @@ internal class NotificationsImpl(context: Context?, core: Core?) :
             smallIcon = smallIcon,
             textTitle = null,
             textContent = "DEFCON $status",
+            notificationId = 1000 + status,
             ongoing = true
         )
     }

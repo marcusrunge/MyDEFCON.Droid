@@ -1,3 +1,4 @@
+import com.android.build.api.dsl.LibraryExtension
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
@@ -6,7 +7,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
-android {
+extensions.configure<LibraryExtension>("android") {
     namespace = "com.marcusrunge.mydefcon.firebase"
     compileSdk = 36
 

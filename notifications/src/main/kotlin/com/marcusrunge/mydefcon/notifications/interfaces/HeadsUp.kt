@@ -19,9 +19,10 @@ interface HeadsUp {
      * @param smallIcon A drawable resource ID for the notification's small icon.
      * @param textTitle The title of the notification.
      * @param textContent The main content text of the notification.
+     * @param notificationId The ID of the notification.
      * @param ongoing If true, the notification is persistent and cannot be dismissed by the user.
      */
-    fun showBasicUrgent(@DrawableRes smallIcon: Int?, textTitle: String?, textContent: String?, ongoing: Boolean)
+    fun showBasicUrgent(@DrawableRes smallIcon: Int?, textTitle: String?, textContent: String?, notificationId: Int, ongoing: Boolean)
 
     /**
      * Displays a basic heads-up notification with high priority.
@@ -31,9 +32,10 @@ interface HeadsUp {
      * @param smallIcon A drawable resource ID for the notification's small icon.
      * @param textTitle The title of the notification.
      * @param textContent The main content text of the notification.
+     * @param notificationId The ID of the notification.
      * @param ongoing If true, the notification is persistent and cannot be dismissed by the user.
      */
-    fun showBasicHigh(@DrawableRes smallIcon: Int?, textTitle: String?, textContent: String?, ongoing: Boolean)
+    fun showBasicHigh(@DrawableRes smallIcon: Int?, textTitle: String?, textContent: String?, notificationId: Int, ongoing: Boolean)
 
     /**
      * Displays a basic heads-up notification with medium priority.
@@ -43,9 +45,10 @@ interface HeadsUp {
      * @param smallIcon A drawable resource ID for the notification's small icon.
      * @param textTitle The title of the notification.
      * @param textContent The main content text of the notification.
+     * @param notificationId The ID of the notification.
      * @param ongoing If true, the notification is persistent and cannot be dismissed by the user.
      */
-    fun showBasicMedium(@DrawableRes smallIcon: Int?, textTitle: String?, textContent: String?, ongoing: Boolean)
+    fun showBasicMedium(@DrawableRes smallIcon: Int?, textTitle: String?, textContent: String?, notificationId: Int, ongoing: Boolean)
 
     /**
      * Displays a basic heads-up notification with low priority.
@@ -56,9 +59,10 @@ interface HeadsUp {
      * @param smallIcon A drawable resource ID for the notification's small icon.
      * @param textTitle The title of the notification.
      * @param textContent The main content text of the notification.
+     * @param notificationId The ID of the notification.
      * @param ongoing If true, the notification is persistent and cannot be dismissed by the user.
      */
-    fun showBasicLow(@DrawableRes smallIcon: Int?, textTitle: String?, textContent: String?, ongoing: Boolean)
+    fun showBasicLow(@DrawableRes smallIcon: Int?, textTitle: String?, textContent: String?, notificationId: Int, ongoing: Boolean)
 
     /**
      * Displays an expanded heads-up notification with urgent priority.
@@ -70,6 +74,7 @@ interface HeadsUp {
      * @param largeIcon A drawable resource ID for the notification's large icon.
      * @param textTitle The title of the notification.
      * @param textContent The main content text of the notification.
+     * @param notificationId The ID of the notification.
      * @param ongoing If true, the notification is persistent and cannot be dismissed by the user.
      */
     fun showExpandedUrgent(
@@ -77,6 +82,7 @@ interface HeadsUp {
         @DrawableRes largeIcon: Int?,
         textTitle: String?,
         textContent: String?,
+        notificationId: Int, 
         ongoing: Boolean
     )
 
@@ -89,6 +95,7 @@ interface HeadsUp {
      * @param largeIcon A drawable resource ID for the notification's large icon.
      * @param textTitle The title of the notification.
      * @param textContent The main content text of the notification.
+     * @param notificationId The ID of the notification.
      * @param ongoing If true, the notification is persistent and cannot be dismissed by the user.
      */
     fun showExpandedHigh(
@@ -96,6 +103,7 @@ interface HeadsUp {
         @DrawableRes largeIcon: Int?,
         textTitle: String?,
         textContent: String?,
+        notificationId: Int, 
         ongoing: Boolean
     )
 
@@ -108,6 +116,7 @@ interface HeadsUp {
      * @param largeIcon A drawable resource ID for the notification's large icon.
      * @param textTitle The title of the notification.
      * @param textContent The main content text of the notification.
+     * @param notificationId The ID of the notification.
      * @param ongoing If true, the notification is persistent and cannot be dismissed by the user.
      */
     fun showExpandedMedium(
@@ -115,6 +124,7 @@ interface HeadsUp {
         @DrawableRes largeIcon: Int?,
         textTitle: String?,
         textContent: String?,
+        notificationId: Int, 
         ongoing: Boolean
     )
 
@@ -128,6 +138,7 @@ interface HeadsUp {
      * @param largeIcon A drawable resource ID for the notification's large icon.
      * @param textTitle The title of the notification.
      * @param textContent The main content text of the notification.
+     * @param notificationId The ID of the notification.
      * @param ongoing If true, the notification is persistent and cannot be dismissed by the user.
      */
     fun showExpandedLow(
@@ -135,6 +146,15 @@ interface HeadsUp {
         @DrawableRes largeIcon: Int?,
         textTitle: String?,
         textContent: String?,
+        notificationId: Int,
         ongoing: Boolean
     )
+
+    /**
+     * Checks if the heads-up notification is currently being shown.
+     *
+     * @param notificationId The ID of the notification to check.
+     * @return `true` if the notification is active, `false` otherwise.
+     */
+    fun isNotificationShown(notificationId: Int): Boolean
 }

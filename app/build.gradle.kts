@@ -1,3 +1,5 @@
+import com.android.build.api.dsl.ApplicationExtension
+import com.android.build.api.variant.ResValue
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
@@ -11,7 +13,7 @@ plugins {
     id("com.google.gms.google-services")
 }
 
-android {
+extensions.configure<ApplicationExtension>("android") {
     namespace = "com.marcusrunge.mydefcon"
     compileSdk = 36
 
@@ -19,8 +21,8 @@ android {
         applicationId = "com.marcusrunge.MyDEFCON"
         minSdk = 30
         targetSdk = 36
-        versionCode = 312
-        versionName = "2.1.7"
+        versionCode = 313
+        versionName = "2.1.8"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -41,12 +43,19 @@ android {
         dataBinding = true
     }
 
-    sourceSets.configureEach {
-        java.srcDir("src/$name/kotlin")
+    sourceSets {
+        configureEach {
+            java.srcDir("src/$name/kotlin")
+        }
     }
+}
 
-    applicationVariants.configureEach {
-        resValue("string", "versionName", versionName)
+androidComponents {
+    onVariants { variant ->
+        variant.resValues.put(
+            variant.makeResValueKey("string", "versionName"),
+            variant.outputs.first().versionName.map { ResValue(it) }
+        )
     }
 }
 
@@ -66,7 +75,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0")
     implementation("androidx.navigation:navigation-fragment-ktx:2.9.6")
     implementation("androidx.navigation:navigation-ui-ktx:2.9.6")
-    implementation("com.google.dagger:hilt-android:2.57.2")
+    implementation("com.google.dagger:hilt-android:2.58")
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("com.google.android.gms:play-services-oss-licenses:17.3.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
@@ -79,7 +88,7 @@ dependencies {
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("com.google.firebase:firebase-installations:19.0.1")
     implementation("com.google.firebase:firebase-database:22.0.1")
-    ksp("com.google.dagger:hilt-compiler:2.57.2")
+    ksp("com.google.dagger:hilt-compiler:2.58")
     ksp("androidx.hilt:hilt-compiler:1.3.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.3.0")

@@ -1,3 +1,4 @@
+import com.android.build.api.dsl.LibraryExtension
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
@@ -8,27 +9,33 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
-android {
+extensions.configure<LibraryExtension>("android") {
+    namespace = "com.marcusrunge.mydefcon.data"
+    compileSdk = 36
+
     defaultConfig {
         minSdk = 30
-        compileSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
+
     buildTypes {
-        getByName("release") {
+        release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
-    namespace = "com.marcusrunge.mydefcon.data"
-    sourceSets.configureEach {
-        java.srcDir("src/$name/kotlin")
-    }
+}
+
+sourceSets.configureEach {
+    java.srcDir("src/$name/kotlin")
 }
 
 ksp {
