@@ -1,15 +1,20 @@
 package com.marcusrunge.mydefcon
 
 import android.app.Application
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.google.firebase.installations.FirebaseInstallations
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.firebase.interfaces.Firebase
 import com.marcusrunge.mydefcon.notifications.interfaces.Notifications
+import com.marcusrunge.mydefcon.worker.DefconWorker
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltAndroidApp
@@ -68,5 +73,22 @@ class MyDefconApplication : Application() {
                 }
             }
         }
+
+        // Register the DefconWorker
+        registerDefconWorker()
+    }
+
+    /**
+     * Registers the [DefconWorker] to run periodically.
+     */
+    private fun registerDefconWorker() {
+        val workRequest =
+            PeriodicWorkRequestBuilder<DefconWorker>(15, TimeUnit.MINUTES).build()
+
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "DefconWorker",
+            ExistingPeriodicWorkPolicy.KEEP,
+            workRequest
+        )
     }
 }

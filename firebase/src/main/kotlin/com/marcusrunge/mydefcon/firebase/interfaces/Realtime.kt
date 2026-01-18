@@ -10,6 +10,8 @@ interface Realtime {
      * Fetches the current DEFCON status for a specific group.
      *
      * This function retrieves the current DEFCON status for a group identified by its ID.
+     *
+     * @param joinedDefconGroupId The ID of the group for which to fetch the status.
      */
     fun fetchDefconStatus(joinedDefconGroupId: String)
 }

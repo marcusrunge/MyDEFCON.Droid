@@ -7,7 +7,6 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.graphics.BitmapFactory
-import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.marcusrunge.mydefcon.notifications.R
