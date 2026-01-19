@@ -5,6 +5,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.installations.FirebaseInstallations
 import com.marcusrunge.mydefcon.firebase.bases.FirebaseBase
+import com.marcusrunge.mydefcon.firebase.documents.CheckItem
 import com.marcusrunge.mydefcon.firebase.documents.DefconGroup
 import com.marcusrunge.mydefcon.firebase.documents.Follower
 import com.marcusrunge.mydefcon.firebase.interfaces.Firestore
@@ -64,6 +65,40 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
                         }
                     }
                 }
+
+                // Fetch check items
+                val checkItemQuerySnapshot = try {
+                    documentSnapshot.reference.collection("CheckItems").get().await()
+                } catch (e: Exception) {
+                    Log.w(
+                        tag,
+                        "Error getting check item collection for document ID: $documentId",
+                        e
+                    )
+                    throw e
+                }
+
+                if (checkItemQuerySnapshot.isEmpty) {
+                    Log.d(tag, "Check item collection is empty for document ID: $documentId")
+                } else {
+                    for (checkItemDocument in checkItemQuerySnapshot.documents) {
+                        if (checkItemDocument.exists()) {
+                            defconGroup.checkItems.add(
+                                CheckItem(
+                                    id = checkItemDocument.id,
+                                    uuid = checkItemDocument.getString("Uuid").toString(),
+                                    text = checkItemDocument.getString("Text"),
+                                    defcon = checkItemDocument.getLong("Defcon")?.toInt() ?: 0,
+                                    created = checkItemDocument.getTimestamp("Created")?.toDate()?.time,
+                                    updated = checkItemDocument.getTimestamp("Updated")?.toDate()?.time
+                                        ?: 0L
+                                )
+                            )
+                        } else {
+                            Log.d(tag, "No such check item document in group ID: $documentId")
+                        }
+                    }
+                }
                 return@withContext defconGroup
 
             } catch (e: Exception) {
@@ -116,6 +151,20 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
                     Log.d(tag, "All followers in DefconGroup ID: $documentId deleted.")
                 } else {
                     Log.d(tag, "No followers to delete in DefconGroup ID: $documentId.")
+                }
+
+                val checkItemsCollection =
+                    db.collection("DefconGroup").document(documentId).collection("CheckItems")
+                val checkItemQuerySnapshot = checkItemsCollection.get().await()
+                if (!checkItemQuerySnapshot.isEmpty) {
+                    val batch = db.batch()
+                    for (checkItemDocument in checkItemQuerySnapshot.documents) {
+                        batch.delete(checkItemDocument.reference)
+                    }
+                    batch.commit().await()
+                    Log.d(tag, "All check items in DefconGroup ID: $documentId deleted.")
+                } else {
+                    Log.d(tag, "No check items to delete in DefconGroup ID: $documentId.")
                 }
 
                 db.collection("DefconGroup").document(documentId).delete().await()
