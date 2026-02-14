@@ -1,5 +1,6 @@
 package com.marcusrunge.mydefcon.firebase.interfaces
 
+import com.marcusrunge.mydefcon.firebase.documents.CheckItem
 import com.marcusrunge.mydefcon.firebase.documents.DefconGroup
 import com.marcusrunge.mydefcon.firebase.documents.Follower
 
@@ -87,4 +88,34 @@ interface Firestore {
      * @param isActive The new status of the follower.
      */
     suspend fun updateFollowerStatus(documentId: String, installationId: String, isActive: Boolean)
+
+    /**
+     * Adds a check item to a `DefconGroup`.
+     *
+     * @param documentId The unique identifier of the `DefconGroup`.
+     */
+    suspend fun addCheckItem(documentId: String, checkItem: CheckItem)
+
+    /**
+     * Updates a check item in a `DefconGroup`.
+     *
+     * @param documentId The unique identifier of the `DefconGroup`.
+     */
+    suspend fun updateCheckItem(documentId: String, checkItem: CheckItem)
+    /**
+     * Retrieves all check items associated with a `DefconGroup`.
+     *
+     * @param documentId The unique identifier of the `DefconGroup`.
+     * @return A list of [CheckItem] objects.
+     *
+     * @see CheckItem
+     */
+    suspend fun getCheckItems(documentId: String): List<CheckItem>
+
+    /**
+     * Deletes a check item from a `DefconGroup`.
+     *
+     * @param documentId The unique identifier of the `DefconGroup`.
+     */
+    suspend fun deleteCheckItem(documentId: String, checkItemId: String)
 }

@@ -17,9 +17,9 @@ import androidx.annotation.Keep
 @Keep
 data class CheckItem(
     var id: String = "",
-    var uuid: String,
-    var text: String?,
-    var defcon: Int,
-    val created: Long?,
-    var updated: Long
+    var uuid: String = "",
+    var text: String = "",
+    var defcon: Int = 0,
+    val created: Long = 0,
+    var updated: Long = 0
 )

@@ -55,9 +55,11 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
                             defconGroup.followers.add(
                                 Follower(
                                     followerDocument.id,
-                                    installationId = followerDocument.getString("InstallationId").toString(),
-                                    isActive = followerDocument.getBoolean("IsActive")?: false,
-                                    timestamp = followerDocument.getTimestamp("TimeStamp")?.toDate()?.time ?: 0L
+                                    installationId = followerDocument.getString("InstallationId")
+                                        .toString(),
+                                    isActive = followerDocument.getBoolean("IsActive") ?: false,
+                                    timestamp = followerDocument.getTimestamp("TimeStamp")
+                                        ?.toDate()?.time ?: 0L
                                 )
                             )
                         } else {
@@ -87,11 +89,10 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
                                 CheckItem(
                                     id = checkItemDocument.id,
                                     uuid = checkItemDocument.getString("Uuid").toString(),
-                                    text = checkItemDocument.getString("Text"),
+                                    text = checkItemDocument.getString("Text").toString(),
                                     defcon = checkItemDocument.getLong("Defcon")?.toInt() ?: 0,
-                                    created = checkItemDocument.getTimestamp("Created")?.toDate()?.time,
-                                    updated = checkItemDocument.getTimestamp("Updated")?.toDate()?.time
-                                        ?: 0L
+                                    created = checkItemDocument.getLong("Created") ?: 0L,
+                                    updated = checkItemDocument.getLong("Updated") ?: 0L
                                 )
                             )
                         } else {
@@ -283,9 +284,11 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
                             followers.add(
                                 Follower(
                                     followerDocument.id,
-                                    installationId = followerDocument.getString("InstallationId").toString(),
+                                    installationId = followerDocument.getString("InstallationId")
+                                        .toString(),
                                     isActive = followerDocument.getBoolean("IsActive") ?: false,
-                                    timestamp = followerDocument.getTimestamp("TimeStamp")?.toDate()?.time ?: 0L
+                                    timestamp = followerDocument.getTimestamp("TimeStamp")
+                                        ?.toDate()?.time ?: 0L
                                 )
                             )
                         } else {
@@ -338,6 +341,110 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
 
             } catch (e: Exception) {
                 Log.w(tag, "Error updating follower status in DefconGroup ID: $documentId", e)
+                throw e
+            }
+        }
+    }
+
+    override suspend fun deleteCheckItem(documentId: String, checkItemId: String) {
+        withContext(Dispatchers.IO) {
+            val db = FirebaseFirestore.getInstance()
+            try {
+                db.collection("DefconGroup").document(documentId)
+                    .collection("CheckItems").document(checkItemId)
+                    .delete()
+                    .await()
+                Log.d(tag, "Check item with ID: $checkItemId deleted successfully.")
+            } catch (e: Exception) {
+                Log.w(tag, "Error deleting check item with ID: $checkItemId", e)
+                throw e
+            }
+        }
+    }
+
+    override suspend fun addCheckItem(documentId: String, checkItem: CheckItem) {
+        withContext(Dispatchers.IO) {
+            val db = FirebaseFirestore.getInstance()
+            val checkItemData = hashMapOf(
+                "Uuid" to checkItem.uuid,
+                "Text" to checkItem.text,
+                "Defcon" to checkItem.defcon,
+                "Created" to checkItem.created,
+                "Updated" to checkItem.updated
+            )
+            try {
+                db.collection("DefconGroup").document(documentId)
+                    .collection("CheckItems")
+                    .add(checkItemData)
+                    .await()
+                Log.d(tag, "Check item added to DefconGroup ID: $documentId")
+            } catch (e: Exception) {
+                Log.w(tag, "Error adding check item to DefconGroup ID: $documentId", e)
+                throw e
+            }
+        }
+    }
+
+    override suspend fun getCheckItems(documentId: String): List<CheckItem> =
+        withContext(Dispatchers.IO) {
+            val checkItems = mutableListOf<CheckItem>()
+            val db = FirebaseFirestore.getInstance()
+            try {
+                val checkItemQuerySnapshot =
+                    db.collection("DefconGroup").document(documentId).collection("CheckItems").get()
+                        .await()
+
+                if (checkItemQuerySnapshot.isEmpty) {
+                    Log.d(tag, "Check item collection is empty for document ID: $documentId")
+                } else {
+                    for (checkItemDocument in checkItemQuerySnapshot.documents) {
+                        if (checkItemDocument.exists()) {
+                            checkItems.add(
+                                CheckItem(
+                                    id = checkItemDocument.id,
+                                    uuid = checkItemDocument.getString("Uuid").toString(),
+                                    text = checkItemDocument.getString("Text").toString(),
+                                    defcon = checkItemDocument.getLong("Defcon")?.toInt() ?: 0,
+                                    created = checkItemDocument.getTimestamp("Created")
+                                        ?.toDate()?.time
+                                        ?: 0L,
+                                    updated = checkItemDocument.getTimestamp("Updated")
+                                        ?.toDate()?.time
+                                        ?: 0L
+                                )
+                            )
+                        } else {
+                            Log.d(tag, "No such check item document in group ID: $documentId")
+                        }
+                    }
+                }
+                return@withContext checkItems
+            } catch (e: Exception) {
+                Log.w(tag, "Error getting check item collection for document ID: $documentId", e)
+                throw e
+            }
+        }
+
+    override suspend fun updateCheckItem(
+        documentId: String,
+        checkItem: CheckItem
+    ) {
+        withContext(Dispatchers.IO) {
+            val db = FirebaseFirestore.getInstance()
+            try {
+                checkItem.id.let { checkItemId ->
+                    val checkItemDocRef = db.collection("DefconGroup").document(documentId)
+                        .collection("CheckItems").document(checkItemId)
+                    val updates = hashMapOf<String, Any>(
+                        "Text" to checkItem.text,
+                        "Defcon" to checkItem.defcon,
+                        "Updated" to checkItem.updated
+                    )
+                    checkItemDocRef.update(updates).await()
+                    Log.d(tag, "CheckItem with id $checkItemId updated.")
+                } ?: Log.w(tag, "CheckItem ID is null, can't update.")
+            } catch (e: Exception) {
+                Log.w(tag, "Error updating check item with ID: ${checkItem.id}", e)
                 throw e
             }
         }
