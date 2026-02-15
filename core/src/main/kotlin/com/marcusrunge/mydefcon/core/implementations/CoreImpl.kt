@@ -37,6 +37,7 @@ internal class CoreImpl(
         // Initialize the singleton instances of the core components.
         // The 'create' methods use a singleton pattern to ensure only one instance of each manager exists.
         _broadcast = BroadcastImpl.create(this)
+        _checkItemsSyncManager = CheckItemsSyncManagerImpl.create(this)
         _defconStatusManager = DefconStatusManagerImpl.create(this)
         _liveDataManager = LiveDataManagerImpl.create(this)
         _preferences = PreferencesImpl.create(this)
