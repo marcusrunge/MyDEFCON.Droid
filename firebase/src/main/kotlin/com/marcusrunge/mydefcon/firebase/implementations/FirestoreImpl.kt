@@ -13,107 +13,25 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
-
 internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
-    val tag: String = "FirestoreImpl"
-    override suspend fun getDefconGroup(documentId: String): DefconGroup =
-        withContext(Dispatchers.IO) {
-            val defconGroup = DefconGroup()
-            val db = FirebaseFirestore.getInstance()
-            try {
-                val documentSnapshot =
-                    db.collection("DefconGroup").document(documentId).get().await()
+    private val tag: String = "FirestoreImpl"
 
-                if (!documentSnapshot.exists()) {
-                    Log.d(tag, "No such document with ID: $documentId")
-                    return@withContext defconGroup
-                }
-
-                defconGroup.id = documentSnapshot.id
-                defconGroup.leader = documentSnapshot.getString("Leader").toString()
-                documentSnapshot.getTimestamp("TimeStamp")?.toDate()?.time?.let {
-                    defconGroup.timestamp = it
-                } ?: run {
-                    Log.w(tag, "TimeStamp is null for document ID: $documentId")
-                }
-
-
-                // Fetch followers
-                val followerQuerySnapshot = try {
-                    documentSnapshot.reference.collection("Followers").get().await()
-                } catch (e: Exception) {
-                    Log.w(tag, "Error getting follower collection for document ID: $documentId", e)
-                    throw e
-                }
-
-                if (followerQuerySnapshot.isEmpty) {
-                    Log.d(tag, "Follower collection is empty for document ID: $documentId")
-                    // No followers, but the group itself exists
-                } else {
-                    for (followerDocument in followerQuerySnapshot.documents) {
-                        if (followerDocument.exists()) {
-                            defconGroup.followers.add(
-                                Follower(
-                                    followerDocument.id,
-                                    installationId = followerDocument.getString("InstallationId")
-                                        .toString(),
-                                    isActive = followerDocument.getBoolean("IsActive") ?: false,
-                                    timestamp = followerDocument.getTimestamp("TimeStamp")
-                                        ?.toDate()?.time ?: 0L
-                                )
-                            )
-                        } else {
-                            Log.d(tag, "No such follower document in group ID: $documentId")
-                        }
-                    }
-                }
-
-                // Fetch check items
-                val checkItemQuerySnapshot = try {
-                    documentSnapshot.reference.collection("CheckItems").get().await()
-                } catch (e: Exception) {
-                    Log.w(
-                        tag,
-                        "Error getting check item collection for document ID: $documentId",
-                        e
-                    )
-                    throw e
-                }
-
-                if (checkItemQuerySnapshot.isEmpty) {
-                    Log.d(tag, "Check item collection is empty for document ID: $documentId")
-                } else {
-                    for (checkItemDocument in checkItemQuerySnapshot.documents) {
-                        if (checkItemDocument.exists()) {
-                            defconGroup.checkItems.add(
-                                CheckItem(
-                                    id = checkItemDocument.id,
-                                    uuid = checkItemDocument.getString("Uuid").toString(),
-                                    text = checkItemDocument.getString("Text").toString(),
-                                    defcon = checkItemDocument.getLong("Defcon")?.toInt() ?: 0,
-                                    created = checkItemDocument.getLong("Created") ?: 0L,
-                                    updated = checkItemDocument.getLong("Updated") ?: 0L
-                                )
-                            )
-                        } else {
-                            Log.d(tag, "No such check item document in group ID: $documentId")
-                        }
-                    }
-                }
-                return@withContext defconGroup
-
-            } catch (e: Exception) {
-                Log.w(tag, "Error getting document with ID: $documentId", e)
-                throw e
-            }
-        }
-
+    /**
+     * Creates a new `DefconGroup` in Firestore.
+     * This function generates a new document in the "DefconGroup" collection.
+     * It attempts to associate the group with the current app installation's ID as the "Leader".
+     * A timestamp is also added to mark the creation time.
+     *
+     * @return The unique identifier (document ID) of the newly created group.
+     * @throws Exception if the document creation fails.
+     */
     override suspend fun createDefconGroup(): String = withContext(Dispatchers.IO) {
         val db = FirebaseFirestore.getInstance()
         var installationId: String? = null
         try {
             installationId = FirebaseInstallations.getInstance().id.await()
         } catch (e: Exception) {
+            Log.w(tag, "Error getting installation ID", e)
         }
 
         val defconGroupData = hashMapOf(
@@ -136,6 +54,100 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
         }
     }
 
+    /**
+     * Retrieves a specific `DefconGroup` and its associated sub-collections (Followers, CheckItems) from Firestore.
+     * It fetches the main group document, then iterates through its "Followers" and "CheckItems" sub-collections
+     * to build a complete [DefconGroup] object.
+     *
+     * @param documentId The unique identifier of the `DefconGroup` document.
+     * @return A [DefconGroup] object populated with data from Firestore. If the document doesn't exist, an empty [DefconGroup] is returned.
+     * @throws Exception if there's an error during the fetch operation.
+     */
+    override suspend fun getDefconGroup(documentId: String): DefconGroup =
+        withContext(Dispatchers.IO) {
+            val defconGroup = DefconGroup()
+            val db = FirebaseFirestore.getInstance()
+            try {
+                val documentSnapshot =
+                    db.collection("DefconGroup").document(documentId).get().await()
+
+                if (!documentSnapshot.exists()) {
+                    Log.d(tag, "No such document with ID: $documentId")
+                    return@withContext defconGroup
+                }
+
+                defconGroup.id = documentSnapshot.id
+                defconGroup.leader = documentSnapshot.getString("Leader").toString()
+                documentSnapshot.getTimestamp("TimeStamp")?.toDate()?.time?.let {
+                    defconGroup.timestamp = it
+                } ?: run {
+                    Log.w(tag, "TimeStamp is null for document ID: $documentId")
+                }
+
+                val followerQuerySnapshot = try {
+                    documentSnapshot.reference.collection("Followers").get().await()
+                } catch (e: Exception) {
+                    Log.w(tag, "Error getting follower collection for document ID: $documentId", e)
+                    throw e
+                }
+
+                for (followerDocument in followerQuerySnapshot.documents) {
+                    if (followerDocument.exists()) {
+                        defconGroup.followers.add(
+                            Follower(
+                                followerDocument.id,
+                                installationId = followerDocument.getString("InstallationId")
+                                    .toString(),
+                                isActive = followerDocument.getBoolean("IsActive") ?: false,
+                                timestamp = followerDocument.getTimestamp("TimeStamp")
+                                    ?.toDate()?.time ?: 0L
+                            )
+                        )
+                    }
+                }
+
+                val checkItemQuerySnapshot = try {
+                    documentSnapshot.reference.collection("CheckItems").get().await()
+                } catch (e: Exception) {
+                    Log.w(
+                        tag,
+                        "Error getting check item collection for document ID: $documentId",
+                        e
+                    )
+                    throw e
+                }
+
+                for (checkItemDocument in checkItemQuerySnapshot.documents) {
+                    if (checkItemDocument.exists()) {
+                        defconGroup.checkItems.add(
+                            CheckItem(
+                                id = checkItemDocument.id,
+                                uuid = checkItemDocument.getString("Uuid").toString(),
+                                text = checkItemDocument.getString("Text").toString(),
+                                defcon = checkItemDocument.getLong("Defcon")?.toInt() ?: 0,
+                                created = checkItemDocument.getLong("Created") ?: 0L,
+                                updated = checkItemDocument.getLong("Updated") ?: 0L
+                            )
+                        )
+                    }
+                }
+                return@withContext defconGroup
+
+            } catch (e: Exception) {
+                Log.w(tag, "Error getting document with ID: $documentId", e)
+                throw e
+            }
+        }
+
+    /**
+     * Deletes a `DefconGroup` and all its sub-collections (Followers, CheckItems) from Firestore.
+     * This function performs a cascading delete, first removing all documents within the "Followers"
+     * and "CheckItems" sub-collections before deleting the main `DefconGroup` document itself.
+     * Batch writes are used for deleting sub-collection items for efficiency.
+     *
+     * @param documentId The unique identifier of the `DefconGroup` to delete.
+     * @throws Exception if the deletion process fails at any stage.
+     */
     override suspend fun deleteDefconGroup(documentId: String) {
         withContext(Dispatchers.IO) {
             val db = FirebaseFirestore.getInstance()
@@ -149,9 +161,6 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
                         batch.delete(followerDocument.reference)
                     }
                     batch.commit().await()
-                    Log.d(tag, "All followers in DefconGroup ID: $documentId deleted.")
-                } else {
-                    Log.d(tag, "No followers to delete in DefconGroup ID: $documentId.")
                 }
 
                 val checkItemsCollection =
@@ -163,9 +172,6 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
                         batch.delete(checkItemDocument.reference)
                     }
                     batch.commit().await()
-                    Log.d(tag, "All check items in DefconGroup ID: $documentId deleted.")
-                } else {
-                    Log.d(tag, "No check items to delete in DefconGroup ID: $documentId.")
                 }
 
                 db.collection("DefconGroup").document(documentId).delete().await()
@@ -178,6 +184,34 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
         }
     }
 
+    /**
+     * Checks if a `DefconGroup` with the specified ID exists in Firestore.
+     *
+     * @param documentId The unique identifier of the `DefconGroup`.
+     * @return `true` if the group exists, `false` otherwise. Returns `false` also in case of an error.
+     */
+    override suspend fun checkIfDefconGroupExists(documentId: String): Boolean =
+        withContext(Dispatchers.IO) {
+            val db = FirebaseFirestore.getInstance()
+            try {
+                val documentSnapshot =
+                    db.collection("DefconGroup").document(documentId).get().await()
+                return@withContext documentSnapshot.exists()
+            } catch (e: Exception) {
+                Log.w(tag, "Error checking if DefconGroup ID: $documentId exists", e)
+                return@withContext false
+            }
+        }
+
+    /**
+     * Adds a follower to a `DefconGroup`.
+     * This creates a new document in the "Followers" sub-collection of the specified `DefconGroup`.
+     * The follower is marked as active by default.
+     *
+     * @param documentId The unique identifier of the `DefconGroup`.
+     * @param installationId The unique installation ID of the follower to add.
+     * @throws Exception if adding the follower fails.
+     */
     override suspend fun joinDefconGroup(documentId: String, installationId: String) {
         withContext(Dispatchers.IO) {
             val db = FirebaseFirestore.getInstance()
@@ -202,6 +236,15 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
         }
     }
 
+    /**
+     * Removes a follower from a `DefconGroup` based on their installation ID.
+     * It queries the "Followers" sub-collection to find the matching document and deletes it.
+     * A batch operation is used to ensure all documents matching the installation ID are removed.
+     *
+     * @param documentId The unique identifier of the `DefconGroup`.
+     * @param installationId The unique installation ID of the follower to remove.
+     * @throws Exception if the removal process fails.
+     */
     override suspend fun leaveDefconGroup(documentId: String, installationId: String) {
         withContext(Dispatchers.IO) {
             val db = FirebaseFirestore.getInstance()
@@ -213,10 +256,6 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
                     followersCollection.whereEqualTo("InstallationId", installationId).get().await()
 
                 if (querySnapshot.isEmpty) {
-                    Log.d(
-                        tag,
-                        "No follower found with installation ID $installationId in DefconGroup ID: $documentId to remove."
-                    )
                     return@withContext
                 }
 
@@ -237,19 +276,51 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
         }
     }
 
-    override suspend fun checkIfDefconGroupExists(documentId: String): Boolean =
+    /**
+     * Retrieves all followers associated with a `DefconGroup`.
+     *
+     * @param documentId The unique identifier of the `DefconGroup`.
+     * @return A list of [Follower] objects. Returns an empty list if the collection is empty or an error occurs.
+     * @throws Exception if there is a problem fetching the followers.
+     */
+    override suspend fun getDefconGroupFollowers(documentId: String): List<Follower> =
         withContext(Dispatchers.IO) {
+            val followers = mutableListOf<Follower>()
             val db = FirebaseFirestore.getInstance()
             try {
-                val documentSnapshot =
-                    db.collection("DefconGroup").document(documentId).get().await()
-                return@withContext documentSnapshot.exists()
+                val followerQuerySnapshot =
+                    db.collection("DefconGroup").document(documentId).collection("Followers").get()
+                        .await()
+
+                for (followerDocument in followerQuerySnapshot.documents) {
+                    if (followerDocument.exists()) {
+                        followers.add(
+                            Follower(
+                                followerDocument.id,
+                                installationId = followerDocument.getString("InstallationId")
+                                    .toString(),
+                                isActive = followerDocument.getBoolean("IsActive") ?: false,
+                                timestamp = followerDocument.getTimestamp("TimeStamp")
+                                    ?.toDate()?.time ?: 0L
+                            )
+                        )
+                    }
+                }
+                return@withContext followers
+
             } catch (e: Exception) {
-                Log.w(tag, "Error checking if DefconGroup ID: $documentId exists", e)
-                return@withContext false
+                Log.w(tag, "Error getting followers for document ID: $documentId", e)
+                throw e
             }
         }
 
+    /**
+     * Checks if a specific follower is part of a `DefconGroup`.
+     *
+     * @param documentId The unique identifier of the `DefconGroup`.
+     * @param installationId The unique installation ID of the follower.
+     * @return `true` if the follower is in the group, `false` otherwise. Returns `false` also in case of an error.
+     */
     override suspend fun checkIfFollowerInDefconGroupExists(
         documentId: String,
         installationId: String
@@ -267,43 +338,16 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
         }
     }
 
-    override suspend fun getDefconGroupFollowers(documentId: String): List<Follower> =
-        withContext(Dispatchers.IO) {
-            val followers = mutableListOf<Follower>()
-            val db = FirebaseFirestore.getInstance()
-            try {
-                val followerQuerySnapshot =
-                    db.collection("DefconGroup").document(documentId).collection("Followers").get()
-                        .await()
-
-                if (followerQuerySnapshot.isEmpty) {
-                    Log.d(tag, "Follower collection is empty for document ID: $documentId")
-                } else {
-                    for (followerDocument in followerQuerySnapshot.documents) {
-                        if (followerDocument.exists()) {
-                            followers.add(
-                                Follower(
-                                    followerDocument.id,
-                                    installationId = followerDocument.getString("InstallationId")
-                                        .toString(),
-                                    isActive = followerDocument.getBoolean("IsActive") ?: false,
-                                    timestamp = followerDocument.getTimestamp("TimeStamp")
-                                        ?.toDate()?.time ?: 0L
-                                )
-                            )
-                        } else {
-                            Log.d(tag, "No such follower document in group ID: $documentId")
-                        }
-                    }
-                }
-                return@withContext followers
-
-            } catch (e: Exception) {
-                Log.w(tag, "Error getting followers for document ID: $documentId", e)
-                throw e
-            }
-        }
-
+    /**
+     * Updates the status of a follower within a `DefconGroup`.
+     * This function finds the follower by their installation ID and updates their `IsActive` status
+     * and `TimeStamp`.
+     *
+     * @param documentId The unique identifier of the `DefconGroup`.
+     * @param installationId The unique installation ID of the follower.
+     * @param isActive The new status of the follower.
+     * @throws Exception if the update fails.
+     */
     override suspend fun updateFollowerStatus(
         documentId: String,
         installationId: String,
@@ -319,10 +363,6 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
                     followersCollection.whereEqualTo("InstallationId", installationId).get().await()
 
                 if (querySnapshot.isEmpty) {
-                    Log.d(
-                        tag,
-                        "No follower found with installation ID $installationId in DefconGroup ID: $documentId to update."
-                    )
                     return@withContext
                 }
                 val data = mapOf(
@@ -334,11 +374,6 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
                     batch.update(document.reference, data)
                 }
                 batch.commit().await()
-                Log.d(
-                    tag,
-                    "Follower status updated for installation ID $installationId in DefconGroup ID: $documentId"
-                )
-
             } catch (e: Exception) {
                 Log.w(tag, "Error updating follower status in DefconGroup ID: $documentId", e)
                 throw e
@@ -346,36 +381,14 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
         }
     }
 
-    override suspend fun deleteCheckItem(documentId: String, checkItemUuid: String) {
-        withContext(Dispatchers.IO) {
-            val db = FirebaseFirestore.getInstance()
-            try {
-                val checkItemsCollection = db.collection("DefconGroup").document(documentId)
-                    .collection("CheckItems")
-                val querySnapshot =
-                    checkItemsCollection.whereEqualTo("Uuid", checkItemUuid).get().await()
-
-                if (querySnapshot.isEmpty) {
-                    Log.d(
-                        tag,
-                        "No check item found with UUID $checkItemUuid in DefconGroup ID: $documentId to delete."
-                    )
-                    return@withContext
-                }
-
-                val batch = db.batch()
-                for (document in querySnapshot.documents) {
-                    batch.delete(document.reference)
-                }
-                batch.commit().await()
-                Log.d(tag, "Check item with UUID: $checkItemUuid deleted successfully.")
-            } catch (e: Exception) {
-                Log.w(tag, "Error deleting check item with UUID: $checkItemUuid", e)
-                throw e
-            }
-        }
-    }
-
+    /**
+     * Adds a check item to a `DefconGroup`.
+     * This function creates a new document in the "CheckItems" sub-collection of the specified `DefconGroup`.
+     *
+     * @param documentId The unique identifier of the `DefconGroup`.
+     * @param checkItem The [CheckItem] object to add. The `id` property is ignored.
+     * @throws Exception if adding the check item fails.
+     */
     override suspend fun addCheckItem(documentId: String, checkItem: CheckItem) {
         withContext(Dispatchers.IO) {
             val db = FirebaseFirestore.getInstance()
@@ -399,6 +412,13 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
         }
     }
 
+    /**
+     * Retrieves all check items associated with a `DefconGroup`.
+     *
+     * @param documentId The unique identifier of the `DefconGroup`.
+     * @return A list of [CheckItem] objects. Returns an empty list if the collection is empty or an error occurs.
+     * @throws Exception if there is a problem fetching the check items.
+     */
     override suspend fun getCheckItems(documentId: String): List<CheckItem> =
         withContext(Dispatchers.IO) {
             val checkItems = mutableListOf<CheckItem>()
@@ -408,28 +428,22 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
                     db.collection("DefconGroup").document(documentId).collection("CheckItems").get()
                         .await()
 
-                if (checkItemQuerySnapshot.isEmpty) {
-                    Log.d(tag, "Check item collection is empty for document ID: $documentId")
-                } else {
-                    for (checkItemDocument in checkItemQuerySnapshot.documents) {
-                        if (checkItemDocument.exists()) {
-                            checkItems.add(
-                                CheckItem(
-                                    id = checkItemDocument.id,
-                                    uuid = checkItemDocument.getString("Uuid").toString(),
-                                    text = checkItemDocument.getString("Text").toString(),
-                                    defcon = checkItemDocument.getLong("Defcon")?.toInt() ?: 0,
-                                    created = checkItemDocument.getTimestamp("Created")
-                                        ?.toDate()?.time
-                                        ?: 0L,
-                                    updated = checkItemDocument.getTimestamp("Updated")
-                                        ?.toDate()?.time
-                                        ?: 0L
-                                )
+                for (checkItemDocument in checkItemQuerySnapshot.documents) {
+                    if (checkItemDocument.exists()) {
+                        checkItems.add(
+                            CheckItem(
+                                id = checkItemDocument.id,
+                                uuid = checkItemDocument.getString("Uuid").toString(),
+                                text = checkItemDocument.getString("Text").toString(),
+                                defcon = checkItemDocument.getLong("Defcon")?.toInt() ?: 0,
+                                created = checkItemDocument.getTimestamp("Created")
+                                    ?.toDate()?.time
+                                    ?: 0L,
+                                updated = checkItemDocument.getTimestamp("Updated")
+                                    ?.toDate()?.time
+                                    ?: 0L
                             )
-                        } else {
-                            Log.d(tag, "No such check item document in group ID: $documentId")
-                        }
+                        )
                     }
                 }
                 return@withContext checkItems
@@ -439,6 +453,15 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
             }
         }
 
+    /**
+     * Updates a check item in a `DefconGroup` based on its UUID.
+     * This function queries for a check item with a matching UUID and updates its "Text", "Defcon", and "Updated" fields.
+     * A batch update is used to apply changes to all found documents, ensuring consistency if multiple documents share the same UUID.
+     *
+     * @param documentId The unique identifier of the `DefconGroup`.
+     * @param checkItem The [CheckItem] object containing the updated data and the UUID to match.
+     * @throws Exception if the update process fails.
+     */
     override suspend fun updateCheckItem(
         documentId: String,
         checkItem: CheckItem
@@ -478,8 +501,50 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
         }
     }
 
+    /**
+     * Deletes a check item from a `DefconGroup` using its UUID.
+     * It queries the "CheckItems" sub-collection to find any documents matching the provided UUID and deletes them.
+     * A batch operation ensures that all matching items are removed.
+     *
+     * @param documentId The unique identifier of the `DefconGroup`.
+     * @param checkItemUuid The unique identifier (UUID) of the check item to delete.
+     * @throws Exception if the deletion fails.
+     */
+    override suspend fun deleteCheckItem(documentId: String, checkItemUuid: String) {
+        withContext(Dispatchers.IO) {
+            val db = FirebaseFirestore.getInstance()
+            try {
+                val checkItemsCollection = db.collection("DefconGroup").document(documentId)
+                    .collection("CheckItems")
+                val querySnapshot =
+                    checkItemsCollection.whereEqualTo("Uuid", checkItemUuid).get().await()
+
+                if (querySnapshot.isEmpty) {
+                    return@withContext
+                }
+
+                val batch = db.batch()
+                for (document in querySnapshot.documents) {
+                    batch.delete(document.reference)
+                }
+                batch.commit().await()
+                Log.d(tag, "Check item with UUID: $checkItemUuid deleted successfully.")
+            } catch (e: Exception) {
+                Log.w(tag, "Error deleting check item with UUID: $checkItemUuid", e)
+                throw e
+            }
+        }
+    }
+
     internal companion object {
         private var instance: Firestore? = null
+
+        /**
+         * Creates and provides a singleton instance of the [Firestore] interface.
+         *
+         * @param base The [FirebaseBase] dependency required for initialization.
+         * @return A singleton instance of [Firestore].
+         */
         fun create(base: FirebaseBase): Firestore = when {
             instance != null -> instance!!
             else -> {

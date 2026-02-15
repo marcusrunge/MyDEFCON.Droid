@@ -12,15 +12,7 @@ import com.marcusrunge.mydefcon.firebase.documents.Follower
  * Firestore API calls, offering a clean and domain-specific way to manage data.
  */
 interface Firestore {
-    /**
-     * Retrieves a specific `DefconGroup` from Firestore.
-     *
-     * @param documentId The unique identifier of the `DefconGroup` document.
-     * @return The [DefconGroup] object.
-     * @see DefconGroup
-     */
-    suspend fun getDefconGroup(documentId: String): DefconGroup
-
+    //region DefconGroup
     /**
      * Creates a new `DefconGroup` in Firestore.
      *
@@ -29,12 +21,31 @@ interface Firestore {
     suspend fun createDefconGroup(): String
 
     /**
-     * Deletes a `DefconGroup` from Firestore.
+     * Retrieves a specific `DefconGroup` from Firestore, including its followers and check items.
+     *
+     * @param documentId The unique identifier of the `DefconGroup` document.
+     * @return The [DefconGroup] object.
+     * @see DefconGroup
+     */
+    suspend fun getDefconGroup(documentId: String): DefconGroup
+
+    /**
+     * Deletes a `DefconGroup` from Firestore, including all its sub-collections.
      *
      * @param documentId The unique identifier of the `DefconGroup` to delete.
      */
     suspend fun deleteDefconGroup(documentId: String)
 
+    /**
+     * Checks if a `DefconGroup` with the specified ID exists in Firestore.
+     *
+     * @param documentId The unique identifier of the `DefconGroup`.
+     * @return `true` if the group exists, `false` otherwise.
+     */
+    suspend fun checkIfDefconGroupExists(documentId: String): Boolean
+    //endregion
+
+    //region Follower
     /**
      * Adds a follower to a `DefconGroup`.
      *
@@ -52,12 +63,13 @@ interface Firestore {
     suspend fun leaveDefconGroup(documentId: String, installationId: String)
 
     /**
-     * Checks if a `DefconGroup` with the specified ID exists in Firestore.
+     * Retrieves all followers associated with a `DefconGroup`.
      *
      * @param documentId The unique identifier of the `DefconGroup`.
-     * @return `true` if the group exists, `false` otherwise.
+     * @return A list of [Follower] objects.
+     * @see Follower
      */
-    suspend fun checkIfDefconGroupExists(documentId: String): Boolean
+    suspend fun getDefconGroupFollowers(documentId: String): List<Follower>
 
     /**
      * Checks if a specific follower is part of a `DefconGroup`.
@@ -72,15 +84,6 @@ interface Firestore {
     ): Boolean
 
     /**
-     * Retrieves all followers associated with a `DefconGroup`.
-     *
-     * @param documentId The unique identifier of the `DefconGroup`.
-     * @return A list of [Follower] objects.
-     * @see Follower
-     */
-    suspend fun getDefconGroupFollowers(documentId: String): List<Follower>
-
-    /**
      * Updates the status of a follower within a `DefconGroup`.
      *
      * @param documentId The unique identifier of the `DefconGroup`.
@@ -88,35 +91,40 @@ interface Firestore {
      * @param isActive The new status of the follower.
      */
     suspend fun updateFollowerStatus(documentId: String, installationId: String, isActive: Boolean)
+    //endregion
 
+    //region CheckItem
     /**
      * Adds a check item to a `DefconGroup`.
      *
      * @param documentId The unique identifier of the `DefconGroup`.
+     * @param checkItem The [CheckItem] to add.
      */
     suspend fun addCheckItem(documentId: String, checkItem: CheckItem)
 
-    /**
-     * Updates a check item in a `DefconGroup`.
-     *
-     * @param documentId The unique identifier of the `DefconGroup`.
-     */
-    suspend fun updateCheckItem(documentId: String, checkItem: CheckItem)
     /**
      * Retrieves all check items associated with a `DefconGroup`.
      *
      * @param documentId The unique identifier of the `DefconGroup`.
      * @return A list of [CheckItem] objects.
-     *
      * @see CheckItem
      */
     suspend fun getCheckItems(documentId: String): List<CheckItem>
 
     /**
+     * Updates a check item in a `DefconGroup`.
+     *
+     * @param documentId The unique identifier of the `DefconGroup`.
+     * @param checkItem The [CheckItem] with updated data.
+     */
+    suspend fun updateCheckItem(documentId: String, checkItem: CheckItem)
+
+    /**
      * Deletes a check item from a `DefconGroup`.
      *
      * @param documentId The unique identifier of the `DefconGroup`.
-     * @param checkItemUuid The unique identifier of the check item to delete.
+     * @param checkItemUuid The unique identifier (UUID) of the check item to delete.
      */
     suspend fun deleteCheckItem(documentId: String, checkItemUuid: String)
+    //endregion
 }
