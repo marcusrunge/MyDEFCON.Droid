@@ -2,7 +2,6 @@ package com.marcusrunge.mydefcon.core.bases
 
 import com.marcusrunge.mydefcon.core.interfaces.Broadcast
 import com.marcusrunge.mydefcon.core.interfaces.BroadcastOperations
-import com.marcusrunge.mydefcon.core.interfaces.CheckItemsSyncManager
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.core.interfaces.DefconStatusManager
 import com.marcusrunge.mydefcon.core.interfaces.LiveDataManager
@@ -31,7 +30,6 @@ internal abstract class CoreBase(
     // These are intended to be initialized in the subclass.
     protected lateinit var _preferences: Preferences
     protected lateinit var _broadcast: Broadcast
-    protected lateinit var _checkItemsSyncManager: CheckItemsSyncManager
     protected lateinit var _liveDataManager: LiveDataManager
     protected lateinit var _defconStatusManager: DefconStatusManager
     protected lateinit var _coroutineScope: CoroutineScope
@@ -62,9 +60,6 @@ internal abstract class CoreBase(
     /** Provides a [CoroutineScope] for managing asynchronous operations. */
     override val coroutineScope: CoroutineScope?
         get() = _coroutineScope
-    /** Provides access to the [CheckItemsSyncManager] component. */
-    override val checkItemsSyncManager: CheckItemsSyncManager?
-        get() = _checkItemsSyncManager
 
     /** Provides internal access to the [PreferencesOperations] for use within the core module. */
     internal val preferencesOperations: PreferencesOperations get() = _preferencesOperations

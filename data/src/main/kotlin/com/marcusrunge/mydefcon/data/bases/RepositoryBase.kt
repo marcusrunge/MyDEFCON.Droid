@@ -2,6 +2,8 @@ package com.marcusrunge.mydefcon.data.bases
 
 import android.content.Context
 import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.marcusrunge.mydefcon.data.interfaces.CheckItems
 
 /**
@@ -34,11 +36,17 @@ internal abstract class RepositoryBase(context: Context?) {
     internal val myDefconDatabase: MyDefconDatabase
 
     init {
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE checkitem ADD COLUMN is_export INTEGER NOT NULL DEFAULT 0")
+            }
+        }
+
         // A non-null context is required to initialize the database.
         requireNotNull(context) { "Context must not be null for database initialization." }
         myDefconDatabase = Room.databaseBuilder(
-                context,
-                MyDefconDatabase::class.java, "mydefcon_database"
-            ).fallbackToDestructiveMigration(false).build()
+            context,
+            MyDefconDatabase::class.java, "mydefcon_database"
+        ).addMigrations(MIGRATION_2_3).fallbackToDestructiveMigration(false).build()
     }
 }

@@ -17,12 +17,6 @@ interface Core {
     val broadCast: Broadcast?
 
     /**
-     * Provides access to the [CheckItemsSyncManager] for managing synchronization of check items.
-     * Can be null if the synchronization feature is not available.
-     */
-    val checkItemsSyncManager: CheckItemsSyncManager?
-
-    /**
      * Provides access to the [Preferences] component for managing application settings.
      * Can be null if the preferences feature is not available.
      */

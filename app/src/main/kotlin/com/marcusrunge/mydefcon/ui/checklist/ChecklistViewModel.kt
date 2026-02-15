@@ -181,7 +181,8 @@ class ChecklistViewModel @Inject constructor(
                 isDeleted = false,
                 defcon = checkItemsStatus,
                 created = now.toEpochSecond(),
-                updated = now.toEpochSecond()
+                updated = now.toEpochSecond(),
+                isExport = false
             )
             val id = data.repository.checkItems.insert(checkItem)
             checkItem.id = id

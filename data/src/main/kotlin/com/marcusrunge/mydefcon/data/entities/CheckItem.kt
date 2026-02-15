@@ -19,6 +19,7 @@ import java.io.Serializable
  * @property defcon The DEFCON level associated with this check item.
  * @property created The timestamp when the item was created.
  * @property updated The timestamp of the last update to the item.
+ * @property isExport A flag indicating whether the item has been marked for export to the server.
  */
 @Entity(tableName = "checkitem")
 @kotlinx.serialization.Serializable
@@ -29,6 +30,7 @@ data class CheckItem(
     @ColumnInfo(name = "is_checked") var isChecked: Boolean,
     @ColumnInfo(name = "is_deleted") var isDeleted: Boolean,
     @ColumnInfo(name = "defcon") var defcon: Int,
-    @ColumnInfo(name = "created") val created: Long?,
-    @ColumnInfo(name = "updated") var updated: Long
+    @ColumnInfo(name = "created") val created: Long,
+    @ColumnInfo(name = "updated") var updated: Long,
+    @ColumnInfo(name = "is_export") var isExport: Boolean,
 ) : Serializable

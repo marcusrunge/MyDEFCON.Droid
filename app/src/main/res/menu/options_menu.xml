@@ -6,6 +6,12 @@
         android:title="@string/action_statusshare"
         app:showAsAction="ifRoom" />
     <item
+        android:id="@+id/action_listsync"
+        android:icon="@drawable/ic_sync_black_24dp"
+        android:title="@string/action_listsync"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/navigation_settings"
         android:title="@string/title_settings" />
     <item

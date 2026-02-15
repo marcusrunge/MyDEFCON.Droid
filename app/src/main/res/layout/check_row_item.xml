@@ -22,14 +22,14 @@
             android:buttonTint="@drawable/check_redgreen_selector"
             android:checked="@{checkitem.isChecked}"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <EditText
             android:hint="@string/checkitem_hinttext"
             android:id="@+id/editText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
             android:autofillHints=""
             android:backgroundTint="@color/white"
             android:inputType="textMultiLine"
@@ -37,9 +37,22 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@android:color/white"
             android:textCursorDrawable="@null"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/checkBox"
-            app:layout_constraintTop_toTopOf="@id/checkBox"
+            app:layout_constraintEnd_toStartOf="@id/exportCheckBox"
+            app:layout_constraintStart_toEndOf="@id/checkBox"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             tools:ignore="SpeakableTextPresentCheck" />
+
+        <CheckBox
+            android:id="@+id/exportCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="@{checkitem.isExport}"
+            android:buttonTint="@drawable/check_default_selector"
+            android:layout_margin="4dp"
+            app:layout_constraintStart_toEndOf="@+id/editText"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
