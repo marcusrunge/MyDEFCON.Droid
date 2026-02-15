@@ -346,17 +346,31 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
         }
     }
 
-    override suspend fun deleteCheckItem(documentId: String, checkItemId: String) {
+    override suspend fun deleteCheckItem(documentId: String, checkItemUuid: String) {
         withContext(Dispatchers.IO) {
             val db = FirebaseFirestore.getInstance()
             try {
-                db.collection("DefconGroup").document(documentId)
-                    .collection("CheckItems").document(checkItemId)
-                    .delete()
-                    .await()
-                Log.d(tag, "Check item with ID: $checkItemId deleted successfully.")
+                val checkItemsCollection = db.collection("DefconGroup").document(documentId)
+                    .collection("CheckItems")
+                val querySnapshot =
+                    checkItemsCollection.whereEqualTo("Uuid", checkItemUuid).get().await()
+
+                if (querySnapshot.isEmpty) {
+                    Log.d(
+                        tag,
+                        "No check item found with UUID $checkItemUuid in DefconGroup ID: $documentId to delete."
+                    )
+                    return@withContext
+                }
+
+                val batch = db.batch()
+                for (document in querySnapshot.documents) {
+                    batch.delete(document.reference)
+                }
+                batch.commit().await()
+                Log.d(tag, "Check item with UUID: $checkItemUuid deleted successfully.")
             } catch (e: Exception) {
-                Log.w(tag, "Error deleting check item with ID: $checkItemId", e)
+                Log.w(tag, "Error deleting check item with UUID: $checkItemUuid", e)
                 throw e
             }
         }
@@ -432,19 +446,33 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
         withContext(Dispatchers.IO) {
             val db = FirebaseFirestore.getInstance()
             try {
-                checkItem.id.let { checkItemId ->
-                    val checkItemDocRef = db.collection("DefconGroup").document(documentId)
-                        .collection("CheckItems").document(checkItemId)
-                    val updates = hashMapOf<String, Any>(
-                        "Text" to checkItem.text,
-                        "Defcon" to checkItem.defcon,
-                        "Updated" to checkItem.updated
+                val checkItemsCollection = db.collection("DefconGroup").document(documentId)
+                    .collection("CheckItems")
+                val querySnapshot =
+                    checkItemsCollection.whereEqualTo("Uuid", checkItem.uuid).get().await()
+
+                if (querySnapshot.isEmpty) {
+                    Log.w(
+                        tag,
+                        "No check item found with UUID ${checkItem.uuid} in DefconGroup ID: $documentId to update."
                     )
-                    checkItemDocRef.update(updates).await()
-                    Log.d(tag, "CheckItem with id $checkItemId updated.")
-                } ?: Log.w(tag, "CheckItem ID is null, can't update.")
+                    return@withContext
+                }
+
+                val updates = mapOf(
+                    "Text" to checkItem.text,
+                    "Defcon" to checkItem.defcon,
+                    "Updated" to checkItem.updated
+                )
+
+                val batch = db.batch()
+                for (document in querySnapshot.documents) {
+                    batch.update(document.reference, updates)
+                }
+                batch.commit().await()
+                Log.d(tag, "CheckItem with uuid ${checkItem.uuid} updated.")
             } catch (e: Exception) {
-                Log.w(tag, "Error updating check item with ID: ${checkItem.id}", e)
+                Log.w(tag, "Error updating check item with UUID: ${checkItem.uuid}", e)
                 throw e
             }
         }

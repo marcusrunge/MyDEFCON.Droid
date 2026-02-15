@@ -116,6 +116,7 @@ interface Firestore {
      * Deletes a check item from a `DefconGroup`.
      *
      * @param documentId The unique identifier of the `DefconGroup`.
+     * @param checkItemUuid The unique identifier of the check item to delete.
      */
-    suspend fun deleteCheckItem(documentId: String, checkItemId: String)
+    suspend fun deleteCheckItem(documentId: String, checkItemUuid: String)
 }
