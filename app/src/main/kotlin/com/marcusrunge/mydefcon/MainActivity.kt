@@ -21,15 +21,18 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
-import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
+import com.google.android.gms.oss.licenses.v2.OssLicensesMenuActivity
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.databinding.ActivityMainBinding
+import com.marcusrunge.mydefcon.interfaces.CheckListSynchronization
 import com.marcusrunge.mydefcon.ui.main.MainViewModel
 import com.marcusrunge.mydefcon.utils.BitmapUtils
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -44,6 +47,8 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedListener {
     @Inject
     lateinit var core: Core
+    @Inject
+    lateinit var checkListSynchronization: CheckListSynchronization
     private lateinit var navController: NavController
     private lateinit var binding: ActivityMainBinding
     private var optionsMenu: Menu? = null
@@ -85,9 +90,6 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
             insets
         }
-
-        // Set the title for the open source licenses activity
-        OssLicensesMenuActivity.setActivityTitle(getString(R.string.license_title))
 
         // Set up the NavController
         val navHostFragment =
@@ -147,10 +149,12 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
                 navController.navigate(R.id.navigation_privacy)
                 true
             }
-            /*R.id.navigation_licenses -> {
-                startActivity(Intent(this, OssLicensesMenuActivity::class.java))
+            R.id.navigation_licenses -> {
+                val intent = Intent(this, OssLicensesMenuActivity::class.java)
+                intent.putExtra("title", getString(R.string.license_title))
+                startActivity(intent)
                 true
-            }*/
+            }
             R.id.navigation_terms -> {
                 navController.navigate(R.id.navigation_terms)
                 true
@@ -158,6 +162,12 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
             // Handle the Up button
             android.R.id.home -> {
                 navController.popBackStack()
+                true
+            }
+            R.id.action_listsync->{
+                lifecycleScope.launch {
+                    checkListSynchronization.syncCheckList()
+                }
                 true
             }
 
@@ -201,12 +211,15 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         when (destination.id) {
             R.id.navigation_status -> {
                 optionsMenu?.findItem(R.id.action_statusshare)?.isVisible = true
+                optionsMenu?.findItem(R.id.action_listsync)?.isVisible = false
             }
             R.id.navigation_checklist -> {
                 optionsMenu?.findItem(R.id.action_statusshare)?.isVisible = false
+                optionsMenu?.findItem(R.id.action_listsync)?.isVisible = true
             }
             else -> {
                 optionsMenu?.findItem(R.id.action_statusshare)?.isVisible = false
+                optionsMenu?.findItem(R.id.action_listsync)?.isVisible = false
             }
         }
     }

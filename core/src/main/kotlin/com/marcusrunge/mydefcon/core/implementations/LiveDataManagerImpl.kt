@@ -26,6 +26,12 @@ internal class LiveDataManagerImpl(private val coreBase: CoreBase) : LiveDataMan
     private val _defconStatusFlow = MutableSharedFlow<Pair<Int, Class<*>>>()
 
     /**
+     * A private, mutable shared flow that is used to emit checklist changes internally.
+     * The value is the [Class] of the component that initiated the change.
+     */
+    private val _checkListChangeFlow = MutableSharedFlow<Class<*>>()
+
+    /**
      * A private, mutable shared flow that is used to emit DEFCON group changes internally.
      * The triple consists of the created DEFCON group ID (a [String]), the joined DEFCON group
      * ID (a [String]) and the [Class] of the component that initiated the change.
@@ -38,6 +44,13 @@ internal class LiveDataManagerImpl(private val coreBase: CoreBase) : LiveDataMan
      */
     override val defconStatusFlow: SharedFlow<Pair<Int, Class<*>>>
         get() = _defconStatusFlow.asSharedFlow()
+
+    /**
+     * A public, immutable shared flow that exposes checklist changes to observers.
+     * This follows the best practice of exposing only immutable flows to consumers.
+     */
+    override val checkListChangeFlow: SharedFlow<Class<*>>
+        get() = _checkListChangeFlow.asSharedFlow()
 
     /**
      * A public, immutable shared flow that exposes the DEFCON group changes to observers.
@@ -59,6 +72,21 @@ internal class LiveDataManagerImpl(private val coreBase: CoreBase) : LiveDataMan
     override fun emitDefconStatus(status: Int, source: Class<*>) {
         coreBase.coroutineScope?.launch {
             _defconStatusFlow.emit(Pair(status, source))
+        }
+    }
+
+    /**
+     * Emits a new checklist change to the shared flow.
+     *
+     * This function is called by other components when they need to signal that the
+     * checklist has been modified. It launches a coroutine in the core's coroutine scope to emit
+     * the new status to the [_checkListChangeFlow].
+     *
+     * @param source The class that is emitting the change.
+     */
+    override fun emitCheckListChange(source: Class<*>) {
+        coreBase.coroutineScope?.launch {
+            _checkListChangeFlow.emit(source)
         }
     }
 

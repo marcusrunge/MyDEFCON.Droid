@@ -38,4 +38,5 @@
     <string name="installation_id">Installation-ID:</string>
     <string name="could_not_retrieve_installation_id">Could not retrieve Installation ID</string>
     <string name="loading_installation_id">Loading...</string>
+    <string name="title_licenses">Licenses</string>
 </resources>

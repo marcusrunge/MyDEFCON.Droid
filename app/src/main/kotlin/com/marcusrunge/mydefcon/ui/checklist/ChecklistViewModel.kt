@@ -123,6 +123,11 @@ class ChecklistViewModel @Inject constructor(
     init {
         setupRecyclerViewAdapter()
         setupItemTouchHelper()
+        viewModelScope.launch {
+            core.liveDataManager?.checkListChangeFlow?.collect {
+                loadCheckItemsForStatus()
+            }
+        }
     }
 
     /**

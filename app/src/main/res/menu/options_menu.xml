@@ -17,9 +17,9 @@
     <item
         android:id="@+id/navigation_terms"
         android:title="@string/title_terms" />
-    <!--<item
+    <item
         android:id="@+id/navigation_licenses"
-        android:title="@string/title_licenses" />-->
+        android:title="@string/title_licenses" />
     <item
         android:id="@+id/navigation_privacy"
         android:title="@string/title_privacy" />

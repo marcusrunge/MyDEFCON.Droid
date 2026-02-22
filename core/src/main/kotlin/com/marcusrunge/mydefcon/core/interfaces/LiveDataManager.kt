@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.SharedFlow
  * An interface for managing live data within the application.
  *
  * This interface provides a contract for emitting and observing real-time data streams,
- * specifically for the DEFCON status and group changes.
+ * specifically for the DEFCON status, group changes, and checklist changes.
  */
 interface LiveDataManager {
     /**
@@ -28,6 +28,14 @@ interface LiveDataManager {
     val defconGroupChangeFlow: SharedFlow<Triple<String, String, Class<*>>>
 
     /**
+     * A [SharedFlow] that emits changes to the checklist.
+     *
+     * Components can collect from this flow to react to changes in the checklist in real-time.
+     * The emitted value is the [Class] of the component that initiated the change.
+     */
+    val checkListChangeFlow: SharedFlow<Class<*>>
+
+    /**
      * Emits a new DEFCON status to the [defconStatusFlow].
      *
      * @param status The new DEFCON status to emit.
@@ -43,4 +51,11 @@ interface LiveDataManager {
      * @param source The class that is emitting the new status.
      */
     fun emitDefconGroupChange(createdGroupId: String, joinedGroupId: String, source: Class<*>)
+
+    /**
+     * Emits a new checklist change to the [checkListChangeFlow].
+     *
+     * @param source The class that is emitting the checklist change.
+     */
+    fun emitCheckListChange(source: Class<*>)
 }
