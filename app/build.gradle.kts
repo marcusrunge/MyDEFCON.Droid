@@ -86,7 +86,7 @@ dependencies {
     implementation("androidx.work:work-runtime-ktx:2.11.1")
     implementation("androidx.hilt:hilt-work:1.3.0")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
-    implementation("com.google.firebase:firebase-installations:19.0.1")
+    implementation("com.google.firebase:firebase-installations:19.1.0")
     implementation("com.google.firebase:firebase-database:22.0.1")
     ksp("com.google.dagger:hilt-compiler:2.59.2")
     ksp("androidx.hilt:hilt-compiler:1.3.0")
