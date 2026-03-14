@@ -53,7 +53,7 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 
 dependencies {
     val room_version = "2.8.4"
-    implementation("androidx.core:core-ktx:1.17.0")
+    implementation("androidx.core:core-ktx:1.18.0")
     implementation("androidx.room:room-runtime:$room_version")
     ksp("androidx.room:room-compiler:$room_version")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.10.0")
