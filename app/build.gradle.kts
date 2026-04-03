@@ -83,7 +83,7 @@ dependencies {
     implementation(project(":data"))
     implementation(project(":notifications"))
     implementation(project(":firebase"))
-    implementation("androidx.work:work-runtime-ktx:2.11.1")
+    implementation("androidx.work:work-runtime-ktx:2.11.2")
     implementation("androidx.hilt:hilt-work:1.3.0")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("com.google.firebase:firebase-installations:19.1.0")
