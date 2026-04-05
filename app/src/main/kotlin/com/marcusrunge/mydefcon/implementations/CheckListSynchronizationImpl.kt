@@ -28,16 +28,48 @@ class CheckListSynchronizationImpl(
      *
      * This function fetches the complete checklist from Firebase, clears the local
      * checklist table, and inserts the new items. After the local database is updated,
-     * it emits a notification through the [LiveDataManager] to inform observers that the
+     * it emits a notification through the [com.marcusrunge.mydefcon.core.interfaces.LiveDataManager] to inform observers that the
      * checklist data has changed. This operation is performed on the IO dispatcher to
      * avoid blocking the main thread.
      */
-    override suspend fun syncCheckList() {     
-        if(core.preferences?.joinedDefconGroupId?.isNotBlank() == true) {
-            //TODO: Implement pull sync
-            core.liveDataManager?.emitCheckListChange(CheckListSynchronizationImpl::class.java)
-        }  else if(core.preferences?.createdDefconGroupId?.isNotBlank() == true) {
-            //TODO: Implement push sync
+    override suspend fun syncCheckList() {
+        withContext(Dispatchers.IO) {
+            val joinedDefconGroupId = core.preferences?.joinedDefconGroupId
+            val createdDefconGroupId = core.preferences?.createdDefconGroupId
+
+            if (joinedDefconGroupId?.isNotBlank() == true) {
+                // TODO: Implement pull sync
+                core.liveDataManager?.emitCheckListChange(CheckListSynchronizationImpl::class.java)
+            } else if (createdDefconGroupId?.isNotBlank() == true) {
+                val firebaseCheckItems = firebase.firestore.getCheckItems(createdDefconGroupId)
+                val repositoryCheckItems = data.repository.checkItems.getAll()
+
+                repositoryCheckItems.forEach { repositoryCheckItem ->
+                    val firebaseCheckItem =
+                        firebaseCheckItems.find { it.uuid == repositoryCheckItem.uuid }
+
+                    val checkItem = com.marcusrunge.mydefcon.firebase.documents.CheckItem(
+                        id = firebaseCheckItem?.id ?: "",
+                        uuid = repositoryCheckItem.uuid,
+                        text = repositoryCheckItem.text ?: "",
+                        defcon = repositoryCheckItem.defcon,
+                        created = repositoryCheckItem.created,
+                        updated = repositoryCheckItem.updated
+                    )
+
+                    if (firebaseCheckItem == null) {
+                        firebase.firestore.addCheckItem(createdDefconGroupId, checkItem)
+                    } else {
+                        firebase.firestore.updateCheckItem(createdDefconGroupId, checkItem)
+                    }
+                }
+
+                firebaseCheckItems.forEach { firebaseCheckItem ->
+                    if (repositoryCheckItems.none { it.uuid == firebaseCheckItem.uuid }) {
+                        firebase.firestore.deleteCheckItem(createdDefconGroupId, firebaseCheckItem.uuid)
+                    }
+                }
+            }
         }
     }
 
