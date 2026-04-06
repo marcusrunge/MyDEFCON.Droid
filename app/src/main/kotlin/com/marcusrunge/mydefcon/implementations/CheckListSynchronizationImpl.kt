@@ -38,7 +38,30 @@ class CheckListSynchronizationImpl(
             val createdDefconGroupId = core.preferences?.createdDefconGroupId
 
             if (joinedDefconGroupId?.isNotBlank() == true) {
-                // TODO: Implement pull sync
+                val repositoryCheckItems = data.repository.checkItems.getAll()
+                firebase.firestore.getCheckItems(joinedDefconGroupId).forEach { firebaseCheckItem ->
+                    val repositoryCheckItem =
+                        repositoryCheckItems.find { it.uuid == firebaseCheckItem.uuid }
+                    if (repositoryCheckItem == null) {
+                        data.repository.checkItems.insert(
+                            com.marcusrunge.mydefcon.data.entities.CheckItem(
+                                uuid = firebaseCheckItem.uuid,
+                                text = firebaseCheckItem.text,
+                                isChecked = false,
+                                isDeleted = false,
+                                defcon = firebaseCheckItem.defcon,
+                                created = firebaseCheckItem.created,
+                                updated = firebaseCheckItem.updated,
+                                isExport = false
+                            )
+                        )
+                    } else {
+                        repositoryCheckItem.text = firebaseCheckItem.text
+                        repositoryCheckItem.defcon = firebaseCheckItem.defcon
+                        repositoryCheckItem.updated = firebaseCheckItem.updated
+                        data.repository.checkItems.update(repositoryCheckItem)
+                    }
+                }
                 core.liveDataManager?.emitCheckListChange(CheckListSynchronizationImpl::class.java)
             } else if (createdDefconGroupId?.isNotBlank() == true) {
                 val firebaseCheckItems = firebase.firestore.getCheckItems(createdDefconGroupId)
