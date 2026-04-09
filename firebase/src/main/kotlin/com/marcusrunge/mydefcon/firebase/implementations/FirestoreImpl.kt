@@ -436,12 +436,8 @@ internal class FirestoreImpl(private val base: FirebaseBase) : Firestore {
                                 uuid = checkItemDocument.getString("Uuid").toString(),
                                 text = checkItemDocument.getString("Text").toString(),
                                 defcon = checkItemDocument.getLong("Defcon")?.toInt() ?: 0,
-                                created = checkItemDocument.getTimestamp("Created")
-                                    ?.toDate()?.time
-                                    ?: 0L,
-                                updated = checkItemDocument.getTimestamp("Updated")
-                                    ?.toDate()?.time
-                                    ?: 0L
+                                created = checkItemDocument.getLong("Created") ?: 0L,
+                                updated = checkItemDocument.getLong("Updated") ?: 0L
                             )
                         )
                     }
