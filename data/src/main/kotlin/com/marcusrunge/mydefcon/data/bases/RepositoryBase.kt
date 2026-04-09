@@ -38,7 +38,46 @@ internal abstract class RepositoryBase(context: Context?) {
     init {
         val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(db: SupportSQLiteDatabase) {
-                db.execSQL("ALTER TABLE checkitem ADD COLUMN is_export INTEGER NOT NULL DEFAULT 0")
+
+                // 1. Create new table with the updated schema
+                db.execSQL("""
+                    CREATE TABLE checkitem_new (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        uuid TEXT NOT NULL,
+                        text TEXT,
+                        is_checked INTEGER NOT NULL,
+                        is_deleted INTEGER NOT NULL,
+                        defcon INTEGER NOT NULL,
+                        created INTEGER NOT NULL,
+                        updated INTEGER NOT NULL,
+                        is_export INTEGER NOT NULL DEFAULT 0
+                    )
+                """)
+
+                // 2. Copy data from old → new
+                // For 'created', replace NULL with 0 or a sane default (e.g., current timestamp)
+                db.execSQL("""
+                    INSERT INTO checkitem_new (
+                        id, uuid, text, is_checked, is_deleted, defcon, created, updated, is_export
+                    )
+                    SELECT 
+                        id,
+                        uuid,
+                        text,
+                        is_checked,
+                        is_deleted,
+                        defcon,
+                        COALESCE(created, strftime('%s','now') * 1000) AS created,
+                        updated,
+                        0 AS is_export
+                        FROM checkitem
+                    """)
+
+                // 3. Drop old table
+                db.execSQL("DROP TABLE checkitem")
+
+                // 4. Rename new → old
+                db.execSQL("ALTER TABLE checkitem_new RENAME TO checkitem")
             }
         }
 
@@ -46,7 +85,9 @@ internal abstract class RepositoryBase(context: Context?) {
         requireNotNull(context) { "Context must not be null for database initialization." }
         myDefconDatabase = Room.databaseBuilder(
             context,
-            MyDefconDatabase::class.java, "mydefcon_database"
-        ).addMigrations(MIGRATION_2_3).fallbackToDestructiveMigration(false).build()
+            MyDefconDatabase::class.java,
+            "mydefcon_database")
+            .addMigrations(MIGRATION_2_3)
+            .build()
     }
 }

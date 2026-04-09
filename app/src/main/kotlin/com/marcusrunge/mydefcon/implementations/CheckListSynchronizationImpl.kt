@@ -6,6 +6,7 @@ import com.marcusrunge.mydefcon.firebase.interfaces.Firebase
 import com.marcusrunge.mydefcon.interfaces.CheckListSynchronization
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.util.UUID
 
 /**
  * An implementation of the [CheckListSynchronization] interface.
@@ -73,7 +74,7 @@ class CheckListSynchronizationImpl(
 
                     val checkItem = com.marcusrunge.mydefcon.firebase.documents.CheckItem(
                         id = firebaseCheckItem?.id ?: "",
-                        uuid = repositoryCheckItem.uuid,
+                        uuid = repositoryCheckItem.uuid ?: UUID(0, 0).toString(),
                         text = repositoryCheckItem.text ?: "",
                         defcon = repositoryCheckItem.defcon,
                         created = repositoryCheckItem.created,
