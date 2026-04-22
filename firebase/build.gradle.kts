@@ -44,9 +44,9 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 }
 dependencies {
     implementation("androidx.core:core-ktx:1.18.0")
-    implementation(platform("com.google.firebase:firebase-bom:34.11.0"))
+    implementation(platform("com.google.firebase:firebase-bom:34.12.0"))
     implementation("com.google.firebase:firebase-database:22.0.1")
-    implementation("com.google.firebase:firebase-firestore:26.1.2")
+    implementation("com.google.firebase:firebase-firestore:26.2.0")
     implementation("com.google.firebase:firebase-installations:19.1.0")
     implementation(project(":core"))
     testImplementation("junit:junit:4.13.2")

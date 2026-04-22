@@ -77,7 +77,7 @@ dependencies {
     implementation("androidx.navigation:navigation-ui-ktx:2.9.7")
     implementation("com.google.dagger:hilt-android:2.59.2")
     implementation("androidx.preference:preference-ktx:1.2.1")
-    implementation("com.google.android.gms:play-services-oss-licenses:17.4.0")
+    implementation("com.google.android.gms:play-services-oss-licenses:17.5.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
     implementation(project(":core"))
     implementation(project(":data"))
