@@ -39,4 +39,5 @@
     <string name="could_not_retrieve_installation_id">Could not retrieve Installation ID</string>
     <string name="loading_installation_id">Loading...</string>
     <string name="title_licenses">Licenses</string>
+    <string name="versionName" translatable="false">2.1.9</string>
 </resources>
