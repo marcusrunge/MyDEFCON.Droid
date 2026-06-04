@@ -9,7 +9,7 @@ plugins {
 
 extensions.configure<LibraryExtension>("android") {
     namespace = "com.marcusrunge.mydefcon.notifications"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 30
@@ -31,9 +31,7 @@ extensions.configure<LibraryExtension>("android") {
         targetCompatibility = JavaVersion.VERSION_21
     }
 }
-sourceSets.configureEach {
-    java.srcDir("src/$name/kotlin")
-}
+
 tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_21)
@@ -41,7 +39,7 @@ tasks.withType<KotlinJvmCompile>().configureEach {
     }
 }
 dependencies {
-    implementation("androidx.core:core-ktx:1.18.0")
+    implementation("androidx.core:core-ktx:1.19.0")
     implementation(project(":core"))
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.3.0")

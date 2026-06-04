@@ -18,10 +18,6 @@ tasks.withType<KotlinJvmCompile>().configureEach {
     }
 }
 
-sourceSets.configureEach {
-    java.srcDir("src/$name/kotlin")
-}
-
 dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
 }

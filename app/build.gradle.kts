@@ -15,20 +15,21 @@ plugins {
 
 extensions.configure<ApplicationExtension>("android") {
     namespace = "com.marcusrunge.mydefcon"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.marcusrunge.MyDEFCON"
         minSdk = 30
-        targetSdk = 36
-        versionCode = 316
-        versionName = "2.1.8"
+        targetSdk = 37
+        versionCode = 317
+        versionName = "2.1.9"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         getByName("release") {
             isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
@@ -41,12 +42,6 @@ extensions.configure<ApplicationExtension>("android") {
     buildFeatures {
         viewBinding = true
         dataBinding = true
-    }
-
-    sourceSets {
-        configureEach {
-            java.srcDir("src/$name/kotlin")
-        }
     }
 }
 
@@ -67,18 +62,18 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.18.0")
+    implementation("androidx.core:core-ktx:1.19.0")
     implementation("androidx.appcompat:appcompat:1.7.1")
-    implementation("com.google.android.material:material:1.13.0")
+    implementation("com.google.android.material:material:1.14.0")
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.10.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.9.7")
-    implementation("androidx.navigation:navigation-ui-ktx:2.9.7")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.9.8")
+    implementation("androidx.navigation:navigation-ui-ktx:2.9.8")
     implementation("com.google.dagger:hilt-android:2.59.2")
     implementation("androidx.preference:preference-ktx:1.2.1")
-    implementation("com.google.android.gms:play-services-oss-licenses:17.4.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+    implementation("com.google.android.gms:play-services-oss-licenses:17.5.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
     implementation(project(":core"))
     implementation(project(":data"))
     implementation(project(":notifications"))
