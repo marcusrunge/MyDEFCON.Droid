@@ -20,8 +20,8 @@ extensions.configure<ApplicationExtension>("android") {
         applicationId = "com.marcusrunge.MyDEFCON"
         minSdk = 30
         targetSdk = 37
-        versionCode = 318
-        versionName = "2.2.0"
+        versionCode = 319
+        versionName = "2.2.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -69,7 +69,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.11.0")
     implementation("androidx.navigation:navigation-fragment-ktx:2.9.8")
     implementation("androidx.navigation:navigation-ui-ktx:2.9.8")
-    implementation("com.google.dagger:hilt-android:2.60")
+    implementation("com.google.dagger:hilt-android:2.60.1")
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("com.google.android.gms:play-services-oss-licenses:17.5.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
@@ -78,12 +78,12 @@ dependencies {
     implementation(project(":notifications"))
     implementation(project(":firebase"))
     implementation("androidx.work:work-runtime-ktx:2.11.2")
-    implementation("androidx.hilt:hilt-work:1.3.0")
+    implementation("androidx.hilt:hilt-work:1.4.0")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
-    implementation("com.google.firebase:firebase-installations:19.1.1")
+    implementation("com.google.firebase:firebase-installations:19.1.2")
     implementation("com.google.firebase:firebase-database:22.0.1")
-    ksp("com.google.dagger:hilt-compiler:2.60")
-    ksp("androidx.hilt:hilt-compiler:1.3.0")
+    ksp("com.google.dagger:hilt-compiler:2.60.1")
+    ksp("androidx.hilt:hilt-compiler:1.4.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.3.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
