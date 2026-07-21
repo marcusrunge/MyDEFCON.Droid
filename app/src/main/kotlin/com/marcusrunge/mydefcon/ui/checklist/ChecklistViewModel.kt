@@ -5,10 +5,9 @@ import android.os.Message
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.map
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.marcusrunge.mydefcon.R
@@ -20,6 +19,8 @@ import com.marcusrunge.mydefcon.utils.CheckItemsRecyclerViewAdapter
 import com.marcusrunge.mydefcon.utils.CheckItemsSwipeToDeleteCallback
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
@@ -62,7 +63,8 @@ class ChecklistViewModel @Inject constructor(
 
     // LiveData exposed to the View
     val checkedRadioButtonId: MutableLiveData<Int> = _checkedRadioButtonId
-    val checkItemsRecyclerViewAdapter: LiveData<CheckItemsRecyclerViewAdapter> = _checkItemsRecyclerViewAdapter
+    val checkItemsRecyclerViewAdapter: LiveData<CheckItemsRecyclerViewAdapter> =
+        _checkItemsRecyclerViewAdapter
     val itemTouchHelper: LiveData<ItemTouchHelper> = _itemTouchHelper
     val defcon1ItemsCount: LiveData<String> get() = _defcon1ItemsCount
     val defcon2ItemsCount: LiveData<String> get() = _defcon2ItemsCount
@@ -151,7 +153,9 @@ class ChecklistViewModel @Inject constructor(
             else -> R.id.radio_defcon5
         }
         checkedRadioButtonId.observeForever(statusObserver)
-        allCheckItems = data.repository.checkItems.getAllLive().map { it.toMutableList() }.getDistinct()
+        allCheckItems = data.repository.checkItems.getAllAsFlowList().map { it.toMutableList() }
+            .distinctUntilChanged().asLiveData()
+
         allCheckItems.observeForever(allCheckItemsObserver)
     }
 
@@ -167,7 +171,6 @@ class ChecklistViewModel @Inject constructor(
             allCheckItems.removeObserver(allCheckItemsObserver)
         }
         checkedRadioButtonId.removeObserver(statusObserver)
-        super.onCleared()
     }
 
     /**
@@ -212,6 +215,7 @@ class ChecklistViewModel @Inject constructor(
                     _checkItemsRecyclerViewAdapter.value?.setData(inputMessage.obj as CheckItem)
                 }
             }
+
             RELOAD_CHECKLIST -> {
                 if (inputMessage.obj is List<*>) {
                     allCheckItems.value?.clear()
@@ -237,7 +241,9 @@ class ChecklistViewModel @Inject constructor(
                 item.updated = OffsetDateTime.now(ZoneOffset.UTC).toEpochSecond()
                 data.repository.checkItems.update(item)
                 // Refresh all items to recalculate counts.
-                allCheckItems = data.repository.checkItems.getAllLive().map { it.toMutableList() }.getDistinct()
+                allCheckItems =
+                    data.repository.checkItems.getAllAsFlowList().map { it.toMutableList() }
+                        .distinctUntilChanged().asLiveData()
             }
         }, { item ->
             // On item deleted (swiped away)
@@ -246,7 +252,9 @@ class ChecklistViewModel @Inject constructor(
                 item.isDeleted = true
                 data.repository.checkItems.update(item)
                 // Refresh all items to recalculate counts.
-                allCheckItems = data.repository.checkItems.getAllLive().map { it.toMutableList() }.getDistinct()
+                allCheckItems =
+                    data.repository.checkItems.getAllAsFlowList().map { it.toMutableList() }
+                        .distinctUntilChanged().asLiveData()
             }
         })
     }
@@ -270,7 +278,9 @@ class ChecklistViewModel @Inject constructor(
         if (::checkItems.isInitialized) {
             checkItems.removeObserver(checkItemsObserver)
         }
-        checkItems = data.repository.checkItems.getAllLive(checkItemsStatus).map { it.toMutableList() }.getDistinct()
+        checkItems =
+            data.repository.checkItems.getAllAsFlowList(checkItemsStatus).map { it.toMutableList() }
+                .distinctUntilChanged().asLiveData()
         checkItems.observe(checklistViewModelOwner, checkItemsObserver)
     }
 
@@ -338,30 +348,6 @@ class ChecklistViewModel @Inject constructor(
      */
     private fun List<CheckItem>.getCountsForDefcon(defcon: Int, isChecked: Boolean): Int {
         return this.count { it.defcon == defcon && it.isChecked == isChecked }
-    }
-
-    /**
-     * An extension function to prevent [LiveData] from emitting the same value consecutively.
-     * This is useful for preventing unnecessary UI updates.
-     * @return A new [LiveData] instance that only emits distinct values.
-     */
-    private fun <T> LiveData<T>.getDistinct(): LiveData<T> {
-        val distinctLiveData = MediatorLiveData<T>()
-        distinctLiveData.addSource(this, object : Observer<T> {
-            private var initialized = false
-            private var liveValue: T? = null
-            override fun onChanged(value: T) {
-                if (!initialized) {
-                    initialized = true
-                    liveValue = value
-                    distinctLiveData.postValue(liveValue)
-                } else if ((value == null && liveValue != null) || value != liveValue) {
-                    liveValue = value
-                    distinctLiveData.postValue(liveValue)
-                }
-            }
-        })
-        return distinctLiveData
     }
 
     companion object {

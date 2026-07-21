@@ -18,7 +18,7 @@ import com.marcusrunge.mydefcon.data.interfaces.Repository
  *
  * @param dataBase The [DataBase] instance which provides access to the database context.
  */
-internal class RepositoryImpl private constructor(dataBase: DataBase) : RepositoryBase(dataBase.context), Repository {
+internal class RepositoryImpl private constructor(dataBase: DataBase) : RepositoryBase(dataBase.context!!), Repository {
 
     init {
         // The `myDefconDatabase` property is inherited from RepositoryBase, providing access

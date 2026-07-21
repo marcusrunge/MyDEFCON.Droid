@@ -6,6 +6,11 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.devtools.ksp")
+    id("androidx.room3")
+}
+
+room3 {
+    schemaDirectory("$projectDir/schemas")
 }
 
 extensions.configure<LibraryExtension>("android") {
@@ -37,12 +42,6 @@ sourceSets.configureEach {
     java.srcDir("src/$name/kotlin")
 }
 
-ksp {
-    arg("room.schemaLocation", "$projectDir/schemas")
-    arg("room.incremental", "true")
-    arg("room.expandProjection", "true")
-}
-
 tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_21)
@@ -51,13 +50,12 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 }
 
 dependencies {
-    val room_version = "2.8.4"
     implementation("androidx.core:core-ktx:1.19.0")
-    implementation("androidx.room:room-runtime:$room_version")
-    ksp("androidx.room:room-compiler:$room_version")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.11.0")
     implementation("androidx.lifecycle:lifecycle-common-java8:2.11.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
+    implementation("androidx.room3:room3-runtime:3.0.0")
+    ksp("androidx.room3:room3-compiler:3.0.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.3.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")

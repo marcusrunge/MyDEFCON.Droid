@@ -8,4 +8,5 @@ plugins {
     id("com.google.gms.google-services") version "4.5.0" apply false
     id("com.google.dagger.hilt.android") version "2.60.1" apply false
     id("com.google.android.gms.oss-licenses-plugin") version "0.13.0" apply false
+    id("androidx.room3") version "3.0.0" apply false
 }

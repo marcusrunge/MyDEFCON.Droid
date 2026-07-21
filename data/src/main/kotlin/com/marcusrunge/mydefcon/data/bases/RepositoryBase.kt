@@ -1,46 +1,52 @@
 package com.marcusrunge.mydefcon.data.bases
 
 import android.content.Context
-import androidx.room.Room
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
+import androidx.room3.Room
+import androidx.room3.migration.Migration
+import androidx.sqlite.SQLiteConnection
+import androidx.sqlite.execSQL
 import com.marcusrunge.mydefcon.data.interfaces.CheckItems
 
 /**
- * An abstract base class for repositories.
+ * Abstract base class for repositories.
  *
- * This class provides common functionality for repositories, such as initializing the
- * database and holding the database instance. Subclasses are responsible for initializing
- * the DAOs.
- *
- * @param context The application context, which is used to build the Room database instance.
- * @throws IllegalStateException if the provided context is null.
+ * @param context Application context used to initialize the database.
  */
-internal abstract class RepositoryBase(context: Context?) {
+internal abstract class RepositoryBase(
+    context: Context
+) {
+
     /**
-     * The backing field for the [CheckItems].
+     * DAO for accessing check items.
      *
-     * This property is intended to be initialized by a subclass (e.g., `RepositoryImpl`) and holds
-     * the concrete implementation of the [CheckItems]. It is `protected` to be accessible
-     * only within this class and its subclasses.
+     * This property must be initialized by the concrete repository.
      */
     protected lateinit var _checkItems: CheckItems
 
     /**
-     * The Room database instance for the application.
-     *
-     * This property provides access to the `MyDefconDatabase` instance, which is built
-     * using the application context. It is marked as `internal` to be accessible within
-     * the same module.
+     * Room database instance used by the repository.
      */
     internal val myDefconDatabase: MyDefconDatabase
 
     init {
-        val MIGRATION_2_3 = object : Migration(2, 3) {
-            override fun migrate(db: SupportSQLiteDatabase) {
+        myDefconDatabase = Room.databaseBuilder<MyDefconDatabase>(
+            context = context.applicationContext,
+            name = "mydefcon_database"
+        )
+            .addMigrations(MIGRATION_2_3)
+            .build()
+    }
 
-                // 1. Create new table with the updated schema
-                db.execSQL("""
+    private companion object {
+
+        /**
+         * Migrates the database schema from version 2 to version 3.
+         */
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+
+            override suspend fun migrate(connection: SQLiteConnection) {
+                connection.execSQL(
+                    """
                     CREATE TABLE checkitem_new (
                         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                         uuid TEXT NOT NULL,
@@ -52,42 +58,47 @@ internal abstract class RepositoryBase(context: Context?) {
                         updated INTEGER NOT NULL,
                         is_export INTEGER NOT NULL DEFAULT 0
                     )
-                """)
+                    """.trimIndent()
+                )
 
-                // 2. Copy data from old → new
-                // For 'created', replace NULL with 0 or a sane default (e.g., current timestamp)
-                db.execSQL("""
+                connection.execSQL(
+                    """
                     INSERT INTO checkitem_new (
-                        id, uuid, text, is_checked, is_deleted, defcon, created, updated, is_export
-                    )
-                    SELECT 
                         id,
                         uuid,
                         text,
                         is_checked,
                         is_deleted,
                         defcon,
-                        COALESCE(created, strftime('%s','now') * 1000) AS created,
+                        created,
                         updated,
-                        0 AS is_export
-                        FROM checkitem
-                    """)
+                        is_export
+                    )
+                    SELECT
+                        id,
+                        uuid,
+                        text,
+                        is_checked,
+                        is_deleted,
+                        defcon,
+                        COALESCE(
+                            created,
+                            CAST(strftime('%s', 'now') AS INTEGER) * 1000
+                        ),
+                        updated,
+                        0
+                    FROM checkitem
+                    """.trimIndent()
+                )
 
-                // 3. Drop old table
-                db.execSQL("DROP TABLE checkitem")
+                connection.execSQL(
+                    "DROP TABLE checkitem"
+                )
 
-                // 4. Rename new → old
-                db.execSQL("ALTER TABLE checkitem_new RENAME TO checkitem")
+                connection.execSQL(
+                    "ALTER TABLE checkitem_new RENAME TO checkitem"
+                )
             }
         }
-
-        // A non-null context is required to initialize the database.
-        requireNotNull(context) { "Context must not be null for database initialization." }
-        myDefconDatabase = Room.databaseBuilder(
-            context,
-            MyDefconDatabase::class.java,
-            "mydefcon_database")
-            .addMigrations(MIGRATION_2_3)
-            .build()
     }
 }

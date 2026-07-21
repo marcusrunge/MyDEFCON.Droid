@@ -6,7 +6,6 @@ import com.marcusrunge.mydefcon.firebase.interfaces.Firebase
 import com.marcusrunge.mydefcon.interfaces.CheckListSynchronization
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.util.UUID
 
 /**
  * An implementation of the [CheckListSynchronization] interface.
@@ -39,7 +38,7 @@ class CheckListSynchronizationImpl(
             val createdDefconGroupId = core.preferences?.createdDefconGroupId
 
             if (joinedDefconGroupId?.isNotBlank() == true) {
-                val repositoryCheckItems = data.repository.checkItems.getAll()
+                val repositoryCheckItems = data.repository.checkItems.getAllAsList()
                 firebase.firestore.getCheckItems(joinedDefconGroupId).forEach { firebaseCheckItem ->
                     val repositoryCheckItem =
                         repositoryCheckItems.find { it.uuid == firebaseCheckItem.uuid }
@@ -66,7 +65,7 @@ class CheckListSynchronizationImpl(
                 core.liveDataManager?.emitCheckListChange(CheckListSynchronizationImpl::class.java)
             } else if (createdDefconGroupId?.isNotBlank() == true) {
                 val firebaseCheckItems = firebase.firestore.getCheckItems(createdDefconGroupId)
-                val repositoryCheckItems = data.repository.checkItems.getAll()
+                val repositoryCheckItems = data.repository.checkItems.getAllAsList()
 
                 repositoryCheckItems.forEach { repositoryCheckItem ->
                     val firebaseCheckItem =
@@ -74,7 +73,7 @@ class CheckListSynchronizationImpl(
 
                     val checkItem = com.marcusrunge.mydefcon.firebase.documents.CheckItem(
                         id = firebaseCheckItem?.id ?: "",
-                        uuid = repositoryCheckItem.uuid ?: UUID(0, 0).toString(),
+                        uuid = repositoryCheckItem.uuid,
                         text = repositoryCheckItem.text ?: "",
                         defcon = repositoryCheckItem.defcon,
                         created = repositoryCheckItem.created,
