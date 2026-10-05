@@ -61,14 +61,14 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.19.0")
+    implementation("androidx.core:core-ktx:1.19.1")
     implementation("androidx.appcompat:appcompat:1.8.0")
     implementation("com.google.android.material:material:1.14.0")
     implementation("androidx.constraintlayout:constraintlayout:2.2.2")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.11.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.11.0")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.10.1")
-    implementation("androidx.navigation:navigation-ui-ktx:2.10.1")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.10.2")
+    implementation("androidx.navigation:navigation-ui-ktx:2.10.2")
     implementation("com.google.dagger:hilt-android:2.60.1")
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("com.google.android.gms:play-services-oss-licenses:17.5.2")
@@ -77,7 +77,7 @@ dependencies {
     implementation(project(":data"))
     implementation(project(":notifications"))
     implementation(project(":firebase"))
-    implementation("androidx.work:work-runtime-ktx:2.11.2")
+    implementation("androidx.work:work-runtime-ktx:2.12.0")
     implementation("androidx.hilt:hilt-work:1.4.0")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("com.google.firebase:firebase-installations:19.1.2")

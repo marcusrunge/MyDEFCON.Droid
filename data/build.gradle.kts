@@ -50,7 +50,7 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.19.0")
+    implementation("androidx.core:core-ktx:1.19.1")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.11.0")
     implementation("androidx.lifecycle:lifecycle-common-java8:2.11.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
