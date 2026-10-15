@@ -65,7 +65,7 @@ class StatusViewModel @Inject constructor(
         viewModelScope.launch {
             core.liveDataManager?.defconGroupChangeFlow?.collect { (_, joinedGroupId, _) ->
                 // Update the state change allowance based on the joined group ID.
-                _isDefconStateChangeAllowed.value = joinedGroupId.isNullOrEmpty()
+                _isDefconStateChangeAllowed.value = joinedGroupId.isEmpty()
             }
         }
     }

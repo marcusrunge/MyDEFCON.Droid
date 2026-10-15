@@ -1,5 +1,6 @@
 package com.marcusrunge.mydefcon
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -13,6 +14,7 @@ import com.marcusrunge.mydefcon.ui.splash.SplashViewModel
  * An activity that shows a splash screen on app startup.
  * After a short delay, it navigates to the [MainActivity].
  */
+@SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySplashBinding
     private val viewModel by viewModels<SplashViewModel>()

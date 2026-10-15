@@ -40,4 +40,6 @@
     <string name="loading_installation_id">Loading...</string>
     <string name="title_licenses">Licenses</string>
     <string name="versionName" translatable="false">2.1.9</string>
+    <string name="mydefcon">MyDEFCON</string>
+    <string name="mr">MR</string>
 </resources>

@@ -14,7 +14,7 @@ import javax.inject.Inject
 /**
  * ViewModel for the main activity.
  *
- * This class is responsible for preparing and managing the data for the [MainActivity].
+ * This class is responsible for preparing and managing the data for the [com.marcusrunge.mydefcon.MainActivity].
  * It handles business logic and state management for the main screen.
  *
  * @param application The application instance.

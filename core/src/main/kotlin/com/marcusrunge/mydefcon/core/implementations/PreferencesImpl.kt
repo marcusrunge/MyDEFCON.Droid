@@ -7,7 +7,7 @@ import com.marcusrunge.mydefcon.core.interfaces.Preferences
  * An implementation of the [Preferences] interface.
  *
  * This class provides a concrete implementation for storing and retrieving application
- * preferences. It acts as a wrapper around the [PreferencesOperations] provided by
+ * preferences. It acts as a wrapper around the [com.marcusrunge.mydefcon.core.interfaces.PreferencesOperations] provided by
  * [CoreBase], mapping high-level preference properties to low-level key-value storage.
  *
  * It is implemented as a singleton to ensure that all parts of the application access the
