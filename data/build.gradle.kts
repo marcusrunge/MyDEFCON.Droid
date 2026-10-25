@@ -53,7 +53,7 @@ dependencies {
     implementation("androidx.core:core-ktx:1.19.1")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.11.0")
     implementation("androidx.lifecycle:lifecycle-common-java8:2.11.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.12.0")
     implementation("androidx.room3:room3-runtime:3.0.3")
     ksp("androidx.room3:room3-compiler:3.0.3")
     testImplementation("junit:junit:4.13.2")
