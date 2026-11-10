@@ -15,15 +15,15 @@ import com.journeyapps.barcodescanner.ScanOptions
 import com.marcusrunge.mydefcon.R
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.firebase.interfaces.Firebase
+import com.marcusrunge.mydefcon.ui.scanner.QrCodeScannerActivity
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 /**
- * A [PreferenceFragmentCompat] for displaying the app's settings.
+ * A [PreferenceFragmentCompat] for displaying the application's settings.
  *
- * This fragment is responsible for inflating the preferences from an XML resource,
- * managing their state, and handling user interactions. It uses Hilt for dependency
- * injection to get instances of [Core] and [Firebase].
+ * This Fragment inflates the preference hierarchy, connects the custom
+ * preferences to their ViewModels and coordinates QR code scanning.
  */
 @AndroidEntryPoint
 class SettingsFragment : PreferenceFragmentCompat(),
@@ -40,45 +40,46 @@ class SettingsFragment : PreferenceFragmentCompat(),
     private lateinit var qrCodeScannerLauncher: ActivityResultLauncher<ScanOptions>
 
     /**
-     * Called during the creation of the fragment to define the preference hierarchy.
+     * Creates the preference hierarchy and registers the scanner result contract.
      *
-     * @param savedInstanceState If the fragment is being re-created from a previous saved state, this is the state.
-     * @param rootKey If non-null, this preference fragment should be rooted at the PreferenceScreen with this key.
+     * @param savedInstanceState Previously stored Fragment state.
+     * @param rootKey Optional root preference key.
      */
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+    override fun onCreatePreferences(
+        savedInstanceState: Bundle?,
+        rootKey: String?
+    ) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
 
-        groupPreferenceViewModel = ViewModelProvider(this)[GroupPreferenceViewModel::class.java]
+        groupPreferenceViewModel =
+            ViewModelProvider(this)[GroupPreferenceViewModel::class.java]
+
         followersPreferenceViewModel =
             ViewModelProvider(this)[FollowersPreferenceViewModel::class.java]
 
-        qrCodeScannerLauncher = registerForActivityResult(ScanContract()) { scanResult ->
-            val scannedGroupId = scanResult.contents
-            if (scannedGroupId == null) {
-                Toast.makeText(requireContext(), getString(R.string.scan_cancelled), Toast.LENGTH_LONG).show()
-                groupPreferenceViewModel.processQrCodeResult(null)
-            } else {
-                Toast.makeText(requireContext(), getString(R.string.scanned, scannedGroupId), Toast.LENGTH_LONG).show()
-                groupPreferenceViewModel.processQrCodeResult(scannedGroupId)
+        qrCodeScannerLauncher =
+            registerForActivityResult(ScanContract()) { scanResult ->
+                processQrCodeScanResult(scanResult.contents)
             }
-        }
 
-        findPreference<GroupPreference>("group_preference")?.apply {
-            initializeViewModel(groupPreferenceViewModel, this@SettingsFragment)
-        }
+        findPreference<GroupPreference>(GROUP_PREFERENCE_KEY)?.initializeViewModel(
+            groupPreferenceViewModel,
+            this
+        )
 
-        findPreference<FollowersPreference>("followers_preference")?.apply {
-            initializeViewModel(followersPreferenceViewModel, this@SettingsFragment)
-        }
+        findPreference<FollowersPreference>(FOLLOWERS_PREFERENCE_KEY)?.initializeViewModel(
+            followersPreferenceViewModel,
+            this
+        )
     }
 
     /**
-     * Called to have the fragment instantiate its user interface view.
+     * Creates the Fragment view and applies the existing translucent background.
      *
-     * @param inflater The LayoutInflater object that can be used to inflate any views in the fragment.
-     * @param container If non-null, this is the parent view that the fragment's UI should be attached to.
-     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state as given here.
-     * @return The View for the fragment's UI, or null.
+     * @param inflater Layout inflater.
+     * @param container Parent view.
+     * @param savedInstanceState Previously stored Fragment state.
+     * @return The created preference view.
      */
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -91,38 +92,46 @@ class SettingsFragment : PreferenceFragmentCompat(),
     }
 
     /**
-     * Called immediately after onCreateView() has returned, but before any saved state has been restored in to the view.
+     * Observes scanner launch requests after the Fragment view has been created.
      *
-     * @param view The View returned by onCreateView().
-     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state as given here.
+     * @param view The created Fragment view.
+     * @param savedInstanceState Previously stored Fragment state.
      */
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?
+    ) {
         super.onViewCreated(view, savedInstanceState)
 
         groupPreferenceViewModel.scanQrCodeEvent.observe(viewLifecycleOwner) { shouldScan ->
-            if (shouldScan == true) {
-                startQrCodeScanner()
+            if (shouldScan != true) {
+                return@observe
             }
+
+            /*
+             * Consume the launch request before starting the Activity. This
+             * prevents recreation of the Fragment from starting a second scanner.
+             */
+            groupPreferenceViewModel.onQrCodeScannerLaunchHandled()
+            startQrCodeScanner()
         }
     }
 
     /**
-     * Called when a shared preference is changed, added, or removed. This may be called even if a preference is set to its existing value.
+     * Receives changes to shared preferences.
      *
-     * @param sharedPreferences The SharedPreferences that received the change.
-     * @param key The key of the preference that was changed, added, or removed.
+     * @param sharedPreferences Changed preference storage.
+     * @param key Changed preference key.
      */
     override fun onSharedPreferenceChanged(
         sharedPreferences: SharedPreferences?,
         key: String?
     ) {
-        // TODO: Not yet implemented
+        // No direct shared preference changes are currently handled here.
     }
 
     /**
-     * Initiates the QR code scanning process.
-     *
-     * This method sets up the options for the scanner, such as the desired barcode format, prompt text, camera to use, and other settings. It then launches the scanner.
+     * Launches the customized ZXing QR code scanner Activity.
      */
     private fun startQrCodeScanner() {
         val options = ScanOptions().apply {
@@ -132,7 +141,42 @@ class SettingsFragment : PreferenceFragmentCompat(),
             setBeepEnabled(true)
             setBarcodeImageEnabled(false)
             setOrientationLocked(false)
+            setCaptureActivity(QrCodeScannerActivity::class.java)
         }
+
         qrCodeScannerLauncher.launch(options)
+    }
+
+    /**
+     * Processes a scanner result and forwards valid group IDs to the ViewModel.
+     *
+     * @param scannedGroupId Scanned content, or null when scanning was cancelled.
+     */
+    private fun processQrCodeScanResult(scannedGroupId: String?) {
+        val normalizedGroupId = scannedGroupId?.trim()
+
+        if (normalizedGroupId.isNullOrEmpty()) {
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.scan_cancelled),
+                Toast.LENGTH_LONG
+            ).show()
+
+            groupPreferenceViewModel.processQrCodeResult(null)
+            return
+        }
+
+        Toast.makeText(
+            requireContext(),
+            getString(R.string.scanned, normalizedGroupId),
+            Toast.LENGTH_LONG
+        ).show()
+
+        groupPreferenceViewModel.processQrCodeResult(normalizedGroupId)
+    }
+
+    private companion object {
+        const val GROUP_PREFERENCE_KEY = "group_preference"
+        const val FOLLOWERS_PREFERENCE_KEY = "followers_preference"
     }
 }

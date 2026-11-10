@@ -9,7 +9,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.installations.FirebaseInstallations
-import com.marcusrunge.mydefcon. BR
+import com.marcusrunge.mydefcon.BR
 import com.marcusrunge.mydefcon.core.interfaces.Core
 import com.marcusrunge.mydefcon.firebase.interfaces.Firebase
 import com.marcusrunge.mydefcon.ui.ObservableViewModel
@@ -23,8 +23,9 @@ import javax.inject.Inject
 /**
  * ViewModel for the group preference screen.
  *
- * This ViewModel handles the logic for creating, deleting, joining, and leaving DEFCON groups.
- * It interacts with Firebase for group management and updates the UI state accordingly.
+ * This ViewModel handles the logic for creating, deleting, joining and leaving
+ * DEFCON groups. It interacts with Firebase for group management and updates
+ * the UI state accordingly.
  *
  * @param app The application instance.
  * @param core The core component for accessing shared preferences.
@@ -32,10 +33,19 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class GroupPreferenceViewModel @Inject constructor(
-    app: Application, private val core: Core, private val firebase: Firebase
+    app: Application,
+    private val core: Core,
+    private val firebase: Firebase
 ) : ObservableViewModel(app), DefaultLifecycleObserver {
 
-    private val _scanQrCodeEvent = MutableLiveData<Boolean>()
+    private val _scanQrCodeEvent = MutableLiveData(false)
+
+    /**
+     * Indicates that the settings Fragment should launch the QR code scanner.
+     *
+     * The Fragment must mark the request as handled before launching the scanner
+     * to prevent recreation of the Fragment from launching it a second time.
+     */
     val scanQrCodeEvent: LiveData<Boolean> = _scanQrCodeEvent
 
     private var _textToEncode: String = ""
@@ -56,7 +66,7 @@ class GroupPreferenceViewModel @Inject constructor(
         }
 
     /**
-     * A boolean indicating whether the 'Create Group' button is enabled.
+     * Indicates whether the Create Group button is enabled.
      */
     @get:Bindable
     var isCreateGroupButtonEnabled: Boolean
@@ -67,7 +77,7 @@ class GroupPreferenceViewModel @Inject constructor(
         }
 
     /**
-     * A boolean indicating whether the 'Delete Group' button is enabled.
+     * Indicates whether the Delete Group button is enabled.
      */
     @get:Bindable
     var isDeleteGroupButtonEnabled: Boolean
@@ -78,7 +88,7 @@ class GroupPreferenceViewModel @Inject constructor(
         }
 
     /**
-     * A boolean indicating whether the 'Join Group' button is enabled.
+     * Indicates whether the Join Group button is enabled.
      */
     @get:Bindable
     var isJoinGroupButtonEnabled: Boolean
@@ -89,7 +99,7 @@ class GroupPreferenceViewModel @Inject constructor(
         }
 
     /**
-     * A boolean indicating whether the 'Leave Group' button is enabled.
+     * Indicates whether the Leave Group button is enabled.
      */
     @get:Bindable
     var isLeaveGroupButtonEnabled: Boolean
@@ -104,8 +114,7 @@ class GroupPreferenceViewModel @Inject constructor(
     }
 
     /**
-     * Handles the click event for the 'Create Group' button.
-     * Creates a new DEFCON group in Firebase and updates the UI.
+     * Creates a new DEFCON group and stores its identifier.
      */
     fun onCreateGroupClicked() {
         viewModelScope.launch {
@@ -113,111 +122,170 @@ class GroupPreferenceViewModel @Inject constructor(
                 val defconGroupId = withContext(Dispatchers.IO) {
                     firebase.firestore.createDefconGroup()
                 }
-                if (defconGroupId.isNotEmpty()) {
-                    core.preferences?.createdDefconGroupId = defconGroupId
-                    core.liveDataManager?.emitDefconGroupChange(defconGroupId,"", GroupPreferenceViewModel::class.java)
-                    textToEncode = defconGroupId
-                    updateButtonStates()
-                    Log.d("GroupPreferenceViewModel", "DEFCON Group ID created: $defconGroupId")
-                } else {
-                    Log.w("GroupPreferenceViewModel", "DEFCON Group ID is empty")
+
+                if (defconGroupId.isEmpty()) {
+                    Log.w(TAG, "DEFCON Group ID is empty")
+                    return@launch
                 }
-            } catch (e: Exception) {
-                Log.e("GroupPreferenceViewModel", "Error during group creation", e)
+
+                core.preferences?.createdDefconGroupId = defconGroupId
+                core.liveDataManager?.emitDefconGroupChange(
+                    defconGroupId,
+                    "",
+                    GroupPreferenceViewModel::class.java
+                )
+
+                textToEncode = defconGroupId
+                updateButtonStates()
+
+                Log.d(TAG, "DEFCON Group ID created: $defconGroupId")
+            } catch (exception: Exception) {
+                Log.e(TAG, "Error during group creation", exception)
             }
         }
     }
 
     /**
-     * Handles the click event for the 'Delete Group' button.
-     * Deletes the created DEFCON group from Firebase and updates the UI.
+     * Deletes the DEFCON group created by this application installation.
      */
     fun onDeleteGroupClicked() {
         viewModelScope.launch {
             try {
-                core.preferences?.createdDefconGroupId?.takeIf { it.isNotEmpty() }?.let {
-                    firebase.firestore.deleteDefconGroup(it)
-                    core.preferences?.createdDefconGroupId = ""
-                    core.liveDataManager?.emitDefconGroupChange("","", GroupPreferenceViewModel::class.java)
-                    updateButtonStates()
+                val createdGroupId = core.preferences?.createdDefconGroupId
+                    ?.takeIf { it.isNotEmpty() }
+                    ?: return@launch
+
+                withContext(Dispatchers.IO) {
+                    firebase.firestore.deleteDefconGroup(createdGroupId)
                 }
-            } catch (e: Exception) {
-                Log.e("GroupPreferenceViewModel", "Error during group deletion", e)
+
+                core.preferences?.createdDefconGroupId = ""
+                core.liveDataManager?.emitDefconGroupChange(
+                    "",
+                    "",
+                    GroupPreferenceViewModel::class.java
+                )
+
+                updateButtonStates()
+
+                Log.d(TAG, "DEFCON Group ID deleted: $createdGroupId")
+            } catch (exception: Exception) {
+                Log.e(TAG, "Error during group deletion", exception)
             }
         }
     }
 
     /**
-     * Handles the click event for the 'Join Group' button.
-     * Triggers the QR code scanner to join a group.
+     * Requests that the settings Fragment launch the QR code scanner.
      */
     fun onJoinGroupClicked() {
         _scanQrCodeEvent.value = true
     }
 
     /**
-     * Handles the click event for the 'Leave Group' button.
-     * Clears the joined group ID from preferences and updates the UI.
+     * Marks the scanner launch request as handled.
+     *
+     * This method must be called before the scanner Activity is launched. It
+     * prevents a Fragment recreation from launching another scanner instance.
+     */
+    fun onQrCodeScannerLaunchHandled() {
+        _scanQrCodeEvent.value = false
+    }
+
+    /**
+     * Leaves the currently joined DEFCON group.
      */
     fun onLeaveGroupClicked() {
         viewModelScope.launch {
             try {
-                withContext(Dispatchers.IO) {
-                    val leftGroupId = core.preferences?.joinedDefconGroupId
+                val leftGroupId = withContext(Dispatchers.IO) {
+                    val groupId = core.preferences?.joinedDefconGroupId
+
                     core.preferences?.joinedDefconGroupId = ""
-                    core.liveDataManager?.emitDefconGroupChange("","", GroupPreferenceViewModel::class.java)
-                    updateButtonStates()
-                    Log.d("GroupPreferenceViewModel", "DEFCON Group ID left: $leftGroupId")
+                    core.liveDataManager?.emitDefconGroupChange(
+                        "",
+                        "",
+                        GroupPreferenceViewModel::class.java
+                    )
+
+                    groupId
                 }
-            } catch (e: Exception) {
-                Log.e("GroupPreferenceViewModel", "Error leaving group", e)
+
+                /*
+                 * Bindable UI properties are updated on the main thread after
+                 * the preference operation has completed.
+                 */
+                updateButtonStates()
+
+                Log.d(TAG, "DEFCON Group ID left: $leftGroupId")
+            } catch (exception: Exception) {
+                Log.e(TAG, "Error leaving group", exception)
             }
         }
     }
 
     /**
-     * Processes the result from the QR code scanner.
-     * If a valid group ID is scanned, it joins the group.
-     * @param groupIdToJoin The scanned group ID, or null if cancelled.
+     * Processes the QR code scanner result.
+     *
+     * A null or blank result represents a cancelled or empty scan. In that
+     * situation, no stored group information is changed.
+     *
+     * @param groupIdToJoin The scanned group ID, or null when scanning was cancelled.
      */
     fun processQrCodeResult(groupIdToJoin: String?) {
-        _scanQrCodeEvent.value = false // Reset the event
-        if (groupIdToJoin.isNullOrEmpty()) {
-            Log.w("GroupPreferenceViewModel", "QR code result was empty or null")
+        val normalizedGroupId = groupIdToJoin?.trim()
+
+        if (normalizedGroupId.isNullOrEmpty()) {
+            Log.d(TAG, "QR code scan was cancelled or returned no content")
             return
         }
 
         viewModelScope.launch {
             try {
                 val installationId = FirebaseInstallations.getInstance().id.await()
+
                 withContext(Dispatchers.IO) {
-                    firebase.firestore.joinDefconGroup(groupIdToJoin, installationId)
+                    firebase.firestore.joinDefconGroup(
+                        normalizedGroupId,
+                        installationId
+                    )
                 }
-                core.preferences?.joinedDefconGroupId = groupIdToJoin
-                core.liveDataManager?.emitDefconGroupChange("",groupIdToJoin, GroupPreferenceViewModel::class.java)
+
+                core.preferences?.joinedDefconGroupId = normalizedGroupId
+                core.liveDataManager?.emitDefconGroupChange(
+                    "",
+                    normalizedGroupId,
+                    GroupPreferenceViewModel::class.java
+                )
+
                 updateButtonStates()
-                Log.d("GroupPreferenceViewModel", "Successfully joined group: $groupIdToJoin")
-            } catch (e: Exception) {
-                Log.e("GroupPreferenceViewModel", "Error joining group: $groupIdToJoin", e)
+
+                Log.d(TAG, "Successfully joined group: $normalizedGroupId")
+            } catch (exception: Exception) {
+                Log.e(
+                    TAG,
+                    "Error joining group: $normalizedGroupId",
+                    exception
+                )
             }
         }
     }
 
     /**
-     * Updates the UI based on messages from background threads. (Not yet implemented)
+     * Updates the UI based on messages from background components.
+     *
      * @param inputMessage The message containing update information.
      */
     override fun updateView(inputMessage: Message) {
-        // TODO: Not yet implemented
+        // No message-based UI updates are currently required.
     }
 
     /**
-     * Updates the enabled state of the group management buttons based on the current
-     * created and joined group IDs stored in shared preferences.
+     * Updates the group management button states from the persisted group IDs.
      */
     private fun updateButtonStates() {
-        val createdGroupId = core.preferences?.createdDefconGroupId ?: ""
-        val joinedGroupId = core.preferences?.joinedDefconGroupId ?: ""
+        val createdGroupId = core.preferences?.createdDefconGroupId.orEmpty()
+        val joinedGroupId = core.preferences?.joinedDefconGroupId.orEmpty()
 
         textToEncode = when {
             createdGroupId.isNotEmpty() -> createdGroupId
@@ -225,9 +293,18 @@ class GroupPreferenceViewModel @Inject constructor(
             else -> ""
         }
 
-        isCreateGroupButtonEnabled = createdGroupId.isEmpty() && joinedGroupId.isEmpty()
+        isCreateGroupButtonEnabled =
+            createdGroupId.isEmpty() && joinedGroupId.isEmpty()
+
         isDeleteGroupButtonEnabled = createdGroupId.isNotEmpty()
-        isJoinGroupButtonEnabled = createdGroupId.isEmpty() && joinedGroupId.isEmpty()
+
+        isJoinGroupButtonEnabled =
+            createdGroupId.isEmpty() && joinedGroupId.isEmpty()
+
         isLeaveGroupButtonEnabled = joinedGroupId.isNotEmpty()
+    }
+
+    private companion object {
+        const val TAG = "GroupPreferenceVM"
     }
 }

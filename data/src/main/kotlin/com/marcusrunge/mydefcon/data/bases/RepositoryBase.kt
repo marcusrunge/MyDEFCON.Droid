@@ -12,9 +12,7 @@ import com.marcusrunge.mydefcon.data.interfaces.CheckItems
  *
  * @param context Application context used to initialize the database.
  */
-internal abstract class RepositoryBase(
-    context: Context
-) {
+internal abstract class RepositoryBase(context: Context) {
 
     /**
      * DAO for accessing check items.
@@ -33,11 +31,24 @@ internal abstract class RepositoryBase(
             context = context.applicationContext,
             name = "mydefcon_database"
         )
-            .addMigrations(MIGRATION_2_3)
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
             .build()
     }
 
     private companion object {
+
+        /**
+         * Migrates the database schema from version 1 to version 2.
+         *
+         * Version 2 changed only the Kotlin mutability of an entity property
+         * from val to var. This does not modify the SQLite schema.
+         */
+        val MIGRATION_1_2 = object : Migration(1, 2) {
+
+            override suspend fun migrate(connection: SQLiteConnection) {
+                // No SQLite schema changes are required between versions 1 and 2.
+            }
+        }
 
         /**
          * Migrates the database schema from version 2 to version 3.
@@ -85,19 +96,18 @@ internal abstract class RepositoryBase(
                             created,
                             CAST(strftime('%s', 'now') AS INTEGER) * 1000
                         ),
-                        updated,
+                        COALESCE(
+                            updated,
+                            created,
+                            CAST(strftime('%s', 'now') AS INTEGER) * 1000
+                        ),
                         0
                     FROM checkitem
                     """.trimIndent()
                 )
 
-                connection.execSQL(
-                    "DROP TABLE checkitem"
-                )
-
-                connection.execSQL(
-                    "ALTER TABLE checkitem_new RENAME TO checkitem"
-                )
+                connection.execSQL("DROP TABLE checkitem")
+                connection.execSQL("ALTER TABLE checkitem_new RENAME TO checkitem")
             }
         }
     }

@@ -30,6 +30,10 @@
             android:name=".MainActivity"
             android:exported="true" />
 
+        <activity
+            android:name=".ui.scanner.QrCodeScannerActivity"
+            android:exported="false"
+            android:screenOrientation="fullSensor" />
         <receiver
             android:name=".MyDefconWidget"
             android:exported="false">
