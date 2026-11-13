@@ -1,6 +1,5 @@
 package com.marcusrunge.mydefcon.utils
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.CheckBox
@@ -8,6 +7,7 @@ import android.widget.EditText
 import androidx.core.widget.doAfterTextChanged
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.marcusrunge.mydefcon.BR
 import com.marcusrunge.mydefcon.R
@@ -70,7 +70,7 @@ class CheckItemsRecyclerViewAdapter(
      */
     fun deleteItem(position: Int) {
         // Ensure the position is valid before attempting deletion.
-        if (checkItems.size - 1 >= position) {
+        if (position in checkItems.indices) {
             // Invoke the callback for the deletion.
             onDeleted.invoke(checkItems[position])
             // Remove the item from the local list.
@@ -81,17 +81,16 @@ class CheckItemsRecyclerViewAdapter(
     }
 
     /**
-     * Sets the data for the adapter, replacing any existing data.
+     * Sets the data for the adapter, using [DiffUtil] to update only modified items.
      *
      * @param checkItems The new list of [CheckItem]s.
      */
-    @SuppressLint("NotifyDataSetChanged")
-    fun setData(checkItems: MutableList<CheckItem>) {
+    fun setData(checkItems: List<CheckItem>) {
+        val diffCallback = CheckItemsDiffCallback(this.checkItems, checkItems)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
         this.checkItems.clear()
         this.checkItems.addAll(checkItems)
-        // Notify the adapter that the entire data set has changed.
-        // This is not the most efficient way but is acceptable for this use case.
-        notifyDataSetChanged()
+        diffResult.dispatchUpdatesTo(this)
     }
 
     /**
@@ -100,9 +99,8 @@ class CheckItemsRecyclerViewAdapter(
      * @param checkItem The [CheckItem] to add.
      */
     fun setData(checkItem: CheckItem) {
-        this.checkItems.add(checkItem)
-        // Notify the adapter that a new item has been inserted at the end of the list.
-        notifyItemInserted(this.checkItems.size - 1)
+        val newList = this.checkItems.toMutableList().apply { add(checkItem) }
+        setData(newList)
     }
 
     /**
@@ -119,30 +117,79 @@ class CheckItemsRecyclerViewAdapter(
         private val onChanged: (checkItem: CheckItem) -> Unit
     ) :
         RecyclerView.ViewHolder(viewDataBinding.root) {
+
+        private var currentItem: CheckItem? = null
+        private var previousText: String? = null
+
+        init {
+            val editText = viewDataBinding.root.findViewById<EditText>(R.id.editText)
+            val checkBox = viewDataBinding.root.findViewById<CheckBox>(R.id.checkBox)
+            val exportCheckBox = viewDataBinding.root.findViewById<CheckBox>(R.id.exportCheckBox)
+
+            editText.doAfterTextChanged { editable ->
+                val newText = editable?.toString()
+                if (newText != previousText) {
+                    previousText = newText
+                    currentItem?.let { item ->
+                        item.text = newText
+                        onChanged.invoke(item)
+                    }
+                }
+            }
+
+            checkBox.setOnCheckedChangeListener { _, isChecked ->
+                currentItem?.let { item ->
+                    if (item.isChecked != isChecked) {
+                        item.isChecked = isChecked
+                        onChanged.invoke(item)
+                    }
+                }
+            }
+
+            exportCheckBox.setOnCheckedChangeListener { _, isChecked ->
+                currentItem?.let { item ->
+                    if (item.isExport != isChecked) {
+                        item.isExport = isChecked
+                        onChanged.invoke(item)
+                    }
+                }
+            }
+        }
+
         /**
          * Binds a [CheckItem] object to the ViewHolder's view.
          *
-         * @param object The [CheckItem] data to bind.
+         * @param checkItem The [CheckItem] data to bind.
          */
-        fun bind(`object`: Any?) {
-            // Set the data binding variable for the check item.
-            viewDataBinding.setVariable(BR.checkitem, `object`)
+        fun bind(checkItem: CheckItem) {
+            currentItem = checkItem
+            previousText = checkItem.text
+            viewDataBinding.setVariable(BR.checkitem, checkItem)
             viewDataBinding.executePendingBindings()
+        }
+    }
 
-            // Add a text changed listener to the EditText.
-            viewDataBinding.root.findViewById<EditText>(R.id.editText).doAfterTextChanged {
-                // When text changes, invoke the onChanged callback with the updated item.
-                onChanged.invoke(`object` as CheckItem)
-            }
+    private class CheckItemsDiffCallback(
+        private val oldList: List<CheckItem>,
+        private val newList: List<CheckItem>
+    ) : DiffUtil.Callback() {
 
-            // Add a checked change listener to the CheckBox.
-            viewDataBinding.root.findViewById<CheckBox>(R.id.checkBox)
-                .setOnCheckedChangeListener { _, isChecked ->
-                    // Update the isChecked property of the CheckItem.
-                    (`object` as CheckItem).isChecked = isChecked
-                    // Invoke the onChanged callback.
-                    onChanged.invoke(`object`)
-                }
+        override fun getOldListSize(): Int = oldList.size
+
+        override fun getNewListSize(): Int = newList.size
+
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldList[oldItemPosition].id == newList[newItemPosition].id
+        }
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            val oldItem = oldList[oldItemPosition]
+            val newItem = newList[newItemPosition]
+            return oldItem.id == newItem.id &&
+                    oldItem.text == newItem.text &&
+                    oldItem.isChecked == newItem.isChecked &&
+                    oldItem.isExport == newItem.isExport &&
+                    oldItem.defcon == newItem.defcon
         }
     }
 }

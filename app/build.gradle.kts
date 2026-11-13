@@ -20,8 +20,8 @@ extensions.configure<ApplicationExtension>("android") {
         applicationId = "com.marcusrunge.MyDEFCON"
         minSdk = 30
         targetSdk = 37
-        versionCode = 322
-        versionName = "2.2.3"
+        versionCode = 323
+        versionName = "2.2.4"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 

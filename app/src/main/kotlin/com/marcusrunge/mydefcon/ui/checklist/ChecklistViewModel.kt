@@ -153,6 +153,9 @@ class ChecklistViewModel @Inject constructor(
             else -> R.id.radio_defcon5
         }
         checkedRadioButtonId.observeForever(statusObserver)
+        if (::allCheckItems.isInitialized) {
+            allCheckItems.removeObserver(allCheckItemsObserver)
+        }
         allCheckItems = data.repository.checkItems.getAllAsFlowList().map { it.toMutableList() }
             .distinctUntilChanged().asLiveData()
 
@@ -176,7 +179,6 @@ class ChecklistViewModel @Inject constructor(
     /**
      * Handles adding a new check item to the database.
      * A new [CheckItem] is created with the current `checkItemsStatus` and inserted.
-     * The view is then notified to display the new item.
      */
     fun onAdd() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -192,14 +194,7 @@ class ChecklistViewModel @Inject constructor(
                 updated = now.toEpochSecond(),
                 isExport = false
             )
-            val id = data.repository.checkItems.insert(checkItem)
-            checkItem.id = id
-            checkItems.value?.add(checkItem)
-
-            // Inform the view to update
-            val updateViewMessage =
-                Message.obtain(handler, UPDATE_VIEW, LOAD_CHECKLIST, 0, checkItem)
-            handler.sendMessage(updateViewMessage)
+            data.repository.checkItems.insert(checkItem)
         }
     }
 
@@ -236,14 +231,10 @@ class ChecklistViewModel @Inject constructor(
      */
     private fun setupRecyclerViewAdapter() {
         _checkItemsRecyclerViewAdapter.value = CheckItemsRecyclerViewAdapter({ item ->
-            // On item updated (e.g., checkbox toggled)
+            // On item updated (e.g., checkbox toggled or text changed)
             viewModelScope.launch(Dispatchers.IO) {
                 item.updated = OffsetDateTime.now(ZoneOffset.UTC).toEpochSecond()
                 data.repository.checkItems.update(item)
-                // Refresh all items to recalculate counts.
-                allCheckItems =
-                    data.repository.checkItems.getAllAsFlowList().map { it.toMutableList() }
-                        .distinctUntilChanged().asLiveData()
             }
         }, { item ->
             // On item deleted (swiped away)
@@ -251,10 +242,6 @@ class ChecklistViewModel @Inject constructor(
                 item.updated = OffsetDateTime.now(ZoneOffset.UTC).toEpochSecond()
                 item.isDeleted = true
                 data.repository.checkItems.update(item)
-                // Refresh all items to recalculate counts.
-                allCheckItems =
-                    data.repository.checkItems.getAllAsFlowList().map { it.toMutableList() }
-                        .distinctUntilChanged().asLiveData()
             }
         })
     }
